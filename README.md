@@ -4,7 +4,7 @@ An Interactive Tool which help the devs to construct and post Intacct web-servic
 Installation
 ------------
 
-To install the extension into Chrome (tested on version 20)
+To install the extension into Chrome (tested on Version 44.0.2403.125 m)
 
 * Download the source, or checkout via git
 

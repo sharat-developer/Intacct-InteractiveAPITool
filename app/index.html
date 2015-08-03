@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Intacct API Test Tool</title>
+
+    <!-- Core CSS - Include with every page -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+
+
+    <!-- Page-Level Plugin CSS - Blank -->
+
+    <!-- SB Admin CSS - Include with every page -->
+    <link href="css/sb-admin.css" rel="stylesheet">
+
+    <!--  All custom CSS -->
+    <link href="css/custom.css" type="text/css" rel="stylesheet">
+
+</head>
+<body>
+
+    <div id="wrapper">
+
+        <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+
+                <a class="navbar-brand" href="index.html"><img src="img/logo.png"/>API Test Tool</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+
+
+            </ul>
+            <!-- /.navbar-top-links -->
+
+
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <ul id="myTab" class="nav nav-tabs">
+                        <li class="active"><a href="#config" data-toggle="tab">CompanyConfig</a></li>
+                        <li><a id="API3_0_ConstructorTab" href="#API3_0_Constructor" data-toggle="tab">API-3.0-Constructor</a></li>
+                        <li><a id="API2_1_ConstructorTab" href="#API2_1_Constructor" data-toggle="tab">API-2.1-Poster</a></li>
+                        <!--        <li><a href="#inspect" data-toggle="tab">SampleCode-Constructor</a></li>-->
+
+
+                    </ul>
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade active in" id="config">
+                            <div class="row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8">
+
+
+                                    <fieldset>
+                                        <legend>Configuration</legend>
+                                        <div class="row">
+                                            <div id="loadConfiguration" class="col-md-4">
+                                                <div class="control-group">
+                                                    <label class="control-label" for="chooseCompanyID">Saved Configurations</label>
+
+                                                    <div class="controls">
+                                                        <select class="form-control" name="chooseCompanyID"
+                                                                id="chooseCompanyID">
+                                                            <option value="#">Save Configuration Before Load</option>
+                                                        </select>
+
+                                                        <p class="help-block">Choose Company ID</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="loadSessionIdSeparator" class="col-md-1">
+                                                <div class="control-group">
+                                                    <label class="control-label" > <span>&nbsp&nbsp&nbsp&nbsp&nbsp</span>/</label>
+
+                                                </div>
+                                            </div>
+                                            <div id="loadSessionId" class="col-md-4">
+                                                <div class="control-group">
+                                                    <label class="control-label" for="sessionId">Load Session ID</label>
+
+                                                    <div class="controls">
+                                                        <input type="text" class="form-control" name="sessionId"
+                                                               id="sessionId"/>
+
+                                                        <p class="help-block">Input Valid Session ID</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <legend>Configuration Details</legend>
+                                        <form class="form-horizontal" action="#" method="post" id="configuration">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="companyId">Company ID</label>
+
+                                                        <div class="controls">
+                                                            <input type="text" class="form-control" name="companyId"
+                                                                   id="companyId" required/>
+
+                                                            <p class="help-block">Enter the Company ID</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="userName">Username</label>
+
+                                                        <div class="controls">
+                                                            <input type="text" class="form-control" name="userName"
+                                                                   id="userName"/>
+
+                                                            <p class="help-block">Enter the Company Username</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="userPassword">Password</label>
+
+                                                        <div class="controls">
+                                                            <input type="password" class="form-control" name="userPassword"
+                                                                   id="userPassword" required/>
+
+                                                            <p class="help-block">Enter the Company Password</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="senderId">Sender ID</label>
+
+                                                        <div class="controls">
+                                                            <input type="text" class="form-control" name="senderId"
+                                                                   id="senderId" required/>
+
+                                                            <p class="help-block">Enter the Sender ID</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="senderPassword">Sender Password</label>
+
+                                                        <div class="controls">
+                                                            <input type="password" class="form-control"
+                                                                   name="senderPassword" id="senderPassword" required/>
+
+                                                            <p class="help-block">Enter the Sender Password</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="endPointURL">Post URL</label>
+
+                                                        <div class="controls">
+                                                            <input type="text" class="form-control" name="endPointURL"
+                                                                   id="endPointURL" required/>
+
+                                                            <p class="help-block">Enter the Company Post URL</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="line-break"></div>
+                                            <div class="row">
+                                                <div class="col-md-9 col-md-offset-4">
+                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                    <button type="reset" class="btn">Reset</button>
+
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </fieldset>
+
+                                </div>
+                                <div class="col-md-2"></div>
+                            </div>
+                        </div>
+
+                        <!--End of First Tab Content-->
+
+                        <div class="tab-pane fade" id="API3_0_Constructor">
+                            <div class="row" id="API3_0_ConstructorContainer">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8">
+
+                                    <form id="objectSelectForm" class="form-horizontal" method="post">
+                                        <!-- action="getFieldInfo.php" -->
+                                        <fieldset>
+                                            <legend>Request XML- Constructor</legend>
+
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="selectObjectDiv">Select Object</label>
+
+                                                        <div id="selectObjectDiv" class="controls">
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-5">
+                                                    <div id='selectMethodDiv' class="control-group">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="" style="margin-top:0.5em"></div>
+                                            <!--                        <div class="row">-->
+                                            <!--                            <div class="col-md-6 col-md-offset-3">-->
+                                            <!--                                <button type="submit" class="btn btn-primary">Get Fields</button>-->
+                                            <!---->
+                                            <!--                            </div>-->
+                                            <!--                        </div>-->
+                                        </fieldset>
+                                    </form>
+                                    <div class='line-break'></div>
+                                    <div id="selectFieldDiv" class="custom-font-size">
+                                        <!--                    div id="selectFieldDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+                                    <div id="putValueFieldDiv" class="custom-font-size">
+                                        <!--                    div id="putValueFieldDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+                                    <div id="keyOrQueryDiv" class="custom-font-size">
+                                        <!--                    div id="keyOrQueryDiv"-->
+                                        <br/><br/><br/>
+                                        <br/><br/><br/>
+                                        <br/><br/><br/>
+                                    </div>
+                                    <div class='line-break'></div>
+                                    <div id="returnFormatDiv" class="custom-font-size">
+                                        <!--                    div id="returnFormatDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+                                    <div id="docParIdDiv" class="custom-font-size">
+                                        <!--                    div id="docParIdDiv"-->
+                                    </div>
+
+                                    <div class='line-break'></div>
+                                    <div id="createXMLShowDiv" class="custom-font-size">
+                                        <!--                    div id="createXMLShowDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+
+                                    <div id="executeXMLDiv" class="custom-font-size">
+                                        <!--                    div id="executeXMLDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+
+                                    <div id="showResponseDiv" class="custom-font-size">
+                                        <!--                    div id="showResponseDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+                                </div>
+                                <div class="col-md-2"></div>
+
+                            </div>
+                            <!-- /.row -->
+
+
+
+                        </div>
+                        <!--End of API3_0_Constructor Tab Content-->
+
+                        <div class="tab-pane fade" id="API2_1_Constructor">
+                            <div class="row" id="API2_1_ConstructorContainer">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8">
+                                    <div class='line-break'></div>
+                                    <div id="createXMLShowDiv_2_1" class="custom-font-size">
+
+                                    </div>
+                                    <div class='line-break'></div>
+
+                                    <div id="executeXMLDiv_2_1" class="custom-font-size">
+                                        <!--                    div id="executeXMLDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+
+                                    <div id="showResponseDiv_2_1" class="custom-font-size">
+                                        <!--                    div id="showResponseDiv"-->
+                                    </div>
+                                    <div class='line-break'></div>
+                                </div>
+                                <div class="col-md-2"></div>
+
+                            </div>
+                            <!-- /.row -->
+
+
+
+                        </div>
+                        <!--End of API2_1_Constructor Tab Content-->
+
+                        <div class="tab-pane fade" id="inspect">
+                            <div class="row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-8">
+
+                                    <form id="inspectForm" class="form-horizontal" action="#" method="post">
+                                        <fieldset>
+                                            <legend>Inspect with Fields</legend>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="inspectObject">Select Object</label>
+
+                                                        <div class="controls">
+                                                            <input type="text" class="form-control" name="inspectObjectName"
+                                                                   id="inspectObject" required>
+
+                                                            <p class="help-block">Enter Object Name</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="line-break"></div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-offset-3">
+                                                    <button type="submit" class="btn btn-primary">Trigger Inspect</button>
+                                                    <button class="btn">Cancel</button>
+
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+
+
+                                </div>
+                                <div class="col-md-2"></div>
+
+                            </div>
+                            <!-- /.row -->
+
+
+                        </div>
+                        <!--End of Inspect Tab Content-->
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-4 footer">
+                    <!--                 &copy; Intacct Software Pvt Ltd 2015-->
+
+                </div>
+
+            </div>
+            <div class="row"><br/>
+            </div>
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Core Scripts - Include with every page -->
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/cookie.js"></script>
+    <script src="js/AJAX-API_Session.js"></script>
+    <script src="js/custom-AJAX-api-call.js"></script>
+    <script src="js/xml2json.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/jquery.loadJSON.js"></script>
+    <script src="js/handleCookie.js"></script>
+
+    <!-- Page-Level Plugin Scripts - Blank -->
+
+
+</body>
+
+</html>

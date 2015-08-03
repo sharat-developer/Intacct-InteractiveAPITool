@@ -1,0 +1,26 @@
+{
+	"name": "InteractiveAPITool2",
+	"version": "0.1",
+	"manifest_version": 2,
+	"description": "XML-TestTool",
+    "content_scripts": [
+      {
+        "matches": ["*://*/*"],
+        "css": ["css/bootstrap.min.css", "css/font-awesome.min.css", "css/sb-admin.css", "css/custom.css"],
+        "js": ["js/jquery-1.10.2.js", "js/bootstrap.min.js", "js/cookie.js", "js/AJAX-API_Session.js", "js/custom-AJAX-api-call.js", "js/xml2json.js", "js/custom.js", "js/jquery.loadJSON.js", "js/handleCookie.js"]
+      }
+    ],
+
+	"app": {
+		"launch":	{
+			"local_path": "index.html"
+		}
+	},
+	"permissions": [ 
+			"https://*.intacct.com/" 
+	],
+	"icons": 	{
+		"128": "icon.png"
+	},
+	"content_security_policy": "script-src 'self'; object-src 'self'"
+}

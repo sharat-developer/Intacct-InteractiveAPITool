@@ -92,6 +92,39 @@ function getQuoteWrappedCSVs(commaSeparatedValues) {
     return "'"+csvArray.join("', '")+"'";
 }
 
+function formatXml(xml) {
+    var formatted = '';
+    var reg = /(>)(<)(\/*)/g;
+    xml = xml.replace(reg, '$1\r\n$2$3');
+    var pad = 0;
+    jQuery.each(xml.split('\r\n'), function(index, node) {
+        var indent = 0;
+        if (node.match( /.+<\/\w[^>]*>$/ )) {
+            indent = 0;
+        } else if (node.match( /^<\/\w/ )) {
+            if (pad != 0) {
+                pad -= 1;
+            }
+        } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
+            indent = 1;
+        } else {
+            indent = 0;
+        }
+
+        var padding = '';
+        for (var i = 0; i < pad; i++) {
+            padding += '  ';
+        }
+
+        formatted += padding + node + '\r\n';
+        pad += indent;
+    });
+
+    return formatted;
+}
+
+
+
 $(function() {
 
     var myTabJq = $("#myTab");
@@ -466,23 +499,93 @@ function selectMethodCallbackFunction(data) {
 
 
 
-function populateShowApiResponseDiv(apiResponse){
-    $('#showResponseDiv').html("<form id='showResponseForm' class='form-horizontal'  method='post'  action='#'>" +
-        "<legend>"+selectedMethod+"-method :: API Response</legend>"+
-        "</form>"
-    );
-    $('#showResponseForm').append(
-        "<fieldset><div class='col-sm-10' >"+
-        "		<div class='form-group'>"+
-        "		<label>API Response</label>"+
-        "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
-//            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
-        "		</div>"+
-        "	</div></fieldset>"
-    );
+function populateShowApiResponseDiv(apiResponse, apiRequest) {
+
+    console.log("inside populateShowApiResponseDiv()::apiRequest==>" +apiRequest);
+
+    //var xmlDocAPIRequest = formatXml(apiRequest);
+
+    //console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
+
+    var showResponseDivHTML =
+            "<div class='row'>"+
+                "<ul id='responseTab' class='nav nav-tabs nav-custom'>"+
+                    "<li class='active'><a  id='responseXMLTab' href='#responseXML' data-toggle='tab'>API Response</a></li>"+
+                    "<li><a  id='requestXMLTab' href='#requestXML' data-toggle='tab'>API Request</a></li>"+
+                "</ul>"+
+                "<div id='responseTabContent' class='tab-content'>"+
+                    "<div class='tab-pane fade active in' id='responseXML'>"+
+                        "<div class='row'>"+
+                            "<form id='showResponseForm' class='form-horizontal'  method='post'  action='#'>" +
+                            "<legend>"+selectedMethod+"-method :: API Response</legend>"+
+                            "<fieldset>" +
+                            "   <div class='col-sm-10' >"+
+                            "		<div class='form-group'>"+
+                            "		<label>API Response</label>"+
+                            "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
+                            "		</div>"+
+                            "	</div>" +
+                            "</fieldset>"+
+                            "</form>"+
+                        "</div>"+
+                    "</div>"+
+                    "<div class='tab-pane fade' id='requestXML'>"+
+                        "<div class='row'>"+
+                            "<form id='showRequestForm' class='form-horizontal'  method='post'  action='#'>" +
+                                "<legend>"+selectedMethod+"-method :: API Request</legend>"+
+                                "<fieldset>" +
+                                "   <div class='col-sm-10' >"+
+                                "		<div class='form-group'>"+
+                                "		<label>API Request</label>"+
+                                "       <textarea id='showRequest' class='form-control' >"+apiRequest+"</textarea>"+
+                                "		</div>"+
+                                "	</div>" +
+                                "</fieldset>"+
+                            "</form>"+
+                        "</div>"+
+                    "</div>"+
+                "</div>"+
+            "</div>"
+        ;
+
+    $('#showResponseDiv').html(showResponseDivHTML);
+
+    //$('#showResponseForm').append(
+    //    "<fieldset>" +
+    //    "   <div class='col-sm-10' >"+
+    //    "		<div class='form-group'>"+
+    //    "		<label>API Response</label>"+
+    //    "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
+    //    "		</div>"+
+    //    "	</div>" +
+    //    "</fieldset>"
+    //);
+
+
     //$('textarea').autoResize();
     var showResponseJq = $("textarea#showResponse");
+    console.log("showResponseJq[0].scrollHeight==>" +showResponseJq[0].scrollHeight);
     showResponseJq.height( (showResponseJq[0].scrollHeight)-1);
+
+
+    //$('#showRequestForm').append(
+    //    "<fieldset>" +
+    //    "   <div class='col-sm-10' >"+
+    //    "		<div class='form-group'>"+
+    //    "		<label>API Request</label>"+
+    //    "       <textarea id='showRequest' class='form-control' >"+xmlDocAPIRequest+"</textarea>"+
+    //    "		</div>"+
+    //    "	</div>" +
+    //    "</fieldset>"
+    //);
+
+    //showRequestJq.
+
+    var showRequestJq = $("textarea#showRequest");
+    console.log("showRequestJq[0].scrollHeight==>" +showRequestJq[0].scrollHeight);
+    //showRequestJq.height( (showRequestJq[0].scrollHeight)-1 );
+    showRequestJq.height( 800 );
+
 }
 
 function populateShowApiResponseDiv_2_1(apiResponse){

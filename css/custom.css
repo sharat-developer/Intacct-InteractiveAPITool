@@ -24,3 +24,7 @@ input[type=checkbox]{
 .footer {
     margin-top: 4%;
 }
+
+.nav.nav-tabs.nav-custom {
+    padding-left: 1%;
+}

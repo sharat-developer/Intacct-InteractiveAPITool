@@ -21,4 +21,4 @@ To install the extension into Chrome (tested on Version 44.0.2403.125 m)
 Usage
 ------------
 
-Key in your Company configurations details and save it, then proceed to API-3.0 Constructor or API-2.1 Poster
+Key in your Company configuration details and save it, then proceed to API-3.0 Constructor or API-2.1 Poster

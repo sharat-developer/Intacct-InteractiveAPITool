@@ -14,6 +14,11 @@ To install the extension into Chrome (tested on Version 44.0.2403.125 m)
     
         git clone https://github.com/sharat-developer/Intacct-InteractiveAPITool.git
         
-* Open Chrome, hit the Settings Icon > Tools > Extensions
+* Open Chrome, hit the  Settings Icon > More Tools > Extensions
 * Enable "Developer Mode" via the checkbox at the top
 * Click the "Load unpacked extension" button and select the folder where you extracted the downloaded code
+
+Usage
+------------
+
+Key in your Company configurations details and save it, then proceed to API-3.0 Constructor or API-2.1 Poster

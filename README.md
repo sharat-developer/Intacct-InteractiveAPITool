@@ -6,7 +6,7 @@ Installation
 
 To install the extension into Chrome (tested on Version 44.0.2403.125 m)
 
-* Download the source zip file using below URL and extract it:
+* Download the source zip file using below URL and extract it :
 
     [https://github.com/sharat-developer/Intacct-InteractiveAPITool/archive/master.zip](../../archive/master.zip)
     
@@ -16,4 +16,4 @@ To install the extension into Chrome (tested on Version 44.0.2403.125 m)
         
 * Open Chrome, hit the Settings Icon > Tools > Extensions
 * Enable "Developer Mode" via the checkbox at the top
-* Click the "Load unpacked extension" button and select the folder where you downloaded the code
+* Click the "Load unpacked extension" button and select the folder where you extracted the downloaded code

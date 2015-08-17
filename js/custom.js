@@ -12,6 +12,7 @@ var UPDATE_REQ_FIELDS_CUSTOM  = ["id"];
 //var VALID_OPERATIONS = ["=", ">", "<", ">=", "<=", "like", "in"];
 var VALID_OPERATIONS = {"=":"=",">": "&amp;gt;", "<":"&amp;lt;", ">=":"&amp;gt;=", "<=":"&amp;lt;=", "in":"in", "not in":"not in", "like":"like", "not like":"not like"};
 var getAllObjectsFlag = true;
+var GET_LIST_OBJECTS = ["accountgroup", "achbankconfiguration", "adjjournal", "allocation", "apaccountlabel", "apadjustment", "apadjustmentbatch", "appayment", "appaymentrequest", "apterm", "araccountlabel", "aradjustment", "aradjustmentbatch", "arpayment", "arpaymentbatch", "arterm", "artransactiondef", "bankaccount", "bill", "billbatch", "cctransaction", "class", "company_info", "contact", "contacttaxgroup", "csnhistory", "custglgroup", "customer", "customerachinfo", "customerbankaccount", "customerchargecard", "customerppackage", "customervisibility", "department", "earningtype", "employee", "employeepref", "employeerate", "expenseadjustmentreport", "expensereport", "expensereportbatch", "expensetypes", "glaccount", "glbudget", "glbudgetitem", "glentry", "gltransaction", "icitem", "icitemtotals", "ictotal", "ictransaction", "ictransactiondef", "invoice", "invoicebatch", "itemglgroup", "itemtaxgroup", "itemtotal", "journal", "location", "locationentity", "locationgroup", "popricelist", "potransaction", "potransactiondef", "pricelistitem", "productline", "project", "projectstatus", "projecttype", "recursotransaction", "renewalmacro", "reportingperiod", "revrecchangelog", "revrecschedule", "revrecscheduleentry", "revrectemplate", "smarteventlog", "sopricelist", "sotransaction", "sotransactiondef", "statglaccount", "statjournal", "stkittransaction", "subscription", "supdoc", "supdocfolder", "task", "taxdetail", "taxschedule", "taxscheduledetail", "taxschedulemap", "territory", "timesheet", "timetype", "trxcurrencies", "uom", "vendglgroup", "vendor", "vendorentityaccount", "vendorpref", "vendorvisibility", "vsoeallocation", "vsoeitempricelist", "vsoepricelist", "warehouse"];
 
 // value contains characters like '&', '>' or '<' converted to XML escape charactes
 function encodeHTML(inputString) {
@@ -92,10 +93,73 @@ function getQuoteWrappedCSVs(commaSeparatedValues) {
     return "'"+csvArray.join("', '")+"'";
 }
 
+//deprecated function to auto-resize textarea box
+function resizeTextArea() { //textAreaJq
+    $.each($("textarea"), function() {
+        console.log("textarea id==>");
+        console.log($(this).attr("id"));
+        var offset = this.offsetHeight - this.clientHeight;
+        $(this).css('height', 'auto').css('height', this.scrollHeight + offset + 1);
+    });
+
+}
+
+function getWrappedXML(wrapTag, wrapBody) {
+    return "<" + wrapTag + ">" + wrapBody + "</" + wrapTag + ">";
+}
+
+function getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML){
+    filterXML = (filterXML == "") ? ("<!--filter-->") : (getWrappedXML("filter", filterXML));
+    sortXML = (sortXML == "") ? ("<!--sort-->") : (getWrappedXML("sorts", sortXML));
+    fieldXML = (fieldXML == "") ? ("<!--field-->") : (getWrappedXML("fields", fieldXML));
+    return "<content>" +
+        "   <function controlid='testControlId'>" +
+        "       <get_list object='" + selectedGetListObject + "' maxitems='10'>" +
+                    filterXML+
+                    sortXML+
+                    fieldXML+
+        "       </get_list>" +
+        "   </function>" +
+        "</content>"
+        ;
+}
+
+function getFilterBody() {
+    return "<!-- <logical logical_operator='and'> -->"+
+            "<expression>"+
+            "<field></field>"+
+            "<operator></operator>"+
+            "<value></value>"+
+            "</expression>"+
+            "<!-- </logical> -->"
+        ;
+}
+
+function getSortOrFieldBody(wrapFun) {
+    if(wrapFun == "sort") {
+        return "<sortfield order='asc'></sortfield>";
+    } else {
+        return "<field></field>";
+    }
+}
+
+function getGetListOperationXML(requestContent_2_1, operation) {
+    requestContent_2_1 = vkbeautify.xmlmin(requestContent_2_1, true);
+    var matchString = "<" + operation + ">(.*)</" + operation + ">";
+    var operationXML = requestContent_2_1.match(matchString);
+    return (operationXML == null) ? ("") : (operationXML[1]);
+}
+
+
+//deprecated function
 function formatXml(xml) {
     var formatted = '';
     var reg = /(>)(<)(\/*)/g;
+    console.log("xml::before==>");
+    console.log(xml);
     xml = xml.replace(reg, '$1\r\n$2$3');
+    console.log("xml::after==>");
+    console.log(xml);
     var pad = 0;
     jQuery.each(xml.split('\r\n'), function(index, node) {
         var indent = 0;
@@ -165,7 +229,7 @@ $(function() {
             $("#selectMethodDiv").html("");
             $("#selectFieldDiv").html("");
             $("#putValueFieldDiv").html("");
-            $("#createXMLShowDiv").html("");
+            //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
             $("#returnFormatDiv").html("");
             docParIdDivJq.html("");
@@ -202,7 +266,7 @@ $(function() {
             $("#selectMethodDiv").html("");
             $("#selectFieldDiv").html("");
             $("#putValueFieldDiv").html("");
-            $("#createXMLShowDiv").html("");
+            //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
             $("#returnFormatDiv").html("");
             docParIdDivJq.html("");
@@ -233,6 +297,17 @@ $(function() {
                 apiSession.ip_setCredentials(credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], "", "");
             }
 
+            var defaultXMLString =
+                    "<content> " +
+                    "   <function controlid='testControlId'>"+
+                    "   <!-- Put your API-3.0 functions here --> "+
+                    "   </function> " +
+                    "</content> "
+                ;
+            defaultXMLString = vkbeautify.xml(defaultXMLString);
+
+            constructedXMLShowFormPopulateData(defaultXMLString, false);
+
             $('#selectObjectDiv').html(
                         "<img height='40em' width='40em' alt='Loading...' src='./img/ajax-loader.gif' id='loading-indicator' />"
             );
@@ -246,10 +321,12 @@ $(function() {
     myTabJq.find("a#API2_1_ConstructorTab").bind('click', function () {
         //bind only once ;)
         if($("#createXMLShowForm_2_1").length == 0) {
-            constructXMLShowFormPopulateData_2_1();
+            objectSelectDivPopulateData_2_1();
+            //constructXMLShowFormPopulateData_2_1();
         }
 
     });
+
 });
 
 function constructDeleteXML( keyForm ){
@@ -336,13 +413,45 @@ function populateSelectObject(responseData){
         selectOptionStringHTML += "<option value='"+dataIterator['_typename']+"'>"+dataIterator['__text']+"</option>"
     });
     selectObjectDivJq.html(
-        "<select id='selectObject' class='form-control' name='objectName'>"+
-        "<option value='#'>--select an object--</option>" +
-        selectOptionStringHTML+
-        "</select>"
+        "<label class='control-label' for='selectObjectDiv'>Select Object</label>"+
+        "<div  class='controls'>"+
+            "<select id='selectObject' class='form-control' name='objectName'>"+
+            "<option value='#'>--select an object--</option>" +
+                selectOptionStringHTML+
+            "</select>"+
+        "</div>"
+
     );
     $("#selectObject").on("change", function () {
-        $("#selectMethodDiv").html(
+        //var selectObjectJq = $("#selectObject");
+        //var currentObject = selectObjectJq.val();
+ 
+        $("#putValueFieldDiv").html("");
+        //$("#createXMLShowDiv").html("");
+        $("#keyOrQueryDiv").html("");
+        $("#returnFormatDiv").html("");
+        $("#docParIdDiv").html("");
+        //$("#executeXMLDiv").html("");
+        $( "#queryForm").html("");
+        $("#selectFieldDiv").html("");
+
+        var selectMethodDivJq = $("#selectMethodDiv");
+        if($(this).val() == "#") {
+            selectMethodDivJq.html("");
+            var defaultXMLString =
+                    "<content> " +
+                    "   <function controlid='testControlId'>"+
+                    "   <!-- Put your API-3.0 functions here --> "+
+                    "   </function> " +
+                    "</content> "
+                ;
+            defaultXMLString = vkbeautify.xml(defaultXMLString);
+
+            constructedXMLShowFormPopulateData(defaultXMLString, false);
+            return;
+        }
+
+        selectMethodDivJq.html(
             "<label class='control-label' for='selectMethod'>Select Method</label>" +
             "                                    <div class='controls'>" +
             "                                        <select id='selectMethod' class='form-control' name='methodName'>" +
@@ -362,27 +471,30 @@ function populateSelectObject(responseData){
         $("#selectMethod").on( "change", function(){
             //console.log("selectMethod->onChange");
 //        event.preventDefault();
-            $("#selectFieldDiv").html("");
+            var selectFieldDivJq = $("#selectFieldDiv");
+            var docParIdDivJq = $("#docParIdDiv");
+
+            selectFieldDivJq.html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
             $("#putValueFieldDiv").html("");
-            $("#createXMLShowDiv").html("");
+            //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
             $("#returnFormatDiv").html("");
-            $("#docParIdDiv").html("");
-            $("#executeXMLDiv").html("");
+            docParIdDivJq.html("");
+            //$("#executeXMLDiv").html("");
             $( "#queryForm").html("");
 
             selectedMethod = $("#selectMethod").val();
 
             if(selectedMethod == "dummy"){
+                selectFieldDivJq.html("");
                 return;
-            }
-            //handle delete method separately
-            else if(selectedMethod == "delete"){
+            } else if(selectedMethod == "delete"){ //handle delete method separately
                 constructKeyInputForm(selectedMethod);
 
-                $('#docParIdDiv').html(
+                selectFieldDivJq.html("");
+                docParIdDivJq.html(
                     "<div class='row'>" +
-                    "<div class='col-md-6 col-md-offset-3'>"+
+                    "<div class='col-md-8 col-md-offset-4'>"+
                     "<button type='button' id = 'constructDeleteXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
                     "</div>" +
                     "</div>"
@@ -390,17 +502,17 @@ function populateSelectObject(responseData){
                 $("#constructDeleteXMLBtn").on("click", function(){
                     var xmlString = constructDeleteXML( $("#keyForm"));
                     xmlString = constructContentWrapper(xmlString);
-                    constructedXMLShowFormPopulateData(xmlString);
+                    constructedXMLShowFormPopulateData(xmlString, true);
                 });
 
                 return;
-            }//handle inspect method separately
-            else if(selectedMethod == "inspect"){
+            } else if(selectedMethod == "inspect"){ //handle inspect method separately
                 constructKeyInputForm(selectedMethod);
 
-                $('#docParIdDiv').html(
+                selectFieldDivJq.html("");
+                docParIdDivJq.html(
                     "<div class='row'>" +
-                    "<div class='col-md-6 col-md-offset-3'>"+
+                    "<div class='col-md-8 col-md-offset-4'>"+
                     "<button type='button' id = 'constructInspectXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
                     "</div>" +
                     "</div>"
@@ -408,7 +520,7 @@ function populateSelectObject(responseData){
                 $("#constructInspectXMLBtn").on("click", function(){
                     var xmlString = constructInspectXML( $("#keyForm"));
                     xmlString = constructContentWrapper(xmlString);
-                    constructedXMLShowFormPopulateData(xmlString);
+                    constructedXMLShowFormPopulateData(xmlString, true);
                 });
 
                 return;
@@ -503,23 +615,23 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
     console.log("inside populateShowApiResponseDiv()::apiRequest==>" +apiRequest);
 
-    //var xmlDocAPIRequest = formatXml(apiRequest);
+    var xmlDocAPIRequest = vkbeautify.xml(apiRequest);
 
-    //console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
+    console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
 
     var showResponseDivHTML =
-            "<div class='row'>"+
+            //"<div class='row'>"+
                 "<ul id='responseTab' class='nav nav-tabs nav-custom'>"+
                     "<li class='active'><a  id='responseXMLTab' href='#responseXML' data-toggle='tab'>API Response</a></li>"+
                     "<li><a  id='requestXMLTab' href='#requestXML' data-toggle='tab'>API Request</a></li>"+
                 "</ul>"+
                 "<div id='responseTabContent' class='tab-content'>"+
                     "<div class='tab-pane fade active in' id='responseXML'>"+
-                        "<div class='row'>"+
+                        //"<div class='row'>"+
                             "<form id='showResponseForm' class='form-horizontal'  method='post'  action='#'>" +
                             "<legend>"+selectedMethod+"-method :: API Response</legend>"+
                             "<fieldset>" +
-                            "   <div class='col-sm-10' >"+
+                            "   <div class='col-sm-12' >"+
                             "		<div class='form-group'>"+
                             "		<label>API Response</label>"+
                             "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
@@ -527,32 +639,32 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
                             "	</div>" +
                             "</fieldset>"+
                             "</form>"+
-                        "</div>"+
+                        //"</div>"+
                     "</div>"+
                     "<div class='tab-pane fade' id='requestXML'>"+
-                        "<div class='row'>"+
+                        //"<div class='row'>"+
                             "<form id='showRequestForm' class='form-horizontal'  method='post'  action='#'>" +
                                 "<legend>"+selectedMethod+"-method :: API Request</legend>"+
                                 "<fieldset>" +
-                                "   <div class='col-sm-10' >"+
+                                "   <div class='col-sm-12' >"+
                                 "		<div class='form-group'>"+
                                 "		<label>API Request</label>"+
-                                "       <textarea id='showRequest' class='form-control' >"+apiRequest+"</textarea>"+
+                                "       <textarea  rows='30' id='showRequest' class='form-control'></textarea>"+ //" + xmlDocAPIRequest + "
                                 "		</div>"+
                                 "	</div>" +
                                 "</fieldset>"+
                             "</form>"+
-                        "</div>"+
+                        //"</div>"+
                     "</div>"+
-                "</div>"+
-            "</div>"
+                "</div>"
+           // "</div>"
         ;
 
     $('#showResponseDiv').html(showResponseDivHTML);
 
     //$('#showResponseForm').append(
     //    "<fieldset>" +
-    //    "   <div class='col-sm-10' >"+
+    //    "   <div class='col-sm-12' >"+
     //    "		<div class='form-group'>"+
     //    "		<label>API Response</label>"+
     //    "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
@@ -564,13 +676,14 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
     //$('textarea').autoResize();
     var showResponseJq = $("textarea#showResponse");
+    //resizeTextArea();
     console.log("showResponseJq[0].scrollHeight==>" +showResponseJq[0].scrollHeight);
-    showResponseJq.height( (showResponseJq[0].scrollHeight)-1);
+    showResponseJq.height( (showResponseJq[0].scrollHeight)-12);
 
 
     //$('#showRequestForm').append(
     //    "<fieldset>" +
-    //    "   <div class='col-sm-10' >"+
+    //    "   <div class='col-sm-12' >"+
     //    "		<div class='form-group'>"+
     //    "		<label>API Request</label>"+
     //    "       <textarea id='showRequest' class='form-control' >"+xmlDocAPIRequest+"</textarea>"+
@@ -581,39 +694,108 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
     //showRequestJq.
 
-    var showRequestJq = $("textarea#showRequest");
-    console.log("showRequestJq[0].scrollHeight==>" +showRequestJq[0].scrollHeight);
-    //showRequestJq.height( (showRequestJq[0].scrollHeight)-1 );
-    showRequestJq.height( 800 );
+    var showRequestJq = $("#showRequest");
+    //following didnt work
+    //console.log("showRequestJq[0].scrollHeight==>" +showRequestJq[0].scrollHeight);
+    //showRequestJq.height( (showRequestJq[0].scrollHeight)-12 );
+    //showRequestJq.height( 800 );
+
+    showRequestJq.val(xmlDocAPIRequest); //.trigger('change');
+    var xmlDocAPIRequestLength = xmlDocAPIRequest.split(/\r\n|\r|\n/).length;
+    //console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
+
+    showRequestJq.attr("rows", xmlDocAPIRequestLength);
+    //$("textarea").trigger('propertychange');
 
 }
 
-function populateShowApiResponseDiv_2_1(apiResponse){
-    $('#showResponseDiv_2_1').html("<form id='showResponseForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
-        "<legend>API-2.1 Response</legend>"+
-        "</form>"
-    );
-    $('#showResponseForm_2_1').append(
-        "<fieldset><div class='col-sm-10' >"+
-        "		<div class='form-group'>"+
-        "		<label>API Response</label>"+
-        "       <textarea id='showResponse_2_1' class='form-control' >"+apiResponse+"</textarea>"+
-//            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
-        "		</div>"+
-        "	</div></fieldset>"
-    );
-    //$('textarea').autoResize();
-    var showResponse_2_1Jq = $("textarea#showResponse_2_1");
-    showResponse_2_1Jq.height( (showResponse_2_1Jq[0].scrollHeight)-1);
+function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
+    console.log("inside populateShowApiResponseDiv_2_1()::apiRequest==>" +apiRequest);
+    var xmlDocAPIRequest = vkbeautify.xml(apiRequest);
+    console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
+
+    var showResponseDivHTML_2_1 =
+            //"<div class='row'>"+
+            "<ul id='responseTab_2_1' class='nav nav-tabs nav-custom'>"+
+            "<li class='active'><a  id='responseXMLTab_2_1' href='#responseXML_2_1' data-toggle='tab'>API Response</a></li>"+
+            "<li><a  id='requestXMLTab_2_1' href='#requestXML_2_1' data-toggle='tab'>API Request</a></li>"+
+            "</ul>"+
+            "<div id='responseTabContent_2_1' class='tab-content'>"+
+            "<div id='responseXML_2_1' class='tab-pane fade active in' >"+
+                //"<div class='row'>"+
+            "<form id='showResponseForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
+            //"<legend>API Response</legend>"+
+            "<fieldset>" +
+            "   <div class='col-sm-12' >"+
+            "		<div class='form-group'>"+
+            "		<label>API Response</label>"+
+            "       <textarea id='showResponse_2_1' class='form-control' >"+apiResponse+"</textarea>"+
+            "		</div>"+
+            "	</div>" +
+            "</fieldset>"+
+            "</form>"+
+                //"</div>"+
+            "</div>"+
+            "<div id='requestXML_2_1' class='tab-pane fade'>"+
+                //"<div class='row'>"+
+            "<form id='showRequestForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
+            //"<legend>API Request</legend>"+
+            "<fieldset>" +
+            "   <div class='col-sm-12' >"+
+            "		<div class='form-group'>"+
+            "		<label>API Request</label>"+
+            "       <textarea  id='showRequest_2_1' class='form-control'></textarea>"+ //" + xmlDocAPIRequest + "
+            "		</div>"+
+            "	</div>" +
+            "</fieldset>"+
+            "</form>"+
+                //"</div>"+
+            "</div>"+
+            "</div>"
+    // "</div>"
+        ;
+
+    $('#showResponseDiv_2_1').html(showResponseDivHTML_2_1);
+    var showResponseJq = $("textarea#showResponse_2_1");
+    console.log("showResponseJq[0].scrollHeight==>" +showResponseJq[0].scrollHeight);
+    showResponseJq.height( (showResponseJq[0].scrollHeight)-12);
+
+    var showRequestJq = $("#showRequest_2_1");
+    showRequestJq.val(xmlDocAPIRequest);
+    var xmlDocAPIRequestLength = xmlDocAPIRequest.split(/\r\n|\r|\n/).length;
+    showRequestJq.attr("rows", xmlDocAPIRequestLength);
+
+//    $('#showResponseDiv_2_1').html("<form id='showResponseForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
+//        "<legend>API-2.1 Response</legend>"+
+//        "</form>"
+//    );
+//    $('#showResponseForm_2_1').append(
+//        "<fieldset><div class='col-sm-12' >"+
+//        "		<div class='form-group'>"+
+//        "		<label>API Response</label>"+
+//        "       <textarea id='showResponse_2_1' class='form-control' >"+apiResponse+"</textarea>"+
+////            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
+//        "		</div>"+
+//        "	</div></fieldset>"
+//    );
+//    //$('textarea').autoResize();
+//    var showResponse_2_1Jq = $("textarea#showResponse_2_1");
+//    showResponse_2_1Jq.height( (showResponse_2_1Jq[0].scrollHeight)-12);
 }
 
-function constructedXMLShowFormPopulateData(data){
+function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
+    var legendString = "";
+    if(constructedXMLFlag === true) {
+        legendString = "<legend>"+selectedMethod+"-method :: constructed Request XML</legend>";
+    } else {
+        legendString = "<legend>API-3.0 Request XML</legend>";
+    }
     $('#createXMLShowDiv').html("<form id='createXMLShowForm' class='form-horizontal'  method='post'  action='#'>" +
-        "<legend>"+selectedMethod+"-method :: constructed Request XML</legend>"+
+        legendString +
         "</form>"
     );
     $('#createXMLShowForm').append(
-        "<fieldset><div class='col-sm-10' >"+
+        "<fieldset><div class='col-sm-12' >"+
         "		<div class='form-group'>"+
         "		<label>API Request</label>"+
         "       <textarea id='createXML' class='form-control' >"+data+"</textarea>"+
@@ -623,10 +805,20 @@ function constructedXMLShowFormPopulateData(data){
     );
     //$('textarea').autoResize();
     var createXMLJq = $("textarea#createXML");
-    createXMLJq.height( (createXMLJq[0].scrollHeight)-1);
+    //createXMLJq.height( (createXMLJq[0].scrollHeight)-12);
 
+    var xmlDocAPIRequestLength = data.split(/\r\n|\r|\n/).length;
+    console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
+    createXMLJq.attr("rows", xmlDocAPIRequestLength);
+
+
+    if(constructedXMLFlag === true) {
+        legendString = "<legend>"+selectedMethod+"-method :: Execute Request XML</legend>";
+    } else {
+        legendString = "<legend>Execute Request XML</legend>";
+    }
     $('#executeXMLDiv').html("<form id='executeXMLForm' class='form-horizontal'  method='post'  action='#'>" +
-        "<legend>"+selectedMethod+"-method :: execute Request XML</legend>"+
+        legendString +
         "</form>"
     );
 
@@ -634,8 +826,8 @@ function constructedXMLShowFormPopulateData(data){
 
     executeXMLFormJq.append(
         "<div class='line-break'></div>"+
-        "<fieldset><div class='' >"+
-        "<div class='col-md-6 col-md-offset-3'>"+
+        "<fieldset><div class='row' >"+
+        "<div class='col-md-8 col-md-offset-4'>"+
         "<button type='submit' id = executeXMLBtn' class='btn btn-primary' >Execute Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
         "</fieldset>"
@@ -654,23 +846,159 @@ function constructedXMLShowFormPopulateData(data){
     });
 }
 
-function constructXMLShowFormPopulateData_2_1(){
 
-    $('#createXMLShowDiv_2_1').html("<form id='createXMLShowForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
-        "<legend>Construct API-2.1 Request XML</legend>"+
+function constructGetListXML_2_1(selectedGetListObject, requestContent_2_1, selectedAttribute) {
+
+    var reqContents = null;
+
+    var filterXML = getGetListOperationXML(requestContent_2_1, "filter");
+    var sortXML = getGetListOperationXML(requestContent_2_1, "sorts");
+    var fieldXML = getGetListOperationXML(requestContent_2_1, "fields");
+
+    if(selectedAttribute == "filter") {
+        filterXML += getFilterBody(); //(filterXML == "" )?(getFilterBody()):(filterXML);
+        return getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML);
+
+    } else if(selectedAttribute == "sort") {
+        sortXML += getSortOrFieldBody("sort"); //(sortXML == "" )?(getSortOrFieldBody("sort")):(sortXML);
+        return getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML);
+
+    }else if(selectedAttribute == "field") {
+        fieldXML += getSortOrFieldBody("field"); //(fieldXML == "" )?(getSortOrFieldBody("field")):(fieldXML);
+        return getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML);
+    }
+}
+
+function objectSelectDivPopulateData_2_1() {
+    $('#objectSelectDiv_2_1')
+        .html(
+        "<form id='objectSelectForm_2_1' class='form-horizontal' method='post'>" +
+        "<fieldset>" +
+        "<legend>Get List Request XML- Constructor</legend>" +
+            //"<div class='row'>" +
+        "<div class='col-md-5 col-md-5-custom'>" +
+        "<div class='control-group'>" +
+        "<label class='control-label' for='selectObjectDiv_2_1'>Select Object</label>" +
+        "<div id='selectObjectDiv_2_1' class='controls'>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "<div class='div-custom'>" + //style='float: none'
+        "<label class='control-label col-md-6' for='primary-div-custom' style='text-align : left'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get List Operations:</label>" +
+        "<div id='primary-div-custom' class='col-md-6'>" +
+        "<div class='control-group'>" +
+
+        "<div id='filterDiv_2_1' class='col-md-2 col-md-offset-1 btn-primary-div-custom'>" +
+        "<button name='filter' type='button' id = 'filter_2_1' class='btn btn-primary'>&nbsp;&nbsp;&nbsp;filter&nbsp;&nbsp;&nbsp;</button>" +
+        "</div>" +
+        "<div id='sortDiv_2_1' class='col-md-2 col-md-offset-2 btn-primary-div-custom'>" +
+        "<button name='sort' type='button' id = 'sort_2_1' class='btn btn-primary'>&nbsp;&nbsp;&nbsp;sort&nbsp;&nbsp;&nbsp;</button>" +
+        "</div>" +
+        "<div id='fieldsDiv_2_1' class='col-md-2 col-md-offset-2 btn-primary-div-custom'>" +
+        "<button name='field' type='button' id = 'fields_2_1' class='btn btn-primary'>&nbsp;&nbsp;&nbsp;fields&nbsp;&nbsp;&nbsp;</button>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</fieldset>" +
+        "</form>" +
+        "<div class='line-break'></div>"
+    );
+    var selectObjectDiv_2_1_Jq = $("#selectObjectDiv_2_1");
+    var selectOptionStringHTML_2_1 = "";
+    $.each(GET_LIST_OBJECTS, function(key, val){
+        selectOptionStringHTML_2_1 += "<option value='"+val+"'>" + val + "</option>"
+    });
+
+    selectObjectDiv_2_1_Jq.html(
+        "<select id='selectObject_2_1' class='form-control' name='objectName'>"+
+        "   <option value='#'>--select an object--</option>" +
+        selectOptionStringHTML_2_1+
+        "</select>"
+    );
+    var selectObject_2_1Jq = $("#selectObject_2_1");
+    var divCustom_2_1Jq = $(".div-custom");
+
+    selectObject_2_1Jq.on("change", function () {
+
+        console.log("selectObject_2_1 on change");
+        var selectedGetListObject =  selectObject_2_1Jq.val(); //find('option:selected').text();
+        divCustom_2_1Jq.hide();
+        if(selectedGetListObject == "#"){
+
+            var requestContent_2_1 =
+                    "<content> " +
+                    "   <function controlid='testControlId' > "+
+                    "   <!-- Put your API-2.1 function here --> "+
+                    "   </function> " +
+                    "</content> "
+                ;
+            constructXMLShowFormPopulateData_2_1(requestContent_2_1);
+        } else {
+            divCustom_2_1Jq.show();
+            requestContent_2_1 = getGetListXML(selectedGetListObject, "", "", "");
+            constructXMLShowFormPopulateData_2_1(requestContent_2_1);
+        }
+
+    });
+
+    selectObject_2_1Jq.trigger("change");
+
+    var btnPrimary_2_1Jq = $(".btn-primary-div-custom [type='button']");
+    btnPrimary_2_1Jq.on("click", function() {
+
+        var createXML_2_1Jq = $("textarea#createXML_2_1");
+        var selectedAttribute = $(this).attr("name");
+        console.log("button click::selectedAttribute==>");
+        console.log(selectedAttribute);
+
+        var requestContent_2_1 = createXML_2_1Jq.val();
+
+        var selectedGetListObject =  selectObject_2_1Jq.find('option:selected').text();
+        var createXML = constructGetListXML_2_1(selectedGetListObject, requestContent_2_1, selectedAttribute);
+        //createXML = vkbeautify.xml(createXML);
+        //createXML_2_1Jq.height( 10 );
+        //createXML_2_1Jq.val(createXML);
+        //createXML_2_1Jq.height( (createXML_2_1Jq[0].scrollHeight)-12);
+        constructXMLShowFormPopulateData_2_1(createXML);
+    });
+
+}
+
+function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
+
+    $('#createXMLShowDiv_2_1')
+        .html(
+
+        "<form id='createXMLShowForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
+        "<legend>API-2.1 Request XML</legend>"+
         "</form>"
     );
+
+
     $('#createXMLShowForm_2_1').append(
-        "<fieldset><div class='col-sm-10' >"+
+        "<fieldset>" +
+        "   <div class='col-sm-12 custom-font-size' >"+
         "		<div class='form-group'>"+
-        "		<label>API Request</label>"+
-        "       <textarea id='createXML_2_1' class='form-control' ></textarea>"+
+        "		    <label >API Request</label>"+
+        "           <textarea id='createXML_2_1' class='form-control' ></textarea>"+
         "		</div>"+
-        "	</div></fieldset>"
+        "	</div>" +
+        "</fieldset>"
     );
     //$('textarea').autoResize();
-    var createXMLJq_2_1Jq = $("textarea#createXML_2_1");
-    createXMLJq_2_1Jq.height( 200 );
+    var createXML_2_1Jq = $("textarea#createXML_2_1");
+    //createXML_2_1Jq.height( 200 );
+
+
+    //createXML_2_1Jq.val(formatXml(requestContent_2_1));
+    requestContent_2_1 = vkbeautify.xml(requestContent_2_1);
+    createXML_2_1Jq.val(requestContent_2_1);
+    //console.log("createXML_2_1Jq[0].scrollHeight==>" +createXML_2_1Jq[0].scrollHeight);
+    //createXML_2_1Jq.height( (createXML_2_1Jq[0].scrollHeight)-12);
+    var xmlDocAPIRequestLength = requestContent_2_1.split(/\r\n|\r|\n/).length;
+    console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
+    createXML_2_1Jq.attr("rows", xmlDocAPIRequestLength);
 
     var executeXMLDiv_2_1Jq = $('#executeXMLDiv_2_1');
 
@@ -683,8 +1011,8 @@ function constructXMLShowFormPopulateData_2_1(){
 
     executeXMLForm_2_1Jq.append(
         "<div class='line-break'></div>"+
-        "<fieldset><div class='' >"+
-        "<div class='col-md-6 col-md-offset-3'>"+
+        "<fieldset><div class='row' >"+
+        "<div class='col-md-8 col-md-offset-4'>"+
         "<button type='submit' id = executeXMLBtn_2_1' class='btn btn-primary' >Execute Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
         "</fieldset>"
@@ -701,6 +1029,9 @@ function constructXMLShowFormPopulateData_2_1(){
 
         customAJAXPost($("#createXML_2_1").val(), credentialJSON, $("#sessionId").val(), "2.1");
     });
+
+
+
 }
 
 function constructCreateOrUpdateXML(formObj){
@@ -743,7 +1074,6 @@ function constructFormXMLRemovingDot(formObj, numOfTabOffset){
 
             for( var j = 0 ; j < tagSplitArray.length - 1 ; j++ ){
 
-
                 if( ( openTagArray.length == 0 )){ // || ( $.inArray(tagSplitArray[i],  tagSplitArray)>-1 )
                     openTagArray.push(tagSplitArray[j]);
                     formXML += getTabOffsetString(numOfTabOffset)+"<"+tagSplitArray[j]+"> \n";
@@ -766,18 +1096,12 @@ function constructFormXMLRemovingDot(formObj, numOfTabOffset){
                             numOfTabOffset--;
                             formXML += getTabOffsetString(numOfTabOffset)+"</"+openTagArray.pop()+"> \n";
                         }
-                        //console.log("#if( ( openTagArray[i] != tagSplitArray[i] ) )")
-                        //console.log("openTagArray.push(tagSplitArray[i])==>"+openTagArray);
-                        //console.log("formXML==>"+formXML);
                     }
                 }
 
             }
 
             formXML += getTabOffsetString(numOfTabOffset)+"<"+tagSplitArray[tagSplitArray.length - 1]+">"+iterator['value']+"</"+tagSplitArray[tagSplitArray.length - 1]+"> \n";
-            //console.log("#after for( var i = 0 ; i < tagSplitArray.length - 1 ; i++ )")
-            //console.log("formXML==>"+formXML);
-            //console.log("openTagArray==>"+openTagArray);
 
         }else{
             while( openTagArray.length > 0){
@@ -916,7 +1240,7 @@ function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormD
     putValueInFieldsFormHTML +=
         "<div class='line-break'></div>"+
         "<div class='line-break'></div>"+
-        "<div class='col-md-6 col-md-offset-3'>"+
+        "<div class='col-md-8 col-md-offset-4'>"+
         "<button type='submit' id = 'constructCreateXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
         "</fieldset>"
@@ -933,7 +1257,7 @@ function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormD
 
         xmlString = constructContentWrapper(xmlString);
 
-        constructedXMLShowFormPopulateData(xmlString);
+        constructedXMLShowFormPopulateData(xmlString, true);
     });
 }
 
@@ -1443,7 +1767,7 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
     $('#docParIdDiv').html(
         docParIdDivHTML+
         "<div class='row'>" +
-        "<div class='col-md-6 col-md-offset-3'>"+
+        "<div class='col-md-8 col-md-offset-4'>"+
         "<button type='button' id = 'constructReadStarXMLBtn' class='btn btn-primary'>Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>" +
         "</div>"
@@ -1453,7 +1777,7 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
 
         var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
         xmlString = constructContentWrapper(xmlString);
-        constructedXMLShowFormPopulateData(xmlString);
+        constructedXMLShowFormPopulateData(xmlString, true);
     });
 }
 

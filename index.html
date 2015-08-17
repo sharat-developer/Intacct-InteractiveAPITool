@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Intacct API Test Tool</title>
+    <title>Intacct XML API Builder and Poster</title>
 
     <!-- Core CSS - Include with every page -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -29,7 +29,7 @@
         <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="margin-bottom: 0">
             <div class="navbar-header">
 
-                <a class="navbar-brand" href="index.html"><img src="img/logo.png"/>API Test Tool</a>
+                <a class="navbar-brand" href="index.html"><img src="img/logo.png"/>API Poster</a>
             </div>
             <!-- /.navbar-header -->
 
@@ -47,9 +47,9 @@
             <div class="row">
                 <div class="col-md-12">
                     <ul id="myTab" class="nav nav-tabs">
-                        <li class="active"><a href="#config" data-toggle="tab">CompanyConfig</a></li>
-                        <li><a id="API3_0_ConstructorTab" href="#API3_0_Constructor" data-toggle="tab">API-3.0-Constructor</a></li>
-                        <li><a id="API2_1_ConstructorTab" href="#API2_1_Constructor" data-toggle="tab">API-2.1-Poster</a></li>
+                        <li class="active"><a href="#config" data-toggle="tab">Configurations</a></li>
+                        <li><a id="API3_0_ConstructorTab" href="#API3_0_Constructor" data-toggle="tab">&nbsp;&nbsp;API-3.0&nbsp;&nbsp;</a></li>
+                        <li><a id="API2_1_ConstructorTab" href="#API2_1_Constructor" data-toggle="tab">&nbsp;&nbsp;API-2.1&nbsp;&nbsp;</a></li>
                         <!--        <li><a href="#inspect" data-toggle="tab">SampleCode-Constructor</a></li>-->
 
 
@@ -59,8 +59,7 @@
                             <div class="row">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-8">
-
-
+                                    <div class='line-break'></div>
                                     <fieldset>
                                         <legend>Configuration</legend>
                                         <div class="row">
@@ -80,7 +79,7 @@
                                             </div>
                                             <div id="loadSessionIdSeparator" class="col-md-1">
                                                 <div class="control-group">
-                                                    <label class="control-label" > <span>&nbsp&nbsp&nbsp&nbsp&nbsp</span>/</label>
+                                                    <label class="control-label" > <span>&nbsp;&nbsp;</span>/</label>
 
                                                 </div>
                                             </div>
@@ -200,7 +199,7 @@
                             <div class="row" id="API3_0_ConstructorContainer">
                                 <div class="col-md-2"></div>
                                 <div class="col-md-8">
-
+                                    <div class='line-break'></div>
                                     <form id="objectSelectForm" class="form-horizontal" method="post">
                                         <!-- action="getFieldInfo.php" -->
                                         <fieldset>
@@ -208,12 +207,8 @@
 
                                             <div class="row">
                                                 <div class="col-md-5">
-                                                    <div class="control-group">
-                                                        <label class="control-label" for="selectObjectDiv">Select Object</label>
+                                                    <div id="selectObjectDiv" class="control-group">
 
-                                                        <div id="selectObjectDiv" class="controls">
-
-                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -287,7 +282,10 @@
                                 <div class="col-md-2"></div>
                                 <div class="col-md-8">
                                     <div class='line-break'></div>
-                                    <div id="createXMLShowDiv_2_1" class="custom-font-size">
+                                    <div id="objectSelectDiv_2_1">
+
+                                    </div>
+                                    <div id="createXMLShowDiv_2_1">
 
                                     </div>
                                     <div class='line-break'></div>
@@ -307,67 +305,15 @@
                             </div>
                             <!-- /.row -->
 
-
-
                         </div>
                         <!--End of API2_1_Constructor Tab Content-->
-
-                        <div class="tab-pane fade" id="inspect">
-                            <div class="row">
-                                <div class="col-md-2"></div>
-                                <div class="col-md-8">
-
-                                    <form id="inspectForm" class="form-horizontal" action="#" method="post">
-                                        <fieldset>
-                                            <legend>Inspect with Fields</legend>
-
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <div class="control-group">
-                                                        <label class="control-label" for="inspectObject">Select Object</label>
-
-                                                        <div class="controls">
-                                                            <input type="text" class="form-control" name="inspectObjectName"
-                                                                   id="inspectObject" required>
-
-                                                            <p class="help-block">Enter Object Name</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="line-break"></div>
-                                            <div class="row">
-                                                <div class="col-md-6 col-md-offset-3">
-                                                    <button type="submit" class="btn btn-primary">Trigger Inspect</button>
-                                                    <button class="btn">Cancel</button>
-
-                                                </div>
-                                            </div>
-                                        </fieldset>
-                                    </form>
-
-
-                                </div>
-                                <div class="col-md-2"></div>
-
-                            </div>
-                            <!-- /.row -->
-
-
-                        </div>
-                        <!--End of Inspect Tab Content-->
-
                     </div>
                 </div>
             </div>
 
 
-            <div class="row">
-                <div class="col-md-4 footer">
+            <div class="footer">
                     <!--                 & copy; Intacct Software Pvt Ltd 2015-->
-
-                </div>
-
             </div>
             <div class="row"><br/>
             </div>
@@ -387,6 +333,7 @@
     <script src="js/custom.js"></script>
     <script src="js/jquery.loadJSON.js"></script>
     <script src="js/handleCookie.js"></script>
+    <script src="js/vkbeautify.js"></script>
 
     <!-- Page-Level Plugin Scripts - Blank -->
 

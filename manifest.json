@@ -1,13 +1,13 @@
 {
 	"name": "InteractiveAPITool",
-	"version": "0.1",
+	"version": "1.0",
 	"manifest_version": 2,
-	"description": "Intacct API XML-TestTool",
+	"description": "Intacct API Builder and Poster",
     "content_scripts": [
       {
         "matches": ["*://*/*"],
         "css": ["css/bootstrap.min.css", "css/font-awesome.min.css", "css/sb-admin.css", "css/custom.css"],
-        "js": ["js/jquery-1.10.2.js", "js/bootstrap.min.js", "js/cookie.js", "js/AJAX-API_Session.js", "js/custom-AJAX-api-call.js", "js/xml2json.min.js", "js/custom.js", "js/jquery.loadJSON.js", "js/handleCookie.js"]
+        "js": ["js/jquery-1.10.2.js", "js/bootstrap.min.js", "js/cookie.js", "js/AJAX-API_Session.js", "js/custom-AJAX-api-call.js", "js/xml2json.min.js", "js/custom.js", "js/jquery.loadJSON.js", "js/handleCookie.js", "js/vkbeautify.js"]
       }
     ],
 

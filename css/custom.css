@@ -2,7 +2,8 @@
     width: 75%;
 }
 .line-break{
-    margin-top:1.5em;
+    /*margin-top:1.5em;*/
+    margin-top:1em;
 }
 
 .btn.btn-default.btn-lg{
@@ -28,3 +29,17 @@ input[type=checkbox]{
 .nav.nav-tabs.nav-custom {
     padding-left: 1%;
 }
+
+.btn-primary-div-custom {
+    padding-top: .5%;
+}
+
+.col-md-5-custom {
+    padding-left: 0;
+}
+
+/*textarea {*/
+    /*-moz-box-sizing: border-box;*/
+    /*box-sizing: border-box;*/
+    /*resize: none;*/
+/*}*/

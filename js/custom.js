@@ -80,6 +80,7 @@ function formValidationForInput(){
     var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
 
     if(!(credentialJSON['senderId'] &&  credentialJSON['senderPassword'] && credentialJSON['endPointURL'] )){
+        alert('Fill up Configuration Details');
         return false;
     }
 
@@ -90,6 +91,7 @@ function formValidationForInput(){
             return true;
         }
     }
+    alert('Fill up Configuration Details');
     return false;
 }
 
@@ -210,9 +212,6 @@ $(function() {
 
             if(formValidationForInput()){
                 $(this).tab('show');
-            }else{
-                alert('Fill up Configuration Details');
-                return false;
             }
         }else{
             $(this).tab('show');
@@ -312,9 +311,9 @@ $(function() {
                         "<img height='40em' width='40em' alt='Loading...' src='./img/ajax-loader.gif' id='loading-indicator' />"
             );
 
-            apiSession.ip_inspect("*", true, populateSelectObject);
-
-
+            if(formValidationForInput()) {
+                apiSession.ip_inspect("*", true, populateSelectObject);
+            }
 
         }
 

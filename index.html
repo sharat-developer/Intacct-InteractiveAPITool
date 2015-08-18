@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Intacct XML API Builder and Poster</title>
+    <link rel="shortcut icon" type="image/png" href="icon.png"/>
 
     <!-- Core CSS - Include with every page -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -117,7 +118,7 @@
 
                                                         <div class="controls">
                                                             <input type="text" class="form-control" name="userName"
-                                                                   id="userName"/>
+                                                                   id="userName" required/>
 
                                                             <p class="help-block">Enter the Company Username</p>
                                                         </div>
@@ -163,6 +164,32 @@
                                                 </div>
                                             </div>
                                             <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="locationId">Location ID</label>
+
+                                                        <div class="controls">
+                                                            <input type="text" class="form-control" name="locationId"
+                                                                   id="locationId" />
+
+                                                            <p class="help-block">Enter the Location ID (Optional)</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="clientId">Client ID</label>
+
+                                                        <div class="controls">
+                                                            <input type="text" class="form-control"
+                                                                   name="clientId" id="clientId" />
+
+                                                            <p class="help-block">Enter the Client ID (Optional)</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-9">
                                                     <div class="control-group">
                                                         <label class="control-label" for="endPointURL">Post URL</label>
@@ -182,6 +209,7 @@
                                                 <div class="col-md-9 col-md-offset-4">
                                                     <button type="submit" class="btn btn-primary">Save</button>
                                                     <button type="reset" class="btn">Reset</button>
+                                                    <button type="button" id="clear" class="btn">Clear</button>
 
                                                 </div>
                                             </div>
@@ -203,7 +231,7 @@
                                     <form id="objectSelectForm" class="form-horizontal" method="post">
                                         <!-- action="getFieldInfo.php" -->
                                         <fieldset>
-                                            <legend>Request XML- Constructor</legend>
+                                            <legend>Request XML - Builder</legend>
 
                                             <div class="row">
                                                 <div class="col-md-5">

@@ -26,7 +26,7 @@ function customAJAXPost(functionXMLString, credentialJSON, sessionId, dtdVersion
     if(sessionId){
         apiSession.ip_setSessionID(sessionId);
     }else{
-        apiSession.ip_setCredentials(credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], "", "");
+        apiSession.ip_setCredentials( credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], credentialJSON['clientId'],credentialJSON['locationId'] );
     }
 
     var processedXML = constructXMLRequest(functionXMLString, apiSession);

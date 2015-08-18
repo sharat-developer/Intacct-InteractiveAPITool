@@ -14,6 +14,11 @@ var VALID_OPERATIONS = {"=":"=",">": "&amp;gt;", "<":"&amp;lt;", ">=":"&amp;gt;=
 var getAllObjectsFlag = true;
 var GET_LIST_OBJECTS = ["accountgroup", "achbankconfiguration", "adjjournal", "allocation", "apaccountlabel", "apadjustment", "apadjustmentbatch", "appayment", "appaymentrequest", "apterm", "araccountlabel", "aradjustment", "aradjustmentbatch", "arpayment", "arpaymentbatch", "arterm", "artransactiondef", "bankaccount", "bill", "billbatch", "cctransaction", "class", "company_info", "contact", "contacttaxgroup", "csnhistory", "custglgroup", "customer", "customerachinfo", "customerbankaccount", "customerchargecard", "customerppackage", "customervisibility", "department", "earningtype", "employee", "employeepref", "employeerate", "expenseadjustmentreport", "expensereport", "expensereportbatch", "expensetypes", "glaccount", "glbudget", "glbudgetitem", "glentry", "gltransaction", "icitem", "icitemtotals", "ictotal", "ictransaction", "ictransactiondef", "invoice", "invoicebatch", "itemglgroup", "itemtaxgroup", "itemtotal", "journal", "location", "locationentity", "locationgroup", "popricelist", "potransaction", "potransactiondef", "pricelistitem", "productline", "project", "projectstatus", "projecttype", "recursotransaction", "renewalmacro", "reportingperiod", "revrecchangelog", "revrecschedule", "revrecscheduleentry", "revrectemplate", "smarteventlog", "sopricelist", "sotransaction", "sotransactiondef", "statglaccount", "statjournal", "stkittransaction", "subscription", "supdoc", "supdocfolder", "task", "taxdetail", "taxschedule", "taxscheduledetail", "taxschedulemap", "territory", "timesheet", "timetype", "trxcurrencies", "uom", "vendglgroup", "vendor", "vendorentityaccount", "vendorpref", "vendorvisibility", "vsoeallocation", "vsoeitempricelist", "vsoepricelist", "warehouse"];
 
+//clear contents in the form
+function clearFormContents(formJq) {
+    formJq.find('input[type=text], input[type=password], input[type=number], input[type=email], textarea').val('');
+}
+
 // value contains characters like '&', '>' or '<' converted to XML escape charactes
 function encodeHTML(inputString) {
 
@@ -223,6 +228,8 @@ $(function() {
             $("#companyId").val('');
             $("#userName").val('');
             $("#userPassword").val('');
+            $("#locationId").val('');
+            $("#clientId").val('');
 
 
             // clear contents from tab
@@ -297,22 +304,17 @@ $(function() {
                 apiSession.ip_setCredentials(credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], "", "");
             }
 
-            var defaultXMLString =
-                    "<content> " +
-                    "   <function controlid='testControlId'>"+
-                    "   <!-- Put your API-3.0 functions here --> "+
-                    "   </function> " +
-                    "</content> "
-                ;
-            defaultXMLString = vkbeautify.xml(defaultXMLString);
 
-            constructedXMLShowFormPopulateData(defaultXMLString, false);
+
+
 
             $('#selectObjectDiv').html(
                         "<img height='40em' width='40em' alt='Loading...' src='./img/ajax-loader.gif' id='loading-indicator' />"
             );
 
             apiSession.ip_inspect("*", true, populateSelectObject);
+
+
 
         }
 
@@ -325,6 +327,11 @@ $(function() {
             //constructXMLShowFormPopulateData_2_1();
         }
 
+    });
+
+    $("button#clear").on("click", function(){
+        var formJq = $(this).parents('form:first');
+        clearFormContents(formJq);
     });
 
 });
@@ -351,6 +358,7 @@ function constructInspectXML( keyForm ){
 function populateSelectObject(responseData){
 
     var x2js = new X2JS();
+    var selectObjectDivJq = $('#selectObjectDiv');
 
     //console.log("responseData==>");
     //console.log(responseData);
@@ -361,9 +369,16 @@ function populateSelectObject(responseData){
     console.log("responseDataJSON==>");
     console.log(responseDataJSON);
     //alert(jsonData);
+    if(responseDataJSON == null) {
+        getAllObjectsFlag = true;
+
+        selectObjectDivJq.html("<b style='color : red'>Check Network connection, also make sure the Post URL is correct.</b>");
+        alert("Connection Failure!");
+        throw new Error("Connection Failure!");
+    }
 
     var senderAuthenticationStatus = responseDataJSON["response"]["control"]["status"];
-    var selectObjectDivJq = $('#selectObjectDiv');
+
 
 
     if(senderAuthenticationStatus != "success") {
@@ -441,7 +456,7 @@ function populateSelectObject(responseData){
             var defaultXMLString =
                     "<content> " +
                     "   <function controlid='testControlId'>"+
-                    "   <!-- Put your API-3.0 functions here --> "+
+                    "   <!-- Put your API-3.0 functions here  or use above Request XML - Builder to build it --> "+
                     "   </function> " +
                     "</content> "
                 ;
@@ -550,6 +565,17 @@ function populateSelectObject(responseData){
 
         });
     });
+
+    var defaultXMLString =
+            "<content> " +
+            "   <function controlid='testControlId'>"+
+            "   <!-- Put your API-3.0 functions here  or use above Request XML - Builder to build it --> "+
+            "   </function> " +
+            "</content> "
+        ;
+    defaultXMLString = vkbeautify.xml(defaultXMLString);
+
+    constructedXMLShowFormPopulateData(defaultXMLString, false);
 }
 
 function selectMethodCallbackFunction(data) {
@@ -874,7 +900,7 @@ function objectSelectDivPopulateData_2_1() {
         .html(
         "<form id='objectSelectForm_2_1' class='form-horizontal' method='post'>" +
         "<fieldset>" +
-        "<legend>Get List Request XML- Constructor</legend>" +
+        "<legend>Get List Request XML - Builder</legend>" +
             //"<div class='row'>" +
         "<div class='col-md-5 col-md-5-custom'>" +
         "<div class='control-group'>" +
@@ -929,7 +955,7 @@ function objectSelectDivPopulateData_2_1() {
             var requestContent_2_1 =
                     "<content> " +
                     "   <function controlid='testControlId' > "+
-                    "   <!-- Put your API-2.1 function here --> "+
+                    "   <!-- Put your API-2.1 function here  or use above Get List Request XML - Builder to build it --> "+
                     "   </function> " +
                     "</content> "
                 ;

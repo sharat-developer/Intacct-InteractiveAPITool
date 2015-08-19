@@ -80,7 +80,6 @@ function formValidationForInput(){
     var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
 
     if(!(credentialJSON['senderId'] &&  credentialJSON['senderPassword'] && credentialJSON['endPointURL'] )){
-        alert('Fill up Configuration Details');
         return false;
     }
 
@@ -91,8 +90,12 @@ function formValidationForInput(){
             return true;
         }
     }
-    alert('Fill up Configuration Details');
     return false;
+}
+
+function alertFormValidation() {
+    console.log("alertFormValidation");
+    alert('Fill up Configuration Details');
 }
 
 function getQuoteWrappedCSVs(commaSeparatedValues) {
@@ -212,6 +215,9 @@ $(function() {
 
             if(formValidationForInput()){
                 $(this).tab('show');
+            } else {
+                alertFormValidation();
+                return false;
             }
         }else{
             $(this).tab('show');
@@ -250,6 +256,10 @@ $(function() {
 
 
     myTabJq.find("a#API3_0_ConstructorTab").bind('click', function () {
+        if(formValidationForInput() == false){
+            return;
+        }
+
         var endPointURL=$('#endPointURL').val();
         console.log('endPointURL==>'+endPointURL);
 
@@ -313,6 +323,8 @@ $(function() {
 
             if(formValidationForInput()) {
                 apiSession.ip_inspect("*", true, populateSelectObject);
+            } else {
+                alertFormValidation();
             }
 
         }
@@ -320,6 +332,9 @@ $(function() {
     });
 
     myTabJq.find("a#API2_1_ConstructorTab").bind('click', function () {
+        if(formValidationForInput() == false){
+            return;
+        }
         //bind only once ;)
         if($("#createXMLShowForm_2_1").length == 0) {
             objectSelectDivPopulateData_2_1();
@@ -590,6 +605,12 @@ function selectMethodCallbackFunction(data) {
     console.log("responseDataJSON==>");
     console.log(responseDataJSON);
     //alert(jsonData);
+    var selectFieldDivJq = $('#selectFieldDiv');
+    if(responseDataJSON == null) {
+        selectFieldDivJq.html("<b style='color : red; font-size: 1.5em;'>Check Network connection, also make sure the Post URL is correct.</b>");
+        alert("Connection Failure!");
+        throw new Error("Connection Failure!");
+    }
 
     var senderAuthenticationStatus = responseDataJSON["response"]["control"]["status"];
 
@@ -597,7 +618,7 @@ function selectMethodCallbackFunction(data) {
         //make sure, onClick of API 3.0 Constructor Tab getAllObjects been called
         getAllObjectsFlag = true;
 
-        $('#selectObjectDiv').html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
         console.log('data: ' + JSON.stringify (responseDataJSON));
         alert("Sender Authentication Failure!");
         throw new Error("Sender Authentication Failure!");
@@ -610,7 +631,7 @@ function selectMethodCallbackFunction(data) {
         //make sure, onClick of API 3.0 Constructor Tab getAllObjects been called
         getAllObjectsFlag = true;
 
-        $('#selectObjectDiv').html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
         console.log('data: ' + JSON.stringify (responseDataJSON));
         alert("User Authentication Failure!");
         throw new Error("User Authentication Failure!");

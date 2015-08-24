@@ -1,8 +1,14 @@
 /**
  * Created by shegde on 08-10-2014.
  */
+
+/**
+ * Global-constants and global-variables
+ */
 var selectedMethod = "create";
 var responseData = {};
+var getAllObjectsFlag = true;
+
 var AUDIT_FIELDS = ["WHENCREATED", "WHENMODIFIED", "CREATEDBY", "MODIFIEDBY","createdBy", "createdAt", "updatedBy", "updatedAt"];
 var CREATE_SKIP_FIELDS_STD = ["RECORDNO"];
 var CREATE_SKIP_FIELDS_CUSTOM = ["id"];
@@ -11,7 +17,6 @@ var UPDATE_REQ_FIELDS_STD  = ["RECORDNO"];
 var UPDATE_REQ_FIELDS_CUSTOM  = ["id"];
 //var VALID_OPERATIONS = ["=", ">", "<", ">=", "<=", "like", "in"];
 var VALID_OPERATIONS = {"=":"=",">": "&amp;gt;", "<":"&amp;lt;", ">=":"&amp;gt;=", "<=":"&amp;lt;=", "in":"in", "not in":"not in", "like":"like", "not like":"not like"};
-var getAllObjectsFlag = true;
 var GET_LIST_OBJECTS = ["accountgroup", "achbankconfiguration", "adjjournal", "allocation", "apaccountlabel", "apadjustment", "apadjustmentbatch", "appayment", "appaymentrequest", "apterm", "araccountlabel", "aradjustment", "aradjustmentbatch", "arpayment", "arpaymentbatch", "arterm", "artransactiondef", "bankaccount", "bill", "billbatch", "cctransaction", "class", "company_info", "contact", "contacttaxgroup", "csnhistory", "custglgroup", "customer", "customerachinfo", "customerbankaccount", "customerchargecard", "customerppackage", "customervisibility", "department", "earningtype", "employee", "employeepref", "employeerate", "expenseadjustmentreport", "expensereport", "expensereportbatch", "expensetypes", "glaccount", "glbudget", "glbudgetitem", "glentry", "gltransaction", "icitem", "icitemtotals", "ictotal", "ictransaction", "ictransactiondef", "invoice", "invoicebatch", "itemglgroup", "itemtaxgroup", "itemtotal", "journal", "location", "locationentity", "locationgroup", "popricelist", "potransaction", "potransactiondef", "pricelistitem", "productline", "project", "projectstatus", "projecttype", "recursotransaction", "renewalmacro", "reportingperiod", "revrecchangelog", "revrecschedule", "revrecscheduleentry", "revrectemplate", "smarteventlog", "sopricelist", "sotransaction", "sotransactiondef", "statglaccount", "statjournal", "stkittransaction", "subscription", "supdoc", "supdocfolder", "task", "taxdetail", "taxschedule", "taxscheduledetail", "taxschedulemap", "territory", "timesheet", "timetype", "trxcurrencies", "uom", "vendglgroup", "vendor", "vendorentityaccount", "vendorpref", "vendorvisibility", "vsoeallocation", "vsoeitempricelist", "vsoepricelist", "warehouse"];
 
 /**

@@ -14,7 +14,9 @@ var VALID_OPERATIONS = {"=":"=",">": "&amp;gt;", "<":"&amp;lt;", ">=":"&amp;gt;=
 var getAllObjectsFlag = true;
 var GET_LIST_OBJECTS = ["accountgroup", "achbankconfiguration", "adjjournal", "allocation", "apaccountlabel", "apadjustment", "apadjustmentbatch", "appayment", "appaymentrequest", "apterm", "araccountlabel", "aradjustment", "aradjustmentbatch", "arpayment", "arpaymentbatch", "arterm", "artransactiondef", "bankaccount", "bill", "billbatch", "cctransaction", "class", "company_info", "contact", "contacttaxgroup", "csnhistory", "custglgroup", "customer", "customerachinfo", "customerbankaccount", "customerchargecard", "customerppackage", "customervisibility", "department", "earningtype", "employee", "employeepref", "employeerate", "expenseadjustmentreport", "expensereport", "expensereportbatch", "expensetypes", "glaccount", "glbudget", "glbudgetitem", "glentry", "gltransaction", "icitem", "icitemtotals", "ictotal", "ictransaction", "ictransactiondef", "invoice", "invoicebatch", "itemglgroup", "itemtaxgroup", "itemtotal", "journal", "location", "locationentity", "locationgroup", "popricelist", "potransaction", "potransactiondef", "pricelistitem", "productline", "project", "projectstatus", "projecttype", "recursotransaction", "renewalmacro", "reportingperiod", "revrecchangelog", "revrecschedule", "revrecscheduleentry", "revrectemplate", "smarteventlog", "sopricelist", "sotransaction", "sotransactiondef", "statglaccount", "statjournal", "stkittransaction", "subscription", "supdoc", "supdocfolder", "task", "taxdetail", "taxschedule", "taxscheduledetail", "taxschedulemap", "territory", "timesheet", "timetype", "trxcurrencies", "uom", "vendglgroup", "vendor", "vendorentityaccount", "vendorpref", "vendorvisibility", "vsoeallocation", "vsoeitempricelist", "vsoepricelist", "warehouse"];
 
-//clear contents in the form
+/**
+ *  Function to clear contents in the form
+ **/
 function clearFormContents(formJq) {
     formJq.find('input[type=text], input[type=password], input[type=number], input[type=email], textarea').val('');
 }
@@ -149,7 +151,7 @@ function getWrappedXML(wrapTag, wrapBody) {
 }
 
 /**
- *  Function to getGetListXML
+ *  Function to create GetListXML
  **/
 function getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML) {
     filterXML = (filterXML == "") ? ("<!--filter-->") : (getWrappedXML("filter", filterXML));
@@ -167,6 +169,9 @@ function getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML) {
         ;
 }
 
+/**
+ *  Function to return Filter body XML
+ **/
 function getFilterBody() {
     return "<!-- <logical logical_operator='and'> -->"+
             "<expression>"+
@@ -178,6 +183,9 @@ function getFilterBody() {
         ;
 }
 
+/**
+ *  Function to return Sort Or Field - body XML
+ **/
 function getSortOrFieldBody(wrapFun) {
     if(wrapFun == "sort") {
         return "<sortfield order='asc'></sortfield>";
@@ -186,6 +194,9 @@ function getSortOrFieldBody(wrapFun) {
     }
 }
 
+/**
+ *  Function to extract GetListOperationXML from 2.1 request content XML
+ **/
 function getGetListOperationXML(requestContent_2_1, operation) {
     requestContent_2_1 = vkbeautify.xmlmin(requestContent_2_1, true);
     var matchString = "<" + operation + ">(.*)</" + operation + ">";
@@ -193,42 +204,6 @@ function getGetListOperationXML(requestContent_2_1, operation) {
     return (operationXML == null) ? ("") : (operationXML[1]);
 }
 
-
-//deprecated function
-function formatXml(xml) {
-    var formatted = '';
-    var reg = /(>)(<)(\/*)/g;
-    console.log("xml::before==>");
-    console.log(xml);
-    xml = xml.replace(reg, '$1\r\n$2$3');
-    console.log("xml::after==>");
-    console.log(xml);
-    var pad = 0;
-    jQuery.each(xml.split('\r\n'), function(index, node) {
-        var indent = 0;
-        if (node.match( /.+<\/\w[^>]*>$/ )) {
-            indent = 0;
-        } else if (node.match( /^<\/\w/ )) {
-            if (pad != 0) {
-                pad -= 1;
-            }
-        } else if (node.match( /^<\w[^>]*[^\/]>.*$/ )) {
-            indent = 1;
-        } else {
-            indent = 0;
-        }
-
-        var padding = '';
-        for (var i = 0; i < pad; i++) {
-            padding += '  ';
-        }
-
-        formatted += padding + node + '\r\n';
-        pad += indent;
-    });
-
-    return formatted;
-}
 
 
 /**
@@ -381,6 +356,9 @@ $(function() {
 
 });
 
+/**
+ *  Function to construct and return Delete method XML request
+ **/
 function constructDeleteXML( keyForm ){
 
     var xmlString = getTabOffsetString(2)+"<"+selectedMethod+"> \n";
@@ -390,6 +368,9 @@ function constructDeleteXML( keyForm ){
     return xmlString;
 }
 
+/**
+ *  Function to construct and return Inspect method XML request
+ **/
 function constructInspectXML( keyForm ){
 
     var  inspectWithDetail = nameValueToJSON( keyForm.serializeArray())['inspectWithDetail'];
@@ -400,6 +381,9 @@ function constructInspectXML( keyForm ){
     return xmlString;
 }
 
+/**
+ *  Function to construct and return readMore method XML request
+ **/
 function constructReadMoreXML(){
 
     var xmlString = getTabOffsetString(2)+"<"+selectedMethod+"> \n";
@@ -408,11 +392,17 @@ function constructReadMoreXML(){
     return xmlString;
 }
 
+/**
+ *  Function to construct and return getAPISession method XML request
+ **/
 function constructGetAPISessionXML(){
 
     return getTabOffsetString(2)+"<"+selectedMethod+"></"+selectedMethod+">\n";
 }
 
+/**
+ *  Function to construct and return getUserPermissions method XML request, with userId as input
+ **/
 function constructGetUserPermissionsXML(userId){
 
     var xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
@@ -421,6 +411,9 @@ function constructGetUserPermissionsXML(userId){
     return xmlString;
 }
 
+/**
+ *  Function to populate all objects in selectObject input field from inspect * call
+ **/
 function populateSelectObject(responseData){
 
     var x2js = new X2JS();
@@ -720,6 +713,9 @@ function populateSelectObject(responseData){
     selectObjectJq.trigger("change");
 }
 
+/**
+ *  AJAX Callback Function, inspect for an object call
+ **/
 function selectMethodCallbackFunction(data) {
 
     var x2js = new X2JS();
@@ -788,6 +784,9 @@ function selectMethodCallbackFunction(data) {
     }
 }
 
+/**
+ *  AJAX Callback Function to show response XML from API-3.0 request posted earlier
+ **/
 function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
     console.log("inside populateShowApiResponseDiv()::apiRequest==>" +apiRequest);
@@ -886,6 +885,9 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
 }
 
+/**
+ *  AJAX Callback Function to show response XML from API-2.1 request posted earlier
+ **/
 function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
     console.log("inside populateShowApiResponseDiv_2_1()::apiRequest==>" +apiRequest);
     var xmlDocAPIRequest = vkbeautify.xml(apiRequest);
@@ -960,6 +962,9 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
 //    showResponse_2_1Jq.height( (showResponse_2_1Jq[0].scrollHeight)-12);
 }
 
+/**
+ *  Function to show the content part of request XML constructed by the API-3.0 Request Builder
+ **/
 function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
     var legendString = "";
     if(constructedXMLFlag === true) {
@@ -1023,7 +1028,9 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
     });
 }
 
-
+/**
+ *  Function to show the content part of request XML constructed by the API-2.1 Request Builder
+ **/
 function constructGetListXML_2_1(selectedGetListObject, requestContent_2_1, selectedAttribute) {
 
     var reqContents = null;
@@ -1046,6 +1053,9 @@ function constructGetListXML_2_1(selectedGetListObject, requestContent_2_1, sele
     }
 }
 
+/**
+ *  Function to draw HTML for API-2.1 Get List Request XML - Builder
+ **/
 function objectSelectDivPopulateData_2_1() {
     $('#objectSelectDiv_2_1')
         .html(
@@ -1142,6 +1152,9 @@ function objectSelectDivPopulateData_2_1() {
 
 }
 
+/**
+ *  Function to show the content part of request XML constructed by the API-2.1 Request Builder
+ **/
 function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
 
     $('#createXMLShowDiv_2_1')
@@ -1209,6 +1222,9 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
 
 }
 
+/**
+ *  Function to construct and return request XML for Create and Update methods
+ **/
 function constructCreateOrUpdateXML(formObj){
     var xmlString = getTabOffsetString(2) + "<"+selectedMethod + "> \n";
     xmlString += getTabOffsetString(3) + "<"+ responseData["Type"]["_Name"] + ">\n";
@@ -1219,6 +1235,9 @@ function constructCreateOrUpdateXML(formObj){
     return xmlString;
 }
 
+/**
+ *  Function to return the string of tabs based on numOfTabOffset
+ **/
 function getTabOffsetString(numOfTabOffset){
     var tabOffset = "";
     for(var i=numOfTabOffset; i>0 ;i--){
@@ -1228,7 +1247,11 @@ function getTabOffsetString(numOfTabOffset){
     return tabOffset;
 }
 
-//mainly for create and update <DISPLAYCONTACT.FIRSTNAME>value</DISPLAYCONTACT.FIRSTNAME> to <DISPLAYCONTACT><FIRSTNAME>value</FIRSTNAME></DISPLAYCONTACT>
+/**
+ *  Function to construct and return XML element string from the input forms
+ *  mainly for create and update methods to transform
+ *  <DISPLAYCONTACT.FIRSTNAME>value</DISPLAYCONTACT.FIRSTNAME>   -->  <DISPLAYCONTACT><FIRSTNAME>value</FIRSTNAME></DISPLAYCONTACT>
+ **/
 function constructFormXMLRemovingDot(formObj, numOfTabOffset){
     var postData;
     postData = $(formObj).serializeArray();
@@ -1305,7 +1328,10 @@ function constructFormXMLRemovingDot(formObj, numOfTabOffset){
     return formXML;
 }
 
-//mainly for read* & delete call
+/**
+ *  Function to construct XML by reading values from the forms
+ *  mainly for read* & delete call
+ **/
 function constructFormXML(formObj, numOfTabOffset){
     var postData;
     postData = $(formObj).serializeArray();
@@ -1318,6 +1344,9 @@ function constructFormXML(formObj, numOfTabOffset){
     return formXML;
 }
 
+/**
+ *  Function to return content wrapped XML with function XML as input
+ **/
 function constructContentWrapper(xmlString) {
     return "<content>\n" +
         getTabOffsetString(1)+"<function controlid='testControlId'>\n"+
@@ -1327,6 +1356,9 @@ function constructContentWrapper(xmlString) {
     ;
 }
 
+/**
+ *  Function to return HTML options tag string from valid value object
+ **/
 function getValidValueOptions(validValue) {
 
     var label = validValue["validValueLabel"];
@@ -1344,6 +1376,9 @@ function getValidValueOptions(validValue) {
     return "<option value='"+key+"'>"+label+"</option>";
 }
 
+/**
+ *  Function to construct Put value in the Fields form HTML component
+ **/
 function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormData){
 
     //console.log("putValueInFieldsFormPopulateData");
@@ -1436,6 +1471,10 @@ function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormD
     });
 }
 
+/**
+ *  Function to create putValueInFieldsFormData  by reading checkbox from objectSelectFieldForm
+ *  and call putValueInFieldsFormPopulateData() method to construct HTML component
+ **/
 function putValueInFieldsForm(responseData){
     var  putValuesObject = {};
     var putValueInFieldsFormData = {};
@@ -1452,7 +1491,11 @@ function putValueInFieldsForm(responseData){
     });
     putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormData);
 }
-//for create and update
+
+/**
+ *  Function to construct objectSelectFieldForm from processed data
+ *  mainly for create and update methods
+ **/
 function objectSelectFieldFormPopulateData(processedData){
     var selectFieldDivHTML =
             "<form id='objectSelectFieldForm' class='form-horizontal'  method='post'  action='#'>"
@@ -1520,6 +1563,9 @@ function objectSelectFieldFormPopulateData(processedData){
     });
 }
 
+/**
+ *  Function to construct QueryForm from the given queryIndex
+ **/
 function constructQueryForm(queryIndex){
     var selectFieldStringHTML = "";
     $.each(responseData["Type"]["Fields"], function(key,value){
@@ -1563,6 +1609,9 @@ function constructQueryForm(queryIndex){
     return queryFormHTML;
 }
 
+/**
+ *  jquery Callback Function definatin for on-change of $("#queryFormSelectField"+queryIndex+"")
+ **/
 function queryFormSelectFieldOnChange(queryIndex){
     $("#queryFormSelectField"+queryIndex+"").on("change", function(){
         var readByQueryInputValueDivHTML ="";
@@ -1596,6 +1645,9 @@ function queryFormSelectFieldOnChange(queryIndex){
     });
 }
 
+/**
+ *  Function to construct UserInputForm from responseData object
+ **/
 function constructUserInputForm(dataJSON) {
 
     console.log("constructUserInputForm(userInfo)::userInfo==>");
@@ -1653,6 +1705,9 @@ function constructUserInputForm(dataJSON) {
 
 }
 
+/**
+ *  Function to construct KeyInputForm from given method name
+**/
 function constructKeyInputForm(methodName){
 
     var keyOrQueryDivHTML = "";
@@ -1827,6 +1882,9 @@ function constructKeyInputForm(methodName){
     }
 }
 
+/**
+ *  Function to construct returnFormatForm HTML component
+ **/
 function constructReturnFormatForm(){
     //returnFormatDiv
     var returnFormatDivHTML =
@@ -1860,6 +1918,9 @@ function constructReturnFormatForm(){
     );
 }
 
+/**
+ *  Function to extract the values from form Object and to create well-formatted CSV string
+ **/
 function constructFormCSV(formObj, inputName){
     var postData = $( formObj ).serializeArray();
     var formCSV = "";
@@ -1874,7 +1935,9 @@ function constructFormCSV(formObj, inputName){
     return formCSV + " ";
 }
 
-
+/**
+ *  Function to extract the values from queryForm Object and to create query body XML string
+ **/
 function constructReadByQueryXML( queryForm ){
     var xmlString = "";
     var queryIndex = parseInt($( "input#queryIndex" ).val());
@@ -1926,7 +1989,11 @@ function constructReadByQueryXML( queryForm ){
     return xmlString;
 }
 
-function constructReadStarXML( selectedFieldsForm, keyForm, returnFormatForm, docParIdForm){
+/**
+ *  Function to construct XML string for read, readByQuery and readByName methods,
+ *  by reading input values from selectedFieldsForm, keyForm, returnFormatForm and docParIdForm
+ **/
+function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, docParIdForm){
     var formCSV = constructFormCSV(selectedFieldsForm, "selectedFields");
     var xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
     xmlString += getTabOffsetString(3) + "<object>" + responseData["Type"]["_Name"]+"</object>\n";
@@ -1950,6 +2017,9 @@ function constructReadStarXML( selectedFieldsForm, keyForm, returnFormatForm, do
     return xmlString;
 }
 
+/**
+ *  Function to construct docParIdForm
+ **/
 function constructDocParIdForm(value, methodName, readByQueryFlag){
     //docParIdDiv
     var docParIdDivHTML = "";
@@ -2007,7 +2077,10 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
     });
 }
 
-//for read* methods
+/**
+ *  Function to construct selectFieldForm as per processedData as input parameter
+ *  used mainly for read* methods
+ **/
 function selectFieldFormPopulateData(processedData){
 
     console.log('processedData==>');
@@ -2085,10 +2158,13 @@ function selectFieldFormPopulateData(processedData){
     constructDocParIdForm(responseData["Type"]["_Name"], selectedMethod, true);
 }
 
+/**
+ *  Function to process responseData into processedResponseData based on input method either create or update
+ *  used mainly for create and update
+ **/
 function processResponseData(responseData, method){
 
     var processedResponseData = responseData;
-
 
     if(method == 'create'){
 

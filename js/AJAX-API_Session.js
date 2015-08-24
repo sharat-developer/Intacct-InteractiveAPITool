@@ -1,7 +1,4 @@
 /**
- * Created by shegde on 7/8/14.
- */
-/**
  * AJAX API class
  */
 var READY_STATE_COMPLETE = 4;

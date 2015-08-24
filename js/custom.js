@@ -19,7 +19,10 @@ function clearFormContents(formJq) {
     formJq.find('input[type=text], input[type=password], input[type=number], input[type=email], textarea').val('');
 }
 
-// value contains characters like '&', '>' or '<' converted to XML escape charactes
+/**
+ *  Function to encode the HTML
+ *  value contains characters like '&', '>' or '<' converted to XML escape charactes
+ */
 function encodeHTML(inputString) {
 
     console.log('inputString==>');
@@ -38,6 +41,9 @@ function encodeHTML(inputString) {
     return outputString;
 }
 
+/**
+ *  Function to check if object is custom or standard
+ */
 function getObjectType(){
     if(responseData["Type"]["Attributes"]["keyField"] == "name") {
         return "custom";
@@ -46,13 +52,19 @@ function getObjectType(){
     }
 }
 
+/*
+ *  Function to sot the array
+ */
 function sortArrayByKey(inputArray, sortKey) {
     return inputArray.sort(function (a, b) {
         return (a[sortKey]).localeCompare( b[sortKey] );
     });
 }
 
-//{'name' :companyId, 'value' : 'INTACCT'} --> {companyId : 'INTACCT'}
+/**
+ *  Function to convert name-value array to JSON.
+ *  Eg: {'name' :companyId, 'value' : 'INTACCT'} --> {companyId : 'INTACCT'}
+**/
 function nameValueToJSON(nameValueObject){
     var jsonObj ={};
     $.each(nameValueObject , function(k,v){
@@ -61,8 +73,10 @@ function nameValueToJSON(nameValueObject){
     return jsonObj;
 }
 
-
-//{[{'name' :companyId, 'value' : 'INTACCT'}, {...}] --> { [{'companyId' : {value: 'INTACCT'}}, {...}]}
+/**
+ *  Function to get associative object from Array.
+ *  Eg: {[{'name' :companyId, 'value' : 'INTACCT'}, {...}] --> { [{'companyId' : {value: 'INTACCT'}}, {...}]}
+ **/
 function getAssociativeObjectFromArray(indexedArray){
 
     //console.log("console.log(JSON.stringify(dataJSON));");
@@ -75,7 +89,9 @@ function getAssociativeObjectFromArray(indexedArray){
     return associativeObj;
 }
 
-
+/**
+ *  Configuration form validation
+ **/
 function formValidationForInput(){
     var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
 
@@ -93,17 +109,28 @@ function formValidationForInput(){
     return false;
 }
 
+/**
+ *  Alert to fill Configuration fields
+ **/
 function alertFormValidation() {
     console.log("alertFormValidation");
     alert('Fill up Configuration Details');
 }
 
+/**
+ *  Function to get single queto values from CSV input.
+ *  Eg: abc,xyz --> 'abc', 'xyz'
+ **/
 function getQuoteWrappedCSVs(commaSeparatedValues) {
     var csvArray = commaSeparatedValues.split(",");
     return "'"+csvArray.join("', '")+"'";
 }
 
-//deprecated function to auto-resize textarea box
+
+/**
+ *  Function to resizeTextArea
+ *  deprecated function to auto-resize textarea box
+ **/
 function resizeTextArea() { //textAreaJq
     $.each($("textarea"), function() {
         console.log("textarea id==>");
@@ -114,11 +141,17 @@ function resizeTextArea() { //textAreaJq
 
 }
 
+/**
+ *  Function to getWrappedXML from XMLBody
+ **/
 function getWrappedXML(wrapTag, wrapBody) {
     return "<" + wrapTag + ">" + wrapBody + "</" + wrapTag + ">";
 }
 
-function getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML){
+/**
+ *  Function to getGetListXML
+ **/
+function getGetListXML(selectedGetListObject, filterXML, sortXML, fieldXML) {
     filterXML = (filterXML == "") ? ("<!--filter-->") : (getWrappedXML("filter", filterXML));
     sortXML = (sortXML == "") ? ("<!--sort-->") : (getWrappedXML("sorts", sortXML));
     fieldXML = (fieldXML == "") ? ("<!--field-->") : (getWrappedXML("fields", fieldXML));
@@ -198,7 +231,9 @@ function formatXml(xml) {
 }
 
 
-
+/**
+ *  jQuery document.getReady function
+ **/
 $(function() {
 
     var myTabJq = $("#myTab");
@@ -313,10 +348,6 @@ $(function() {
                 apiSession.ip_setCredentials(credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], "", "");
             }
 
-
-
-
-
             $('#selectObjectDiv').html(
                         "<img height='40em' width='40em' alt='Loading...' src='./img/ajax-loader.gif' id='loading-indicator' />"
             );
@@ -366,6 +397,27 @@ function constructInspectXML( keyForm ){
     var xmlString = getTabOffsetString(2)+"<"+selectedMethod+((inspectWithDetail)?(" detail = '1'"):(""))+"> \n";
     xmlString += getTabOffsetString(3)+"<object>"+$("#selectObject").val()+"</object>\n";
     xmlString += getTabOffsetString(2)+"</"+selectedMethod+">\n";
+    return xmlString;
+}
+
+function constructReadMoreXML(){
+
+    var xmlString = getTabOffsetString(2)+"<"+selectedMethod+"> \n";
+    xmlString += getTabOffsetString(3)+"<object>"+$("#selectObject").val()+"</object>\n";
+    xmlString += getTabOffsetString(2)+"</"+selectedMethod+">\n";
+    return xmlString;
+}
+
+function constructGetAPISessionXML(){
+
+    return getTabOffsetString(2)+"<"+selectedMethod+"></"+selectedMethod+">\n";
+}
+
+function constructGetUserPermissionsXML(userId){
+
+    var xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
+    xmlString += getTabOffsetString(3) + "<userId>" + userId + "</userId>\n";
+    xmlString += getTabOffsetString(2) + "</" + selectedMethod + ">\n";
     return xmlString;
 }
 
@@ -451,7 +503,9 @@ function populateSelectObject(responseData){
         "</div>"
 
     );
-    $("#selectObject").on("change", function () {
+
+    var selectObjectJq = $("#selectObject");
+    selectObjectJq.on("change", function () {
         //var selectObjectJq = $("#selectObject");
         //var currentObject = selectObjectJq.val();
  
@@ -466,7 +520,16 @@ function populateSelectObject(responseData){
 
         var selectMethodDivJq = $("#selectMethodDiv");
         if($(this).val() == "#") {
-            selectMethodDivJq.html("");
+            selectMethodDivJq.html(
+                "<label class='control-label' for='selectMethod'>Select Generic Method</label>" +
+                "                                    <div class='controls'>" +
+                "                                        <select id='selectMethod' class='form-control' name='methodName'>" +
+                "                                            <option value='#'>--select a generic method--</option>" +
+                "                                            <option value='getAPISession'>getAPISession</option>" +
+                "                                            <option value='getUserPermissions'>getUserPermissions</option>" +
+                "                                        </select>" +
+                "                                    </div>"
+            );
             var defaultXMLString =
                     "<content> " +
                     "   <function controlid='testControlId'>"+
@@ -475,8 +538,63 @@ function populateSelectObject(responseData){
                     "</content> "
                 ;
             defaultXMLString = vkbeautify.xml(defaultXMLString);
-
             constructedXMLShowFormPopulateData(defaultXMLString, false);
+
+            $("#selectMethod").on( "change", function(){
+                //console.log("selectMethod->onChange");
+//        event.preventDefault();
+                var selectFieldDivJq = $("#selectFieldDiv");
+                var docParIdDivJq = $("#docParIdDiv");
+
+                selectFieldDivJq.html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
+                $("#putValueFieldDiv").html("");
+                //$("#createXMLShowDiv").html("");
+                $("#keyOrQueryDiv").html("");
+                $("#returnFormatDiv").html("");
+                docParIdDivJq.html("");
+                //$("#executeXMLDiv").html("");
+                $( "#queryForm").html("");
+
+                selectedMethod = $("#selectMethod").val();
+                var xmlString = "";
+                if(selectedMethod == "#"){
+                    selectFieldDivJq.html("");
+                    return;
+                } else if(selectedMethod == "getAPISession") { //handle getAPISession method separately
+                    console.log("selectedMethod ==>" + selectedMethod);
+                    selectFieldDivJq.html("");
+                    xmlString = constructGetAPISessionXML();
+                    xmlString = constructContentWrapper(xmlString);
+                    constructedXMLShowFormPopulateData(xmlString, true);
+                    return;
+                } else if(selectedMethod == "getUserPermissions") { //handle getUserPermissions method separately
+                    console.log("selectedMethod ==>" + selectedMethod);
+
+                    var endPointURL = $('#endPointURL').val();
+                    console.log('endPointURL==>'+endPointURL);
+
+                    var objectSelectJSON = nameValueToJSON($('#objectSelectForm').serializeArray());
+                    console.log('objectSelectJSON==>'+JSON.stringify(objectSelectJSON)); //objectSelectJSON==>{"objectName":"PROJECT","methodName":"readByQuery"}
+
+                    var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
+                    //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
+
+                    var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", "3.0");
+
+                    var sessionId = $("#sessionId").val();
+
+                    if(sessionId != ""){
+                        apiSession.ip_setSessionID(sessionId);
+                    }else{
+                        apiSession.ip_setCredentials(credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], "", "");
+                    }
+                    apiSession.ip_readByQuery("USERINFO", "LOGINID","", "", "xml", selectMethodCallbackFunction);
+                }
+
+
+            });
+
+
             return;
         }
 
@@ -484,13 +602,14 @@ function populateSelectObject(responseData){
             "<label class='control-label' for='selectMethod'>Select Method</label>" +
             "                                    <div class='controls'>" +
             "                                        <select id='selectMethod' class='form-control' name='methodName'>" +
-            "                                            <option value='dummy'>--select a method--</option>" +
+            "                                            <option value='#'>--select a method--</option>" +
             "                                            <option value='inspect'>inspect</option>" +
             "                                            <option value='create'>create</option>" +
             "                                            <option value='update'>update</option>" +
             "                                            <option value='read'>read</option>" +
             "                                            <option value='readByName'>readByName</option>" +
             "                                            <option value='readByQuery'>readByQuery</option>" +
+            "                                            <option value='readMore'>readMore</option>" +
             "                                            <option value='delete'>delete</option>" +
             "                                        </select>" +
             "                                    </div>"
@@ -513,11 +632,18 @@ function populateSelectObject(responseData){
             $( "#queryForm").html("");
 
             selectedMethod = $("#selectMethod").val();
-
-            if(selectedMethod == "dummy"){
+            var xmlString = "";
+            if(selectedMethod == "#"){
                 selectFieldDivJq.html("");
                 return;
-            } else if(selectedMethod == "delete"){ //handle delete method separately
+            } else if(selectedMethod == "readMore"){ //handle readMore method separately
+                console.log("selectedMethod ==>" + selectedMethod);
+                selectFieldDivJq.html("");
+                xmlString = constructReadMoreXML();
+                xmlString = constructContentWrapper(xmlString);
+                constructedXMLShowFormPopulateData(xmlString, true);
+                return;
+            }else if(selectedMethod == "delete"){ //handle delete method separately
                 constructKeyInputForm(selectedMethod);
 
                 selectFieldDivJq.html("");
@@ -590,6 +716,8 @@ function populateSelectObject(responseData){
     defaultXMLString = vkbeautify.xml(defaultXMLString);
 
     constructedXMLShowFormPopulateData(defaultXMLString, false);
+
+    selectObjectJq.trigger("change");
 }
 
 function selectMethodCallbackFunction(data) {
@@ -642,6 +770,11 @@ function selectMethodCallbackFunction(data) {
     console.log("dataJSON==>");
     console.log(dataJSON);
 
+    if(selectedMethod.indexOf("getUserPermissions") > -1){
+        constructUserInputForm(dataJSON);
+        return;
+    }
+
     responseData = dataJSON;
     responseData["Type"]["Fields"] = getAssociativeObjectFromArray(dataJSON["Type"]["Fields"]["Field"]);
 
@@ -654,8 +787,6 @@ function selectMethodCallbackFunction(data) {
         objectSelectFieldFormPopulateData(processedResponseData);
     }
 }
-
-
 
 function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
@@ -1076,8 +1207,6 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         customAJAXPost($("#createXML_2_1").val(), credentialJSON, $("#sessionId").val(), "2.1");
     });
 
-
-
 }
 
 function constructCreateOrUpdateXML(formObj){
@@ -1307,7 +1436,7 @@ function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormD
     });
 }
 
-function putValueInFieldsForms(responseData){
+function putValueInFieldsForm(responseData){
     var  putValuesObject = {};
     var putValueInFieldsFormData = {};
 
@@ -1383,11 +1512,11 @@ function objectSelectFieldFormPopulateData(processedData){
         });
 
     //initialize PutValuesInField for required parameters
-    putValueInFieldsForms(responseData);
+    putValueInFieldsForm(responseData);
     $("#objectSelectFieldForm").find("input[name='selectedFields']").on("change", function (event) {
 
         event.preventDefault();
-        putValueInFieldsForms(responseData);
+        putValueInFieldsForm(responseData);
     });
 }
 
@@ -1467,13 +1596,71 @@ function queryFormSelectFieldOnChange(queryIndex){
     });
 }
 
+function constructUserInputForm(dataJSON) {
+
+    console.log("constructUserInputForm(userInfo)::userInfo==>");
+    console.log(dataJSON);
+
+    console.log(JSON.stringify(dataJSON));
+
+    var keyOrQueryDivHTML = "";
+    var keyFormHTML = "";
+    var keyOrQueryDivJq = $('#keyOrQueryDiv');
+    var selectFieldDivJq = $("#selectFieldDiv");
+
+    var selectOptionStringHTML = "";
+    $.each(dataJSON["userinfo"], function(index,loginIdObj){
+        console.log(loginIdObj);
+        var loginId = loginIdObj["LOGINID"];
+        selectOptionStringHTML += "<option value='" + loginId + "'>" + loginId + "</option>";//selectOptionStringHTML += "<option value='"+index+"'>"+validValue+"</option>"
+    });
+
+    keyOrQueryDivHTML =
+        "<form id='keyForm' class='form-horizontal'  method='post'  action='#'>"
+    ;
+
+    //var index = 0;
+    keyFormHTML =
+        "<fieldset>" +
+        "<legend>" + selectedMethod + "-method :: User ID Selection</legend>" +
+        "<div class='row'>"+
+        "		<div class='control-group col-md-5 ' >"+ //has-error
+        "		    <label>Select User ID Value</label>"+
+        "           <select id='userId' name='userId' class='form-control'>"+
+        "			    "+selectOptionStringHTML+  //"+((value.isRequired)?'has-error':'')+"
+        "           </select>"+
+        "		</div>"+
+        "</div>" +
+        "</fieldset>"
+    ;
+    keyOrQueryDivHTML += keyFormHTML;
+    keyOrQueryDivJq.html(
+        keyOrQueryDivHTML +
+        "</form>"
+        // + "<div id='queryComponentDiv'></div>"
+    );
+
+    var userIdJq = $("#userId");
+    userIdJq.on("change", function() {
+        selectFieldDivJq.html("");
+        var userId = $(this).val();
+        xmlString = constructGetUserPermissionsXML(userId);
+        xmlString = constructContentWrapper(xmlString);
+        constructedXMLShowFormPopulateData(xmlString, true);
+    });
+
+    userIdJq.trigger("change");
+
+}
+
 function constructKeyInputForm(methodName){
 
     var keyOrQueryDivHTML = "";
     var keyFormHTML = "";
     var keyOrQueryDivJq = $('#keyOrQueryDiv');
+    var queryIndex = 1;
 
-    if (methodName.indexOf("inspect") != -1) {
+    if(methodName.indexOf("inspect") != -1) {
         keyOrQueryDivHTML =
                 "<form id='keyForm' class='form-horizontal'  method='post'  action='#'>"
             ;
@@ -1504,11 +1691,7 @@ function constructKeyInputForm(methodName){
         );
 
         return;
-    }
-
-    var queryIndex = 1;
-    //keyOrQueryDiv
-    if (methodName.indexOf("Query") != -1) {
+    } else if(methodName.indexOf("Query") != -1) { //keyOrQueryDiv
         keyOrQueryDivHTML =
                 "<form id='queryHiddenForm' class='form-horizontal'  method='post'  action='#'>"
             ;
@@ -1690,9 +1873,6 @@ function constructFormCSV(formObj, inputName){
     }
     return formCSV + " ";
 }
-
-
-
 
 
 function constructReadByQueryXML( queryForm ){
@@ -1897,6 +2077,10 @@ function selectFieldFormPopulateData(processedData){
      */
 
     constructKeyInputForm(selectedMethod);
+    //todo readRelated
+    //if(selectedMethod == "readRelated"){
+    //    //constructRelationForm();
+    //}
     constructReturnFormatForm();
     constructDocParIdForm(responseData["Type"]["_Name"], selectedMethod, true);
 }

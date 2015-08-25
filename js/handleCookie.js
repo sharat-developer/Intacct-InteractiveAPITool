@@ -48,7 +48,7 @@ $(function() {
             console.log('window.location.pathname==>'+window.location.pathname);
             console.log('window.location.hostname==>'+window.location.hostname);
             //console.log('window.location.pathname -1 ==>'+window.location.pathname.substring(1));
-            if(docCookies.setItem('interactiveAPIToolCookie', cookieVal, sec,'',window.location.hostname)){
+            if(docCookies.setItem('interactiveAPIToolCookie', cookieVal, sec, '', window.location.hostname, true)){
                 console.log('interactiveAPIToolCookie set');
 
             }

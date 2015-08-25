@@ -50,7 +50,6 @@ $(function() {
             //console.log('window.location.pathname -1 ==>'+window.location.pathname.substring(1));
             if(docCookies.setItem('interactiveAPIToolCookie', cookieVal, sec, '', window.location.hostname)){
                 console.log('interactiveAPIToolCookie set');
-
             }
 
             $(this).trigger('reset'); // reset form

@@ -16,7 +16,7 @@ To install the extension into Chrome (tested on Version 44.0.2403.125 m)
         
 * Open Chrome, hit the  Settings Icon > More Tools > Extensions
 * Enable "Developer Mode" via the checkbox at the top
-* Click the "Load unpacked extension" button and select the folder where you extracted the downloaded code
+* Click the "Load unpacked extension" button and select the folder where you extracted the zip file
 
 Usage
 ------------

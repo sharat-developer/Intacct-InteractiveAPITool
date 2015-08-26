@@ -1000,9 +1000,9 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
 
 
     if(constructedXMLFlag === true) {
-        legendString = "<legend>"+selectedMethod+"-method :: Execute Request XML</legend>";
+        legendString = "<legend>"+selectedMethod+"-method :: Post Request XML</legend>";
     } else {
-        legendString = "<legend>Execute Request XML</legend>";
+        legendString = "<legend>Post Request XML</legend>";
     }
     $('#executeXMLDiv').html("<form id='executeXMLForm' class='form-horizontal'  method='post'  action='#'>" +
         legendString +
@@ -1015,7 +1015,7 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
         "<div class='line-break'></div>"+
         "<fieldset><div class='row' >"+
         "<div class='col-md-8 col-md-offset-4'>"+
-        "<button type='submit' id = executeXMLBtn' class='btn btn-primary' >Execute Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+        "<button type='submit' id = executeXMLBtn' class='btn btn-primary' >Post Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
         "</fieldset>"
     );
@@ -1208,7 +1208,7 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         "<div class='line-break'></div>"+
         "<fieldset><div class='row' >"+
         "<div class='col-md-8 col-md-offset-4'>"+
-        "<button type='submit' id = executeXMLBtn_2_1' class='btn btn-primary' >Execute Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+        "<button type='submit' id = executeXMLBtn_2_1' class='btn btn-primary' >Post Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
         "</fieldset>"
     );

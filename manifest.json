@@ -3,13 +3,6 @@
 	"version": "0.2.0",
 	"manifest_version": 2,
 	"description": "Intacct API Builder and Poster",
-    "content_scripts": [
-      {
-        "matches": ["*://*/*"],
-        "js": ["js/contentScript.js"]
-      }
-    ],
-
 	"app": {
 		"launch":	{
 			"local_path": "interactiveAPITool.html"

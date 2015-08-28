@@ -2241,3 +2241,89 @@ function processResponseData(responseData, method){
 
     return processedResponseData;
 }
+/**
+ *  Function to show response headers like response state, response text and response time
+ **/
+function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
+    console.log("readyStateChangeCallback");
+    //$('#responseHeaderDiv').html("Status:" + xRequest.status + "statusText:" + xRequest.statusText);
+
+    //document.getElementById('xmlresulthdr').innerHTML = "XMLHTTP Status: " + this.readyState;
+
+    var responseHeaderDivHTML = "";
+    var responseHeaderString = "";
+
+    switch (xRequest.readyState)
+    {
+        case 0 :
+            responseHeaderString = "Request not initialize...";
+            break;
+        case 1 :
+            responseHeaderString = "Server connection opened...";
+            break;
+        case 2 :
+            responseHeaderString = "Response received...";
+            break;
+        case 3 :
+            responseHeaderString = "Processing response...";
+            break;
+        case 4 :
+            // if "OK"
+            if (xRequest.status==200)
+            {
+                // XML data is OK
+                var postEndTime = new Date().getTime();
+                console.log("postEndTime==>" + postEndTime);
+
+                var postStatTImeHTMLId =  (dtdVersion == "3.0")? ("postStartTime"):("postStartTime_2_1");
+                var postStartTimeJq = $("#" + postStatTImeHTMLId);
+                var postStartTime = parseInt(postStartTimeJq.val());
+                console.log("postStartTime==>" + postStartTime);
+
+                var responseTime = postEndTime - postStartTime;
+                console.log("responseTime==>" + responseTime);
+
+                var responseTimeInSeconds = responseTime/1000;
+
+                responseHeaderString = "<strong>Response Time:</strong> " + responseTimeInSeconds + " sec &nbsp;&nbsp;&nbsp;<strong>Status Text:</strong>" + xRequest.statusText + " &nbsp;&nbsp;&nbsp;<strong>Status Code:</strong> " + xRequest.status;
+
+                //console.log("readyStateChangeCallback==>" + xmlRequestBody);
+
+                if(dtdVersion == "3.0") {
+                    populateShowApiResponseDiv(xRequest.responseText, xmlRequestBody);
+                } else if(dtdVersion == "2.1") {
+                    populateShowApiResponseDiv_2_1(xRequest.responseText, xmlRequestBody);
+                }
+                //document.getElementById('xmlresponse').value = xRequest.responseText;
+            }
+            else
+            {
+//  	  	alert("Problem retrieving XML data:" + this.statusText + " Status: " + this.status);
+                alert("Problem retrieving XML data.  Status: " + this.status);
+                alert("Response Text: " + this.responseText);
+            }
+            break;
+    }
+
+    var responseMetricsFormId = (dtdVersion == "3.0")? ("responseMetricsForm"):("responseMetricsForm_2_1");
+    responseHeaderDivHTML ="<form id='" + responseMetricsFormId + "' class='form-horizontal'  method='post'  action='#'>" +
+        "<legend>Response Metrics</legend>"+
+        "<fieldset>" +
+        "<div class='alert alert-success' role='alert'>" + responseHeaderString + "</div>"+
+        "</fieldset>"+
+        "</form>";
+    var responseMetricDivId = (dtdVersion == "3.0")? ("responseMetricDiv"):("responseMetricDiv_2_1");
+    $("#" + responseMetricDivId).html(responseHeaderDivHTML);
+}
+
+/*
+ *  setPostStartTime in hidden input HTML component
+ */
+function setPostStartTime(dtdVersion) {
+    var postStatTImeId =  (dtdVersion == "3.0")? ("postStartTime"):("postStartTime_2_1");
+    var postStartTimeJq = $("#" + postStatTImeId);
+    var postStartTime = new Date().getTime();
+    console.log("postStartTime==>" + postStartTime);
+    postStartTimeJq.val(postStartTime);
+
+}

@@ -436,7 +436,10 @@ function populateSelectObject(responseData){
     if(responseDataJSON == null) {
         getAllObjectsFlag = true;
 
-        selectObjectDivJq.html("<b style='color : red'>Check Network connection, also make sure the Post URL is correct.</b>");
+        //selectObjectDivJq.html("<b style='color : red'>Check Network connection, also make sure the Post URL is correct.</b>");
+        var errorString = "Check Network connection, also make sure the Post URL is correct.";
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+
         alert("Connection Failure!");
         throw new Error("Connection Failure!");
     }
@@ -449,7 +452,10 @@ function populateSelectObject(responseData){
         //make sure, onClick of API 3.0 Constructor Tab getAllObjects been called
         getAllObjectsFlag = true;
 
-        selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        //selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+
         console.log('data: ' + JSON.stringify (responseDataJSON));
         alert("Sender Authentication Failure!");
         throw new Error("Sender Authentication Failure!");
@@ -462,7 +468,10 @@ function populateSelectObject(responseData){
         //make sure, onClick of API 3.0 Constructor Tab getAllObjects been called
         getAllObjectsFlag = true;
 
-        selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        //selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+
         console.log('data: ' + JSON.stringify (responseDataJSON));
         alert("User Authentication Failure!");
         throw new Error("User Authentication Failure!");
@@ -736,7 +745,11 @@ function selectMethodCallbackFunction(data) {
     //alert(jsonData);
     var selectFieldDivJq = $('#selectFieldDiv');
     if(responseDataJSON == null) {
-        selectFieldDivJq.html("<b style='color : red; font-size: 1.5em;'>Check Network connection, also make sure the Post URL is correct.</b>");
+        //selectFieldDivJq.html("<b style='color : red; font-size: 1.5em;'>Check Network connection, also make sure the Post URL is correct.</b>");
+
+        var errorString = "Check Network connection, also make sure the Post URL is correct.";
+        selectFieldDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+
         alert("Connection Failure!");
         throw new Error("Connection Failure!");
     }
@@ -747,7 +760,11 @@ function selectMethodCallbackFunction(data) {
         //make sure, onClick of API 3.0 Constructor Tab getAllObjects been called
         getAllObjectsFlag = true;
 
-        selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        //selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+
+        var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
+        selectFieldDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+
         console.log('data: ' + JSON.stringify (responseDataJSON));
         alert("Sender Authentication Failure!");
         throw new Error("Sender Authentication Failure!");
@@ -760,7 +777,10 @@ function selectMethodCallbackFunction(data) {
         //make sure, onClick of API 3.0 Constructor Tab getAllObjects been called
         getAllObjectsFlag = true;
 
-        selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        //selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
+        selectFieldDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+
         console.log('data: ' + JSON.stringify (responseDataJSON));
         alert("User Authentication Failure!");
         throw new Error("User Authentication Failure!");

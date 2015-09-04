@@ -117,6 +117,37 @@ function formValidationForInput(){
 }
 
 /**
+ * //todo formvalidation
+ * using jquer.validate to trigger form validation programatically without submit
+ *
+ * */
+function forceFormValidate(formId) {
+
+    var formIdJq = $("#" + formId);
+    formIdJq.validate({
+        //rules: {
+        //    name: {
+        //        minlength: 2,
+        //        required: true
+        //    },
+        //    message: {
+        //        minlength: 2,
+        //        required: true
+        //    }
+        //},
+        highlight: function (element) {
+            $(element).closest('.control-group').removeClass('success').addClass('has-error');
+        },
+        success: function (element) {
+            element.text('').addClass('valid')
+                .closest('.control-group').removeClass('has-error').addClass('success');
+        }
+    });
+
+    formIdJq.removeAttr("novalidate");
+}
+
+/**
  *  Alert to fill Configuration fields
  **/
 function alertFormValidation() {
@@ -215,6 +246,19 @@ function getGetListOperationXML(requestContent_2_1, operation) {
  *  jQuery document.getReady function
  **/
 $(function() {
+
+
+    //on-load of page related to configuration screen
+    $("#moreOptionsAnchor").on("click", function() {
+        $("#moreOptions").toggle();
+        if($('#moreOptions').is(':visible')){
+            $(this).text('-Hide More Options');
+        }else{
+            $(this).text('+Show More Options');
+        }
+    }).text("+Show More Options");
+    //$(this).text("Show More Options");
+    $("#moreOptions").hide();
 
     var myTabJq = $("#myTab");
     var configurationJq = $('#configuration');
@@ -318,7 +362,10 @@ $(function() {
 
             credentialJSON = nameValueToJSON(configurationJq.serializeArray());
 
+            console.log("credentialJSON==>");
+            console.log(credentialJSON);
             var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", "3.0");
+            //var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], credentialJSON['controlId'], credentialJSON['uniqueId'], "3.0", credentialJSON['policyId'], credentialJSON['encodingType']);
 
             var sessionId = sessionIdJq.val();
 
@@ -587,6 +634,7 @@ function populateSelectObject(responseData){
                     //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
 
                     var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", "3.0");
+                    //var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], credentialJSON['controlId'], credentialJSON['uniqueId'], "3.0", credentialJSON['policyId'], credentialJSON['encodingType']);
 
                     var sessionId = $("#sessionId").val();
 
@@ -698,6 +746,7 @@ function populateSelectObject(responseData){
             //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
 
             var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", "3.0");
+            //var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], credentialJSON['controlId'], credentialJSON['uniqueId'], "3.0", credentialJSON['policyId'], credentialJSON['encodingType']);
 
             var sessionId = $("#sessionId").val();
 
@@ -1035,7 +1084,7 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
         "<div class='line-break'></div>"+
         "<fieldset><div class='row' >"+
         "<div class='col-md-8 col-md-offset-4'>"+
-        "<button type='submit' id = executeXMLBtn' class='btn btn-primary' >Post Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+        "<button type='submit' id = 'executeXMLBtn' class='btn btn-primary' >Post Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
         "</fieldset>"
     );
@@ -1228,7 +1277,7 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         "<div class='line-break'></div>"+
         "<fieldset><div class='row' >"+
         "<div class='col-md-8 col-md-offset-4'>"+
-        "<button type='submit' id = executeXMLBtn_2_1' class='btn btn-primary' >Post Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+        "<button type='submit' id = 'executeXMLBtn_2_1' class='btn btn-primary' >Post Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
         "</fieldset>"
     );
@@ -1693,7 +1742,7 @@ function constructUserInputForm(dataJSON) {
     });
 
     keyOrQueryDivHTML =
-        "<form id='keyForm' class='form-horizontal'  method='post'  action='#'>"
+        "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator'>"
     ;
 
     //var index = 0;
@@ -1742,7 +1791,7 @@ function constructKeyInputForm(methodName){
 
     if(methodName.indexOf("inspect") != -1) {
         keyOrQueryDivHTML =
-                "<form id='keyForm' class='form-horizontal'  method='post'  action='#'>"
+                "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
             ;
 
         //var index = 0;
@@ -1873,7 +1922,7 @@ function constructKeyInputForm(methodName){
         });
     } else {
         keyOrQueryDivHTML =
-                "<form id='keyForm' class='form-horizontal'  method='post'  action='#'>"
+                "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator'>"
             ;
 
         //var index = 0;
@@ -1889,7 +1938,7 @@ function constructKeyInputForm(methodName){
         keyFormHTML +=
             "<div class='col-md-5' >" +
             "		<div class='control-group has-error'>" +
-            "		<label>keys</label>" +
+            "		<label class='control-label'> keys </label>" +
             "			<input type='text' name='keys' placeholder='"+keysPlaceholder+"' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
             "</div>"
         ;
@@ -1903,6 +1952,11 @@ function constructKeyInputForm(methodName){
             "</form>"
             // + "<div id='queryComponentDiv'></div>"
         );
+
+         //var keyFormValidator = $("#keyForm").validate();
+         //$("#contactForm").removeAttr("novalidate");
+        //forceFormValidate("keyForm");
+
 
     }
 }
@@ -2099,6 +2153,22 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
         var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
         xmlString = constructContentWrapper(xmlString);
         constructedXMLShowFormPopulateData(xmlString, true);
+
+        //todo formvalidation
+        //var keyFormValidator = $("#keyForm").validate();
+        ////keyFormValidator.form();
+        //
+        //
+        //console.log("(#keyForm).validator()::called");
+        //
+        //if(keyFormValidator.form()) {
+        //    var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
+        //    xmlString = constructContentWrapper(xmlString);
+        //    constructedXMLShowFormPopulateData(xmlString, true);
+        //}
+
+
+
     });
 }
 
@@ -2272,6 +2342,8 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
 
     var responseHeaderDivHTML = "";
     var responseHeaderString = "";
+    var alertClass = "alert alert-success";
+    $("#showResponseDiv").show();
 
     switch (xRequest.readyState)
     {
@@ -2304,8 +2376,14 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
                 console.log("responseTime==>" + responseTime);
 
                 var responseTimeInSeconds = responseTime/1000;
+                var statusCode = xRequest.status;
 
                 responseHeaderString = "<strong>Response Time:</strong> " + responseTimeInSeconds + " sec &nbsp;&nbsp;&nbsp;<strong>Status Text:</strong>" + xRequest.statusText + " &nbsp;&nbsp;&nbsp;<strong>Status Code:</strong> " + xRequest.status;
+
+                if(statusCode != 200) {
+                    alertClass = "alert alert-danger";
+                    $("#showResponseDiv").hide();
+                }
 
                 //console.log("readyStateChangeCallback==>" + xmlRequestBody);
 
@@ -2318,18 +2396,20 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
             }
             else
             {
-//  	  	alert("Problem retrieving XML data:" + this.statusText + " Status: " + this.status);
-                alert("Problem retrieving XML data.  Status: " + this.status);
-                alert("Response Text: " + this.responseText);
+                alertClass = "alert alert-danger";
+                responseHeaderString = "Problem retrieving XML data from server. &nbsp;&nbsp;&nbsp;<strong>Status Text:</strong>" + xRequest.statusText + " &nbsp;&nbsp;&nbsp;<strong>Status Code:</strong> " + xRequest.status;
+                $("#showResponseDiv").hide();
+                //alert("Problem retrieving XML data.  Status: " + this.status);
+                //alert("Response Text: " + this.responseText);
             }
             break;
     }
 
     var responseMetricsFormId = (dtdVersion == "3.0")? ("responseMetricsForm"):("responseMetricsForm_2_1");
-    responseHeaderDivHTML ="<form id='" + responseMetricsFormId + "' class='form-horizontal'  method='post'  action='#'>" +
+    responseHeaderDivHTML = "<form id='" + responseMetricsFormId + "' class='form-horizontal'  method='post'  action='#'>" +
         "<legend>Response Metrics</legend>"+
         "<fieldset>" +
-        "<div class='alert alert-success' role='alert'>" + responseHeaderString + "</div>"+
+        "<div class='" + alertClass + "' role='alert'>" + responseHeaderString + "</div>"+
         "</fieldset>"+
         "</form>";
     var responseMetricDivId = (dtdVersion == "3.0")? ("responseMetricDiv"):("responseMetricDiv_2_1");

@@ -203,6 +203,85 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <a id="moreOptionsAnchor"></a>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div id="moreOptions">
+
+                                                    <div class="col-md-3">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="encodingType">Encoding</label>
+                                                            <div  class="controls">
+                                                                <select id="encodingType" class="form-control" name="encodingType">
+                                                                    <option value="UTF-8">UTF-8</option>
+                                                                    <option value="iso-8859-1">iso-8859-1</option>
+                                                                </select>
+                                                                <p class="help-block">Enter the Encoding Type (Optional)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="urlEncodedXML">Post URL Encoded XML</label>
+
+                                                            <div class="controls">
+                                                                <input type="checkbox" class="form-control "
+                                                                       name="urlEncodedXML" id="urlEncodedXML" />
+
+                                                                <p class="help-block">Check this to URL Encode Request XML</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="controlId">Control ID</label>
+
+                                                            <div class="controls">
+                                                                <input type="text" class="form-control" name="controlId"
+                                                                       id="controlId" />
+
+                                                                <p class="help-block">Enter the Control ID (Optional)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="uniqueId">Unique ID</label>
+
+                                                            <div class="controls">
+                                                                <select id="uniqueId" class="form-control" name="uniqueId">
+                                                                    <option value="false">false</option>
+                                                                    <option value="true">true</option>
+                                                                </select>
+                                                                <p class="help-block">Enter the Unique ID (Optional)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-3">
+                                                        <div class="control-group">
+                                                            <label class="control-label" for="policyId">Policy ID</label>
+
+                                                            <div class="controls">
+                                                                <input type="text" class="form-control"
+                                                                       name="policyId" id="policyId" />
+
+                                                                <p class="help-block">Enter the Policy ID (Optional)</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--<div class="row">-->
+                                                        <div class="col-md-12">
+                                                            <a  target="_blank" href="https://developer.intacct.com/wiki/constructing-web-services-request"> &nbsp;To know more about this configurations visit Developer Forum</a>
+                                                        </div>
+                                                    <!--</div>-->
+
+                                                </div>
+                                            </div>
+
 
                                             <div class="line-break"></div>
                                             <div class="row">
@@ -363,6 +442,8 @@
     <!-- Core Scripts - Include with every page -->
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/validator.js"></script>
     <script src="js/cookie.js"></script>
     <script src="js/AJAX-API_Session.js"></script>
     <script src="js/custom-AJAX-api-call.js"></script>

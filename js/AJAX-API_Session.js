@@ -5,13 +5,16 @@ var READY_STATE_COMPLETE = 4;
 /**
  * Constructor
  */
-function API_Session(ajaxURL, senderid, senderpwd, controlid, uniqueid, dtdversion) {
+function API_Session(ajaxURL, senderid, senderpwd, controlid, uniqueid, dtdversion, policyId, encodingType, urlEncodedXML) {
     this.ajaxURL = ajaxURL;
     this.senderid = senderid || 'null';
     this.senderpwd = senderpwd || 'null';
     this.controlid = controlid || "controlid";
     this.uniqueid = uniqueid || "false";
     this.dtdversion = dtdversion || "3.0";
+    this.policyId = policyId || "";
+    this.encodingType = encodingType || "UTF-8";
+    this.urlEncodedXML = urlEncodedXML || false;
     this.lastRequest = '';
     this.lastResponse = '';
     // if the caller didn't specify a URL and we have a global session ID on the page
@@ -227,11 +230,14 @@ API_Session.prototype.xmlNode = function(name, value) {
  * Get header of XML request
  */
 API_Session.prototype.getRecHeader = function() {
-    var buff = '<?xml version="1.0" encoding="UTF-8"?><request>';
+    var buff = '<?xml version="1.0" encoding="' + this.encodingType + '"?><request>';
+    var policyIdString = (this.policyId != "")?("<policyid>" + this.policyId + "</policyid>"):("");
 
     buff += '<control><senderid>'+this.xmlEncode(this.senderid)+
         '</senderid><password>'+this.xmlEncode(this.senderpwd)+'</password><controlid>'+this.xmlEncode(this.controlid)+'</controlid>'+
-        '<uniqueid>'+this.xmlEncode(this.uniqueid)+'</uniqueid><dtdversion>'+this.xmlEncode(this.dtdversion)+'</dtdversion></control>';
+        '<uniqueid>'+this.xmlEncode(this.uniqueid)+'</uniqueid><dtdversion>'+this.xmlEncode(this.dtdversion)+'</dtdversion>'+
+        policyIdString+
+        '</control>';
     buff += '<operation>';
 
     buff += '<authentication>';
@@ -261,11 +267,13 @@ API_Session.prototype.getRecHeader = function() {
  */
 //cmbs custom
 API_Session.prototype.getRecHeaderWithOutContent = function() {
-    var buff = '<?xml version="1.0" encoding="UTF-8"?><request>';
-
+    var buff = '<?xml version="1.0" encoding="' + this.encodingType + '"?><request>';
+    var policyIdString = (this.policyId != "")?("<policyid>" + this.policyId + "</policyid>"):("");
     buff += '<control><senderid>'+this.xmlEncode(this.senderid)+
     '</senderid><password>'+this.xmlEncode(this.senderpwd)+'</password><controlid>'+this.xmlEncode(this.controlid)+'</controlid>'+
-    '<uniqueid>'+this.xmlEncode(this.uniqueid)+'</uniqueid><dtdversion>'+this.xmlEncode(this.dtdversion)+'</dtdversion></control>';
+    '<uniqueid>'+this.xmlEncode(this.uniqueid)+'</uniqueid><dtdversion>'+ this.xmlEncode(this.dtdversion) + '</dtdversion>' +
+        policyIdString+
+        '</control>';
     buff += '<operation>';
 
     buff += '<authentication>';

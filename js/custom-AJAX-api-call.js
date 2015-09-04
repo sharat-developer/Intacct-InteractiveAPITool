@@ -21,7 +21,8 @@ function constructXMLRequest(payload, apiSession) {
 
 function customAJAXPost(functionXMLString, credentialJSON, sessionId, dtdVersion){
 
-    var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", dtdVersion || "3.0");
+    //var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", dtdVersion || "3.0");
+    var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], credentialJSON['controlId'], credentialJSON['uniqueId'], "3.0", credentialJSON['policyId'], credentialJSON['encodingType'], credentialJSON['urlEncodedXML']);
 
     if(sessionId){
         apiSession.ip_setSessionID(sessionId);
@@ -92,22 +93,30 @@ function customSendRequest(apiSession, payload, callback, dtdVersion) {
     var errProc = apiSession.checkError;
     var errCallback = (apiSession.errorProc ? apiSession.errorProc :  function(errMessage) { alert("Error: "+errMessage); } );
 
+
+    var url = apiSession.ajaxURL;
+    xRequest.open('POST', url, true);
+    var encodedDoc = "";
+    if(apiSession.urlEncodedXML) {
+        encodedDoc = 'xmlrequest=' + encodeURIComponent(xmlDoc);
+        xRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    } else {
+        encodedDoc = xmlDoc;
+        xRequest.setRequestHeader("Content-Type", "x-intacct-xml-request");
+    }
+
     xRequest.onreadystatechange = function() {
         //if (xRequest.readyState == READY_STATE_COMPLETE) {
         //    //below lines commented since API response with errors were just comming in alert
         //    //if (errProc(xRequest.responseText, errCallback))
         //    //    return;
-            if (callback) {
-                console.log("callback(xRequest.responseText, xmlDoc)==>" + xmlDoc);
-                callback(xRequest, xmlDoc, dtdVersion);
-            }
+        if (callback) {
+            console.log("callback(xRequest.responseText, xmlDoc)==>" + encodedDoc);
+            callback(xRequest, encodedDoc, dtdVersion);
+        }
         //
         //}
     };
-    var url = apiSession.ajaxURL;
-    xRequest.open('POST', url, true);
-    var encodedDoc = 'xmlrequest=' + encodeURIComponent(xmlDoc);
-    xRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     //cmbs
     //xRequest.setRequestHeader("Content-length", encodedDoc.length);

@@ -121,10 +121,12 @@ function formValidationForInput(){
  * using jquer.validate to trigger form validation programatically without submit
  *
  * */
-function forceFormValidate(formId) {
+function instantiateFormValidate(formId) {
 
     var formIdJq = $("#" + formId);
-    formIdJq.validate({
+    formIdJq.removeAttr("novalidate");
+
+    var keyFormValidator = formIdJq.validate({
         //rules: {
         //    name: {
         //        minlength: 2,
@@ -136,16 +138,28 @@ function forceFormValidate(formId) {
         //    }
         //},
         highlight: function (element) {
-            $(element).closest('.control-group').removeClass('success').addClass('has-error');
+            //alert('highlight');
+            $(element).closest('.control-group').addClass('has-error');
         },
         success: function (element) {
             element.text('').addClass('valid')
                 .closest('.control-group').removeClass('has-error').addClass('success');
-        }
+        },
+        errorElement: 'label',
+        errorClass: 'help-block'
     });
 
-    formIdJq.removeAttr("novalidate");
+    //var keyFormValidator = $("#keyForm").validate();
+    //keyFormValidator.form();
 }
+
+function triggerFormValidation(formId) {
+    var formIdJq = $("#" + formId);
+
+    var keyFormValidator = formIdJq.validate();
+    return keyFormValidator.form();
+}
+
 
 /**
  *  Alert to fill Configuration fields
@@ -405,6 +419,27 @@ $(function() {
         var formJq = $(this).parents('form:first');
         clearFormContents(formJq);
     });
+
+
+    //$("form").on("submit", function(e) {
+    //    e.preventDefault();
+    //    console.log("formSubmit");
+    //    console.log("formName==>" + $(this).attr("id"));
+    //    //forceFormValidate($(this).attr("id"));
+    //});
+
+    //$("form").submit(function(e){
+    //    e.preventDefault();
+    //    //alert("Submitted");
+    //    console.log("formSubmit");
+    //
+    //    var formId = $(this).attr("id");
+    //    console.log("formId==>" + formId);
+    //    //    //forceFormValidate($(this).attr("id"));
+    //    instantiateFormValidate(formId);
+    //    triggerFormValidation(formId);
+    //});
+
 
 });
 
@@ -883,7 +918,7 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
                             "<fieldset>" +
                             "   <div class='col-sm-12' >"+
                             "		<div class='form-group'>"+
-                            "		<label>API Response</label>"+
+                            "		<label class='control-label'>API Response</label>"+
                             "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
                             "		</div>"+
                             "	</div>" +
@@ -898,7 +933,7 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
                                 "<fieldset>" +
                                 "   <div class='col-sm-12' >"+
                                 "		<div class='form-group'>"+
-                                "		<label>API Request</label>"+
+                                "		<label class='control-label'>API Request</label>"+
                                 "       <textarea  rows='30' id='showRequest' class='form-control'></textarea>"+ //" + xmlDocAPIRequest + "
                                 "		</div>"+
                                 "	</div>" +
@@ -916,7 +951,7 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
     //    "<fieldset>" +
     //    "   <div class='col-sm-12' >"+
     //    "		<div class='form-group'>"+
-    //    "		<label>API Response</label>"+
+    //    "		<label class='control-label'>API Response</label>"+
     //    "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
     //    "		</div>"+
     //    "	</div>" +
@@ -935,7 +970,7 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
     //    "<fieldset>" +
     //    "   <div class='col-sm-12' >"+
     //    "		<div class='form-group'>"+
-    //    "		<label>API Request</label>"+
+    //    "		<label class='control-label'>API Request</label>"+
     //    "       <textarea id='showRequest' class='form-control' >"+xmlDocAPIRequest+"</textarea>"+
     //    "		</div>"+
     //    "	</div>" +
@@ -981,7 +1016,7 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
             "<fieldset>" +
             "   <div class='col-sm-12' >"+
             "		<div class='form-group'>"+
-            "		<label>API Response</label>"+
+            "		<label class='control-label'>API Response</label>"+
             "       <textarea id='showResponse_2_1' class='form-control' >"+apiResponse+"</textarea>"+
             "		</div>"+
             "	</div>" +
@@ -996,7 +1031,7 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
             "<fieldset>" +
             "   <div class='col-sm-12' >"+
             "		<div class='form-group'>"+
-            "		<label>API Request</label>"+
+            "		<label class='control-label'>API Request</label>"+
             "       <textarea  id='showRequest_2_1' class='form-control'></textarea>"+ //" + xmlDocAPIRequest + "
             "		</div>"+
             "	</div>" +
@@ -1025,7 +1060,7 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
 //    $('#showResponseForm_2_1').append(
 //        "<fieldset><div class='col-sm-12' >"+
 //        "		<div class='form-group'>"+
-//        "		<label>API Response</label>"+
+//        "		<label class='control-label'>API Response</label>"+
 //        "       <textarea id='showResponse_2_1' class='form-control' >"+apiResponse+"</textarea>"+
 ////            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
 //        "		</div>"+
@@ -1053,7 +1088,7 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
     $('#createXMLShowForm').append(
         "<fieldset><div class='col-sm-12' >"+
         "		<div class='form-group'>"+
-        "		<label>API Request</label>"+
+        "		<label class='control-label'>API Request</label>"+
         "       <textarea id='createXML' class='form-control' >"+data+"</textarea>"+
 //            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
         "		</div>"+
@@ -1479,8 +1514,8 @@ function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormD
             });
             putValueInFieldsFormHTML +=
                 "<div class='col-md-5' >"+
-                "		<div class='control-group "+((value['isRequired'] == "true")?'has-error':'')+"' >"+
-                "		    <label>"+value['Name']+"</label>"+
+                "		<div class='control-group' >"+ //"+((value['isRequired'] == "true")?'has-error':'')+"
+                "		    <label class='control-label'>"+value['Name']+"</label>"+
                 "           <select id='"+value['Name']+"' class='form-control' name='"+value['Name']+"'"+((value['isRequired'] == "true")?'required':'')+">"+
                 "			    "+selectOptionStringHTML+  //"+((value.isRequired)?'has-error':'')+"
                 "           </select>"+
@@ -1502,8 +1537,8 @@ function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormD
 
             putValueInFieldsFormHTML +=
                 "<div class='col-md-5' >"+
-                "		<div class='control-group "+((value['isRequired'] == "true")?'has-error':'')+"'>"+
-                "		<label>"+value['Name']+"</label>"+
+                "		<div class='control-group'>"+ //"+((value['isRequired'] == "true")?'has-error':'')+"
+                "		<label class='control-label'>"+value['Name']+"</label>"+
                 "			<input type='text' "+inputValueString+" name='"+value['Name']+"' placeholder='"+"type:"+value['externalDataName']+"; "+((value['maxLength'] != 0)?"maxLength:"+value['maxLength']+"; ":'')+"' class='form-control '  "+((value['isRequired'] == "true")?'required':'')+"/>"+  //"+((value.isRequired)?'has-error':'')+"
                 "		</div>"+
                 "</div>"
@@ -1524,18 +1559,29 @@ function putValueInFieldsFormPopulateData(putValuesObject, putValueInFieldsFormD
     putValueInFieldsFormHTML +=
         "<div class='line-break'></div>"+
         "<div class='line-break'></div>"+
+        "<div class='row'>"+
         "<div class='col-md-8 col-md-offset-4'>"+
         "<button type='submit' id = 'constructCreateXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
         "</div>"+
-        "</fieldset>"
+        "</fieldset>"+
+        "</div>"
     ;
     $("#putValueFieldDiv").html(
         putValueFieldDivHTML+
         putValueInFieldsFormHTML+
         "</form>"
     );
+
+    instantiateFormValidate("putValueInFieldsForm");
+
     $("#putValueInFieldsForm").on("submit",function( event ){
         event.preventDefault();
+
+        // if form is not validated dont create the Request XML
+        if(!triggerFormValidation($(this).attr("id"))) {
+            return false;
+        }
+
 //        console.log("selectedMethod==>"+selectedMethod);
         var xmlString = constructCreateOrUpdateXML(this);
 
@@ -1653,8 +1699,8 @@ function constructQueryForm(queryIndex){
     var queryFormHTML =
             "<div class='col-md-3' >" +
             "		<div class='control-group'>" +
-            "		<label>Select Field to Query</label>" +
-            "           <select id='queryFormSelectField"+queryIndex+"' class='form-control' name='queryFormSelectField"+queryIndex+"' required >"+
+            "		<label class='control-label'>Select Field to Query</label>" +
+            "           <select id='queryFormSelectField"+queryIndex+"' class='form-control' name='queryFormSelectField"+queryIndex+"'>"+
             "			    "+selectFieldStringHTML+  //"+((value.isRequired)?'has-error':'')+"
             "           </select>"+
             "        </div>" +
@@ -1663,8 +1709,8 @@ function constructQueryForm(queryIndex){
     queryFormHTML +=
         "<div class='col-md-2' >" +
         "		<div class='control-group'>" +
-        "		<label>Select Operation</label>" +
-        "           <select id='queryFormSelectOperation"+queryIndex+"' class='form-control' name='queryFormSelectField"+queryIndex+"' required >"+
+        "		<label class='control-label'>Select Operation</label>" +
+        "           <select id='queryFormSelectOperation"+queryIndex+"' class='form-control' name='queryFormSelectField"+queryIndex+"'>"+
         "			    "+selectOperationStringHTML+  //"+((value.isRequired)?'has-error':'')+"
         "           </select>"+
         "       </div>" +
@@ -1673,8 +1719,8 @@ function constructQueryForm(queryIndex){
     queryFormHTML +=
         "<div id='readByQueryInputValueDiv"+queryIndex+"' class='col-md-4' >" +
         "		<div class='control-group'>" +
-        "		    <label>Input Query Value</label>" +
-        "           <input type='text' id='queryValue"+queryIndex+"' name='queryValue"+queryIndex+"' placeholder='type:integer; maxLength:8' class='form-control ' required />" +
+        "		    <label class='control-label'>Input Query Value</label>" +
+        "           <input type='text' id='queryValue"+queryIndex+"' name='queryValue"+queryIndex+"' placeholder='type:integer; maxLength:8' class='form-control'/>" +
         "       </div>" +
         "</div>"
     ;
@@ -1701,7 +1747,7 @@ function queryFormSelectFieldOnChange(queryIndex){
 
             readByQueryInputValueDivHTML =
                 "		<div class='control-group' >"+
-                "		    <label>Select Query Value</label>"+
+                "		    <label class='control-label'>Select Query Value</label>"+
                 "           <select id='queryValue"+currentIndex+"' name='queryValue"+currentIndex+"' class='form-control'>"+
                 "			    "+selectOptionStringHTML+  //"+((value.isRequired)?'has-error':'')+"
                 "           </select>"+
@@ -1710,7 +1756,7 @@ function queryFormSelectFieldOnChange(queryIndex){
         }else{
             readByQueryInputValueDivHTML =
                 "		<div class='control-group'>" +
-                "		    <label>Input Query Value</label>" +
+                "		    <label class='control-label'>Input Query Value</label>" +
                 "           <input type='text' id='queryValue"+currentIndex+"' name='queryValue"+currentIndex+"' placeholder='"+"type:" + queryFormSelectFieldValue['externalDataName'] + "; " + ((queryFormSelectFieldValue['maxLength'] != 0)?"maxLength:" + queryFormSelectFieldValue['maxLength']+"; ":'') + "' class='form-control' />" +
                 "       </div>"
             ;
@@ -1751,7 +1797,7 @@ function constructUserInputForm(dataJSON) {
         "<legend>" + selectedMethod + "-method :: User ID Selection</legend>" +
         "<div class='row'>"+
         "		<div class='control-group col-md-5 ' >"+ //has-error
-        "		    <label>Select User ID Value</label>"+
+        "		    <label class='control-label'>Select User ID Value</label>"+
         "           <select id='userId' name='userId' class='form-control'>"+
         "			    "+selectOptionStringHTML+  //"+((value.isRequired)?'has-error':'')+"
         "           </select>"+
@@ -1893,8 +1939,8 @@ function constructKeyInputForm(methodName){
                 "<div class='row' id='queryFormDiv"+queryIndex+"'>"+
                 "   <div class='col-md-2' >" +
                 "	    	<div class='control-group'>" +
-                "		        <label>Logical Operator</label>" +
-                "               <select id='queryFormLogicalOperator"+queryIndex+"' class='form-control' name='queryFormLogicalOperator"+queryIndex+"' required >"+
+                "		        <label class='control-label'>Logical Operator</label>" +
+                "               <select id='queryFormLogicalOperator"+queryIndex+"' class='form-control' name='queryFormLogicalOperator"+queryIndex+"'>"+
                 "			        <option value='and'>AND</option>"+  //"+((value.isRequired)?'has-error':'')+"
                 "			        <option value='or'>OR</option>"+
                 "               </select>"+
@@ -1937,8 +1983,8 @@ function constructKeyInputForm(methodName){
         }
         keyFormHTML +=
             "<div class='col-md-5' >" +
-            "		<div class='control-group has-error'>" +
-            "		<label class='control-label'> keys </label>" +
+            "		<div class='control-group'>" +
+            "		<label > keys </label>" + //class='control-label'
             "			<input type='text' name='keys' placeholder='"+keysPlaceholder+"' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
             "</div>"
         ;
@@ -1954,8 +2000,8 @@ function constructKeyInputForm(methodName){
         );
 
          //var keyFormValidator = $("#keyForm").validate();
-         //$("#contactForm").removeAttr("novalidate");
-        //forceFormValidate("keyForm");
+         $("#keyForm").removeAttr("novalidate");
+        instantiateFormValidate("keyForm");
 
 
     }
@@ -1977,7 +2023,7 @@ function constructReturnFormatForm(){
     returnFormatFormHTML +=
         "<div class='col-md-5' >"+
         "		<div class='control-group' >"+
-        "		    <label>returnFormat</label>"+
+        "		    <label class='control-label'>returnFormat</label>"+
         "           <select id='returnFormatSelect' class='form-control' name='returnFormat'>"+
         "			    <option value='xml'>XML</option>"+
         "			    <option value='json'>JSON</option>"+
@@ -2125,7 +2171,7 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
         docParIdFormHTML +=
             "<div class='col-md-5' >"+
             "		<div class='control-group has-error'>"+
-            "		<label>docparid</label>"+
+            "		<label class='control-label'>docparid</label>"+
             "			<input type='text' id='docparid' name='docparid' placeholder='' value='"+docParId+"' class='form-control ' required />"+  //"+((value.isRequired)?'has-error':'')+"
             "		</div>"+
             "</div>"
@@ -2150,16 +2196,30 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
 
     $("#constructReadStarXMLBtn").on("click", function(){
 
-        var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
-        xmlString = constructContentWrapper(xmlString);
-        constructedXMLShowFormPopulateData(xmlString, true);
+
 
         //todo formvalidation
+
+        if($("#keyForm").length > 0) {
+            console.log("$(#keyForm).length > 0");
+            if(triggerFormValidation("keyForm")) {
+                var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
+                xmlString = constructContentWrapper(xmlString);
+                constructedXMLShowFormPopulateData(xmlString, true);
+            }
+
+        } else {
+            var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
+            xmlString = constructContentWrapper(xmlString);
+            constructedXMLShowFormPopulateData(xmlString, true);
+        }
+
+
         //var keyFormValidator = $("#keyForm").validate();
-        ////keyFormValidator.form();
+        //keyFormValidator.form();
         //
         //
-        //console.log("(#keyForm).validator()::called");
+
         //
         //if(keyFormValidator.form()) {
         //    var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));

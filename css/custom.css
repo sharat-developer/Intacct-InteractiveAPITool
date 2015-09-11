@@ -43,3 +43,25 @@ input[type=checkbox]{
     /*box-sizing: border-box;*/
     /*resize: none;*/
 /*}*/
+/*input[required],*/
+/*select[required]{}*/
+input[required] {
+    background-image: url('../img/asterisk-128-000000.png');
+    background-repeat: no-repeat;
+    background-position: right .3em top .7em;
+    background-size: 1em 1em;
+}
+
+/*input[required].has-error {*/
+    /*background-image: url('../img/print-signs-askerisk-204x204.png');*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: right .3em top .7em;*/
+    /*background-size: 1em 1em;*/
+/*}*/
+
+div.has-error > input[required] {
+    background-image: url('../img/print-signs-askerisk-204x204.png');
+    background-repeat: no-repeat;
+    background-position: right .3em top .7em;
+    background-size: 1em 1em;
+}

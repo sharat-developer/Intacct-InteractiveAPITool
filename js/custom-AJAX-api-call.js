@@ -97,7 +97,9 @@ function customSendRequest(apiSession, payload, callback, dtdVersion) {
     var url = apiSession.ajaxURL;
     xRequest.open('POST', url, true);
     var encodedDoc = "";
-    if(apiSession.urlEncodedXML) {
+    console.log("apiSession.urlEncodedXML==>");
+    console.log(apiSession.urlEncodedXML);
+    if(apiSession.urlEncodedXML == "true") {
         encodedDoc = 'xmlrequest=' + encodeURIComponent(xmlDoc);
         xRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     } else {

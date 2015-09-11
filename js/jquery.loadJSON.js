@@ -51,7 +51,8 @@
                 case 'text':
                 case 'password':
                 case 'hidden':
-                    $(element).attr("value", value);
+                    //$(element).attr("value", value);
+                    $(element).val(value);
                     break;
                 case 'a':
                     var href = $(element).attr("href");

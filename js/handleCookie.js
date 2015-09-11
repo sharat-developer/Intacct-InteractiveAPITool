@@ -15,6 +15,9 @@ function nameValueToJSON(nameValueObject){
 
 
 $(function() {
+    //$("form").submit(function(){
+    //    alert("Submitted");
+    //});
 
     if(docCookies.getItem('interactiveAPIToolCookie')){
         setvalues();
@@ -24,17 +27,26 @@ $(function() {
     }
 
     var configurationJq = $('#configuration');
+    instantiateFormValidate("configuration");
 
     configurationJq.submit(function (e) {
             e.preventDefault();
 
+            var formId = $(this).attr("id");
+            //instantiateFormValidate(formId);
+            //formValidation is false do not save the value
+            if(!triggerFormValidation(formId)) {
+                return false;
+            }
+
             var configurationArray = $('#configuration').serializeArray();
-            //console.log('configurationArray==>'+JSON.stringify(configurationArray));
+            console.log('configurationArray==>'+JSON.stringify(configurationArray));
 
             var companyId = $('#companyId').val();
-            console.log('companyCred-------------------------------------==>'+nameValueToJSON(configurationArray));
+            var configurationArrayObject = nameValueToJSON(configurationArray);
+            console.log('companyCred-------------------------------------==>'+JSON.stringify(configurationArrayObject));
 
-            cookieVar[companyId] = nameValueToJSON(configurationArray);
+            cookieVar[companyId] = configurationArrayObject;
 
 
             var cookieVal = JSON.stringify(cookieVar);
@@ -77,7 +89,7 @@ $(function() {
             //var optionSelected = $("option:selected", this);
             var valueSelected = this.value;
             console.log('valueSelected==>'+valueSelected);
-            //console.log('value---------------------==>'+JSON.stringify(cookieVar[valueSelected]));
+            console.log('value---------------------==>'+JSON.stringify(cookieVar[valueSelected]));
             $('#sessionId').val('');
             configurationJq.trigger('reset');
             configurationJq.loadJSON(cookieVar[valueSelected]);

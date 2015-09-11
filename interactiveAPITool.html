@@ -68,14 +68,14 @@
                                                 <div class="control-group">
                                                     <label class="control-label" for="chooseCompanyID">Saved Configurations</label>
 
-                                                    <div class="controls">
+                                                    <!--<div class="controls">-->
                                                         <select class="form-control" name="chooseCompanyID"
                                                                 id="chooseCompanyID">
                                                             <option value="#">Save Configuration Before Load</option>
                                                         </select>
 
                                                         <p class="help-block">Choose Company ID</p>
-                                                    </div>
+                                                    <!--</div>-->
                                                 </div>
                                             </div>
                                             <div id="loadSessionIdSeparator" class="col-md-1">
@@ -88,52 +88,52 @@
                                                 <div class="control-group">
                                                     <label class="control-label" for="sessionId">Load Session ID</label>
 
-                                                    <div class="controls">
+                                                    <!--<div class="controls">-->
                                                         <input type="text" class="form-control" name="sessionId"
                                                                id="sessionId"/>
 
                                                         <p class="help-block">Input Valid Session ID</p>
-                                                    </div>
+                                                    <!--</div>-->
                                                 </div>
                                             </div>
                                         </div>
                                         <legend>Configuration Details</legend>
-                                        <form class="form-horizontal" action="#" method="post" id="configuration">
+                                        <form class="form-horizontal"  method="post" id="configuration">
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="control-group">
                                                         <label class="control-label" for="companyId">Company ID</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="text" class="form-control" name="companyId"
                                                                    id="companyId" required/>
 
                                                             <p class="help-block">Enter the Company ID</p>
-                                                        </div>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="control-group">
                                                         <label class="control-label" for="userName">Username</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="text" class="form-control" name="userName"
                                                                    id="userName" required/>
 
                                                             <p class="help-block">Enter the Company Username</p>
-                                                        </div>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="control-group">
                                                         <label class="control-label" for="userPassword">Password</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="password" class="form-control" name="userPassword"
                                                                    id="userPassword" required/>
 
                                                             <p class="help-block">Enter the Company Password</p>
-                                                        </div>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -142,12 +142,12 @@
                                                     <div class="control-group">
                                                         <label class="control-label" for="senderId">Sender ID</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="text" class="form-control" name="senderId"
                                                                    id="senderId" required/>
 
                                                             <p class="help-block">Enter the Sender ID</p>
-                                                        </div>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
@@ -168,24 +168,24 @@
                                                     <div class="control-group">
                                                         <label class="control-label" for="locationId">Location ID</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="text" class="form-control" name="locationId"
                                                                    id="locationId" />
 
-                                                            <p class="help-block">Enter the Location ID (Optional)</p>
-                                                        </div>
+                                                            <p class="help-block">Enter the Location ID</p>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="control-group">
                                                         <label class="control-label" for="clientId">Client ID</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="text" class="form-control"
                                                                    name="clientId" id="clientId" />
 
-                                                            <p class="help-block">Enter the Client ID (Optional)</p>
-                                                        </div>
+                                                            <p class="help-block">Enter the Client ID</p>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -194,12 +194,12 @@
                                                     <div class="control-group">
                                                         <label class="control-label" for="endPointURL">Post URL</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="text" class="form-control" name="endPointURL"
                                                                    id="endPointURL" required/>
 
                                                             <p class="help-block">Enter the Company Post URL</p>
-                                                        </div>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -214,50 +214,54 @@
                                                     <div class="col-md-3">
                                                         <div class="control-group">
                                                             <label class="control-label" for="encodingType">Encoding</label>
-                                                            <div  class="controls">
+                                                            <!--<div  class="controls">-->
                                                                 <select id="encodingType" class="form-control" name="encodingType">
                                                                     <option value="UTF-8">UTF-8</option>
                                                                     <option value="iso-8859-1">iso-8859-1</option>
                                                                 </select>
-                                                                <p class="help-block">Enter the Encoding Type (Optional)</p>
-                                                            </div>
+                                                                <p class="help-block">Enter the Encoding Type</p>
+                                                            <!--</div>-->
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <div class="control-group">
                                                             <label class="control-label" for="urlEncodedXML">Post URL Encoded XML</label>
 
-                                                            <div class="controls">
-                                                                <input type="checkbox" class="form-control "
-                                                                       name="urlEncodedXML" id="urlEncodedXML" />
+                                                            <!--<div class="controls">-->
+                                                                <!--<input type="checkbox" class="form-control "-->
+                                                                       <!--name="urlEncodedXML" id="urlEncodedXML" />-->
+                                                            <select id="urlEncodedXML" class="form-control" name="urlEncodedXML">
+                                                                <option value="false">false</option>
+                                                                <option value="true">true</option>
+                                                            </select>
 
-                                                                <p class="help-block">Check this to URL Encode Request XML</p>
-                                                            </div>
+                                                                <p class="help-block">Make it 'true' to URL Encode Request XML</p>
+                                                            <!--</div>-->
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <div class="control-group">
                                                             <label class="control-label" for="controlId">Control ID</label>
 
-                                                            <div class="controls">
+                                                            <!--<div class="controls">-->
                                                                 <input type="text" class="form-control" name="controlId"
                                                                        id="controlId" />
 
-                                                                <p class="help-block">Enter the Control ID (Optional)</p>
-                                                            </div>
+                                                                <p class="help-block">Enter the Control ID</p>
+                                                            <!--</div>-->
                                                         </div>
                                                     </div>
                                                     <div class="col-md-3">
                                                         <div class="control-group">
                                                             <label class="control-label" for="uniqueId">Unique ID</label>
 
-                                                            <div class="controls">
+                                                            <!--<div class="controls">-->
                                                                 <select id="uniqueId" class="form-control" name="uniqueId">
                                                                     <option value="false">false</option>
                                                                     <option value="true">true</option>
                                                                 </select>
-                                                                <p class="help-block">Enter the Unique ID (Optional)</p>
-                                                            </div>
+                                                                <p class="help-block">Enter the Unique ID</p>
+                                                            <!--</div>-->
                                                         </div>
                                                     </div>
 
@@ -265,12 +269,12 @@
                                                         <div class="control-group">
                                                             <label class="control-label" for="policyId">Policy ID</label>
 
-                                                            <div class="controls">
+                                                            <!--<div class="controls">-->
                                                                 <input type="text" class="form-control"
                                                                        name="policyId" id="policyId" />
 
-                                                                <p class="help-block">Enter the Policy ID (Optional)</p>
-                                                            </div>
+                                                                <p class="help-block">Enter the Policy ID</p>
+                                                            <!--</div>-->
                                                         </div>
                                                     </div>
                                                     <!--<div class="row">-->
@@ -443,15 +447,16 @@
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.validate.min.js"></script>
-    <script src="js/validator.js"></script>
+    <!--<script src="js/validator.js"></script>-->
     <script src="js/cookie.js"></script>
     <script src="js/AJAX-API_Session.js"></script>
     <script src="js/custom-AJAX-api-call.js"></script>
     <script src="js/xml2json.min.js"></script>
-    <script src="js/custom.js"></script>
+
     <script src="js/jquery.loadJSON.js"></script>
     <script src="js/handleCookie.js"></script>
     <script src="js/vkbeautify.js"></script>
+    <script src="js/custom.js"></script>
 
     <!-- Page-Level Plugin Scripts - Blank -->
 

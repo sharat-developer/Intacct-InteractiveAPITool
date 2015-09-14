@@ -65,6 +65,9 @@ $(function() {
             }
 
             $(this).trigger('reset'); // reset form
+
+            $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success center").html("<center>You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.</center>");
+
             setvalues();
 
         }
@@ -108,6 +111,8 @@ $(function() {
             $("#docParIdDiv").html("");
             $("#executeXMLDiv").html("");
             $("#addQueryBtn").hide();
+            $("#configDetailsSaveAlertDiv").removeClass("alert").html("");
+            //$("#configDetailsSaveAlertDiv").html("");
 
         });
 
@@ -117,6 +122,6 @@ $(function() {
             chooseCompanyIDJq.append("<option value='"+key+"' selected = 'true' >"+key+"</option>");
         });
 
-        chooseCompanyIDJq.trigger( "change" );
+        //chooseCompanyIDJq.trigger( "change" );
     }
 });

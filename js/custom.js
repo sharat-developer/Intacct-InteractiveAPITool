@@ -471,10 +471,18 @@ function constructInspectXML( keyForm ){
 /**
  *  Function to construct and return readMore method XML request
  **/
-function constructReadMoreXML(){
+function constructReadMoreXML( keyForm ){
 
+    var  keyFormObj = nameValueToJSON( keyForm.serializeArray());
+    var  readMoreWithResultId = keyFormObj['readMoreWithResultId'];
     var xmlString = getTabOffsetString(2)+"<"+selectedMethod+"> \n";
-    xmlString += getTabOffsetString(3)+"<object>"+$("#selectObject").val()+"</object>\n";
+
+    if(readMoreWithResultId) {
+        xmlString += getTabOffsetString(3) + "<resultId>" + keyFormObj['resultId'] +"</resultId>\n";
+    } else {
+        xmlString += getTabOffsetString(3)+"<object>"+$("#selectObject").val()+"</object>\n";
+    }
+
     xmlString += getTabOffsetString(2)+"</"+selectedMethod+">\n";
     return xmlString;
 }
@@ -728,11 +736,30 @@ function populateSelectObject(responseData){
                 return;
             } else if(selectedMethod == "readMore"){ //handle readMore method separately
                 console.log("selectedMethod ==>" + selectedMethod);
+                //selectFieldDivJq.html("");
+                //xmlString = constructReadMoreXML();
+                //xmlString = constructContentWrapper(xmlString);
+                //constructedXMLShowFormPopulateData(xmlString, true);
+                //return;
+                constructKeyInputForm(selectedMethod);
+
                 selectFieldDivJq.html("");
-                xmlString = constructReadMoreXML();
-                xmlString = constructContentWrapper(xmlString);
-                constructedXMLShowFormPopulateData(xmlString, true);
+                docParIdDivJq.html(
+                    "<div class='row'>" +
+                    "<div class='col-md-8 col-md-offset-4'>"+
+                    "<button type='button' id = 'constructReadMoreXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+                    "</div>" +
+                    "</div>"
+                );
+
+                $("#constructReadMoreXMLBtn").on("click", function(){
+                    var xmlString = constructReadMoreXML( $("#keyForm"));
+                    xmlString = constructContentWrapper(xmlString);
+                    constructedXMLShowFormPopulateData(xmlString, true);
+                });
+
                 return;
+
             }else if(selectedMethod == "delete"){ //handle delete method separately
                 constructKeyInputForm(selectedMethod);
 
@@ -1279,7 +1306,7 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         "<fieldset>" +
         "   <div class='col-sm-12 custom-font-size' >"+
         "		<div class='form-group'>"+
-        "		    <label >API Request</label>"+
+        "		    <label class='control-label'>API Request</label>"+
         "           <textarea id='createXML_2_1' class='form-control' ></textarea>"+
         "		</div>"+
         "	</div>" +
@@ -1843,13 +1870,13 @@ function constructKeyInputForm(methodName){
         //var index = 0;
         keyFormHTML =
                 "<fieldset>" +
-                "<legend>" + selectedMethod + "-method :: with details checkbox</legend>" +
+                "<legend>" + selectedMethod + "-method :: with details</legend>" +
                 "<div class='row'>"
             ;
         keyFormHTML +=
             "<div class='col-md-4' >"+
             "		<div class= 'checkbox'>"+
-            "			    <input type='checkbox' name='inspectWithDetail' value='true' >"+"Inspect With Detail"+
+            "			    <input type='checkbox' id='inspectWithDetail' name='inspectWithDetail' value='true' >"+"Inspect With Detail"+
             "			    </input>"+
             "		</div>"+
             "</div>"
@@ -1866,7 +1893,58 @@ function constructKeyInputForm(methodName){
         );
 
         return;
-    } else if(methodName.indexOf("Query") != -1) { //keyOrQueryDiv
+    }else if(methodName.indexOf("readMore") != -1) {
+        keyOrQueryDivHTML =
+            "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
+        ;
+
+        //var index = 0;
+        keyFormHTML =
+            "<fieldset>" +
+            "<legend>" + selectedMethod + "-method :: with resultId</legend>" +
+            "<div id='readMoreWithResultIdDiv' class='row'>"
+        ;
+        keyFormHTML +=
+            "<div class='col-md-5' >"+
+            "		<div class='checkbox'>"+
+            "			    <input type='checkbox' id='readMoreWithResultId' name='readMoreWithResultId' value='true'>" + "readMore with ResultId" +
+            "			    </input>"+
+            "		</div>"+
+            "</div>"
+        ;
+        keyFormHTML +=
+            "</div>" +
+            "</fieldset>"
+        ;
+        keyOrQueryDivHTML += keyFormHTML;
+        keyOrQueryDivJq.html(
+            keyOrQueryDivHTML +
+            "</form>"
+            // + "<div id='queryComponentDiv'></div>"
+        );
+
+        $("#readMoreWithResultId").on("click", function() {
+            //console.log("readMoreWithResultId:onClick");
+            if($(this).is(":checked")) {
+                console.log("readMoreWithResultId:checked");
+                $("#readMoreWithResultIdDiv").append(
+                    "<div id='resultIdDiv' class='col-md-5' >" +
+                    "		<div class='control-group'>" +
+                    "		    <label class='control-label'> Result Id </label>" + //class='control-label'
+                    "			    <input type='text' id='resultId' name='resultId' placeholder='Input readByQuery or readView resultId' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
+                    "       </div>"+
+                    "</div>"
+                );
+            } else {
+                console.log("readMoreWithResultId:notChecked");
+                $("#resultIdDiv").remove();
+            }
+
+        });
+
+
+        return;
+    }   else if(methodName.indexOf("Query") != -1) { //keyOrQueryDiv
         keyOrQueryDivHTML =
                 "<form id='queryHiddenForm' class='form-horizontal'  method='post'  action='#'>"
             ;
@@ -1984,7 +2062,7 @@ function constructKeyInputForm(methodName){
         keyFormHTML +=
             "<div class='col-md-5' >" +
             "		<div class='control-group'>" +
-            "		<label > keys </label>" + //class='control-label'
+            "		<label class='control-label'> keys </label>" + //class='control-label'
             "			<input type='text' name='keys' placeholder='"+keysPlaceholder+"' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
             "</div>"
         ;

@@ -43,10 +43,11 @@ $(function() {
             console.log('configurationArray==>'+JSON.stringify(configurationArray));
 
             var companyId = $('#companyId').val();
+            var configurationName = $('#configurationName').val();
             var configurationArrayObject = nameValueToJSON(configurationArray);
             console.log('companyCred-------------------------------------==>'+JSON.stringify(configurationArrayObject));
 
-            cookieVar[companyId] = configurationArrayObject;
+            cookieVar[configurationName] = configurationArrayObject;
 
 
             var cookieVal = JSON.stringify(cookieVar);
@@ -66,9 +67,11 @@ $(function() {
 
             $(this).trigger('reset'); // reset form
 
+            setvalues();
+
             $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success text-center").html("You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.");
 
-            setvalues();
+
 
         }
 
@@ -122,6 +125,6 @@ $(function() {
             chooseCompanyIDJq.append("<option value='"+key+"' selected = 'true' >"+key+"</option>");
         });
 
-        //chooseCompanyIDJq.trigger( "change" );
+        chooseCompanyIDJq.trigger( "change" );
     }
 });

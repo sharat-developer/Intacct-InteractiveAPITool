@@ -35,7 +35,10 @@
             <!-- /.navbar-header -->
 
             <ul class="nav navbar-top-links navbar-right">
-
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                    Login
+                </button>
 
             </ul>
             <!-- /.navbar-top-links -->
@@ -155,12 +158,12 @@
                                                     <div class="control-group">
                                                         <label class="control-label" for="senderPassword">Sender Password</label>
 
-                                                        <div class="controls">
+                                                        <!--<div class="controls">-->
                                                             <input type="password" class="form-control"
                                                                    name="senderPassword" id="senderPassword" required/>
 
                                                             <p class="help-block">Enter the Sender Password</p>
-                                                        </div>
+                                                        <!--</div>-->
                                                     </div>
                                                 </div>
                                             </div>
@@ -209,8 +212,8 @@
                                                     <a id="moreOptionsAnchor"></a>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div id="moreOptions">
+                                            <div id="moreOptions" >
+                                                <div class="row">
 
                                                     <div class="col-md-3">
                                                         <div class="control-group">
@@ -236,7 +239,7 @@
                                                                 <option value="true">true</option>
                                                             </select>
 
-                                                                <p class="help-block">Make this 'true' to URL Encode Request XML</p>
+                                                                <p class="help-block">Make it 'true' to Encode Request XML</p>
                                                             <!--</div>-->
                                                         </div>
                                                     </div>
@@ -261,10 +264,12 @@
                                                                     <option value="false">false</option>
                                                                     <option value="true">true</option>
                                                                 </select>
-                                                                <p class="help-block">Make this 'true' to impose Unique ID</p>
+                                                                <p class="help-block">Make it 'true' to impose Unique ID</p>
                                                             <!--</div>-->
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div class="row">
 
                                                     <div class="col-md-3">
                                                         <div class="control-group">

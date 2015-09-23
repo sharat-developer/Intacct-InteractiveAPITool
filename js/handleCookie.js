@@ -66,7 +66,7 @@ $(function() {
 
             $(this).trigger('reset'); // reset form
 
-            $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success center").html("<center>You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.</center>");
+            $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success text-center").html("You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.");
 
             setvalues();
 

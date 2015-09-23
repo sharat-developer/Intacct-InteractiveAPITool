@@ -153,6 +153,34 @@ function instantiateFormValidate(formId) {
     //keyFormValidator.form();
 }
 
+function instantiateLoginFormValidate(formId) {
+    var formIdJq = $("#" + formId);
+    formIdJq.removeAttr("novalidate");
+
+    var formValidator = formIdJq.validate({
+        rules : {
+            loginPassword: {
+                minlength: 5
+            },
+            confirmPassword: {
+                minlength: 5,
+                equalTo: "#loginPassword"
+            }
+        },
+        highlight: function (element) {
+            //alert('highlight');
+            $(element).closest('.control-group').addClass('has-error');
+        },
+        success: function (element) {
+            element.text('').addClass('valid')
+                .closest('.control-group').removeClass('has-error').addClass('success');
+        },
+        errorElement: 'label',
+        errorClass: 'help-block'
+    });
+
+}
+
 function triggerFormValidation(formId) {
     var formIdJq = $("#" + formId);
 
@@ -264,12 +292,13 @@ $(function() {
 
     //on-load of page related to configuration screen
     $("#moreOptionsAnchor").on("click", function() {
-        $("#moreOptions").toggle();
-        if($('#moreOptions').is(':visible')){
+
+        if($("#moreOptions").toggle().is(':visible')){
             $(this).text('-Hide More Options');
         }else{
             $(this).text('+Show More Options');
         }
+
     }).text("+Show More Options");
     //$(this).text("Show More Options");
     $("#moreOptions").hide();

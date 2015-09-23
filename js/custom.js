@@ -153,33 +153,7 @@ function instantiateFormValidate(formId) {
     //keyFormValidator.form();
 }
 
-function instantiateLoginFormValidate(formId) {
-    var formIdJq = $("#" + formId);
-    formIdJq.removeAttr("novalidate");
 
-    var formValidator = formIdJq.validate({
-        rules : {
-            loginPassword: {
-                minlength: 5
-            },
-            confirmPassword: {
-                minlength: 5,
-                equalTo: "#loginPassword"
-            }
-        },
-        highlight: function (element) {
-            //alert('highlight');
-            $(element).closest('.control-group').addClass('has-error');
-        },
-        success: function (element) {
-            element.text('').addClass('valid')
-                .closest('.control-group').removeClass('has-error').addClass('success');
-        },
-        errorElement: 'label',
-        errorClass: 'help-block'
-    });
-
-}
 
 function triggerFormValidation(formId) {
     var formIdJq = $("#" + formId);

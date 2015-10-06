@@ -154,6 +154,63 @@ function instantiateFormValidate(formId) {
 }
 
 
+/**
+ *
+ */
+function loginButtonHTML(appUserName) {
+    return '<p></p>'+
+    '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'+
+        '<span id="userDisplaySpan" style="font-size: large">&nbsp;&nbsp;<span id="displayUsernameSpan">'+ appUserName +'</span>&nbsp;'+
+            '<span class="caret"></span>'+
+                        '</span>'+
+        '</button>'+
+            '<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">'+
+                '<li><a id="logOutButton" href="#" >Logout</a></li>'+
+            '</ul>';
+}
+
+/**
+ *
+  */
+function logoutButtonHTML() {
+    return '<p></p>'+
+        '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'+
+        '<span id="loginDisplaySpan" style="font-size: large" data-toggle="modal" data-target="#myModal">Login</span>'+
+        '</button>'
+        ;
+}
+
+/**
+ *
+ * @param formId
+ */
+function instantiateLoginFormValidate(formId) {
+    var formIdJq = $("#" + formId);
+    formIdJq.removeAttr("novalidate");
+
+    var formValidator = formIdJq.validate({
+        rules : {
+            loginPassword: {
+                minlength: 5
+            },
+            confirmPassword: {
+                minlength: 5,
+                equalTo: "#loginPassword"
+            }
+        },
+        highlight: function (element) {
+            //alert('highlight');
+            $(element).closest('.control-group').addClass('has-error');
+        },
+        success: function (element) {
+            element.text('').addClass('valid')
+                .closest('.control-group').removeClass('has-error').addClass('success');
+        },
+        errorElement: 'label',
+        errorClass: 'help-block'
+    });
+
+}
 
 function triggerFormValidation(formId) {
     var formIdJq = $("#" + formId);
@@ -257,11 +314,335 @@ function getGetListOperationXML(requestContent_2_1, operation) {
 }
 
 
+/**
+ * Function to delete sessionStorage variables related to this App
+ */
+function clearAppSessionStorage() {
+    sessionStorage.removeItem("loggedInAppUserName");
+    sessionStorage.removeItem("loggedInAppUserPassword");
+    sessionStorage.removeItem("loggedInAppUserSalt");
+}
+
+/**
+ * Function which calls all App related Init methods
+ */
+function appRelatedInitFunctions() {
+
+    //$("#logOutButton").hide();
+    //$("#userDisplaySpan").hide();
+
+    $("#deleteConfig").hide();
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    if(loggedInAppUserName != undefined) {
+        activeSessionRoutines(loggedInAppUserName);
+    } else {
+        $("#logInModalButton").show();
+        $("#loginDisplaySpan").show();
+        //$(".dropdown-menu").hide();
+        loadTempConfiguration();
+    }
+    // is localStorage available?
+    if (typeof window.localStorage != "undefined") {
+
+        // retrieve
+        var userInfo = localStorage.getItem("IATUserInfo");
+
+        // store
+        if(userInfo != undefined) {
+            console.log("IATUserInfo==>");
+            console.log(userInfo);
+            console.log(JSON.parse(userInfo));
+        } else {
+            //console.log("set::interactiveAPIToolUserInfo");
+            //localStorage.setItem("IATUserInfo", userInfoObj);
+        }
+        // delete
+        //localStorage.removeItem("IATUserInfo");
+    } else {
+        console.log("localStorage is not supported by browser");
+    }
+
+    appRegistrationFormSubmission();
+    appSignInFormSubmission();
+}
+
+/**
+ * Function to save User Info in localStorage
+ */
+function saveUserInfo( userInfo ) {
+
+    var userInfoObj = [];
+
+    // is localStorage available?
+    if (typeof window.localStorage != "undefined") {
+
+        // retrieve
+        var userInfoDB = localStorage.getItem("IATUserInfo");
+        var loggedInUserName = "";
+
+        // store
+        if(userInfoDB != undefined) {
+            console.log("IATUserInfo==>");
+            console.log(userInfoDB);
+            var userInfoDBJSON = JSON.parse(userInfoDB);
+
+            $.each(userInfo, function(key, val) {
+                console.log("userInfoKey==>" + key);
+                console.log("userInfoVal==>" + val);
+                loggedInUserName = key;
+                userInfoDBJSON[key] = val;
+
+            });
+
+            //set IATUserInfo DB
+            localStorage.setItem("IATUserInfo", JSON.stringify(userInfoDBJSON));
+
+        } else {
+            console.log("set::interactiveAPIToolUserInfo");
+            userInfoObj = userInfo;
+
+            //initialize the IATUserInfo DB
+            localStorage.setItem("IATUserInfo", JSON.stringify(userInfoObj));
+        }
+        // delete
+        //localStorage.removeItem("IATUserInfo");
+    } else {
+        clearAppSessionStorage();
+        console.log("localStorage is not supported by browser");
+    }
+}
+
+/**
+ * Function for Registration form submission methods
+ */
+function appRegistrationFormSubmission() {
+    $("#appUserRegisterForm").on("submit", function(e) {
+        e.preventDefault();
+        var appUserRegisterJSON = nameValueToJSON($( this ).serializeArray());
+        console.log("appRegisterJSON==>" + JSON.stringify(appUserRegisterJSON));
+
+
+        var enteredPassword = appUserRegisterJSON["appUserPassword"];
+        var passwordHash = CryptoJS.SHA3(enteredPassword);
+
+        var userSalt = CryptoJS.lib.WordArray.random(512/8);
+
+        console.log("enteredPassword==>" + enteredPassword);
+        console.log("passwordHash==>" + passwordHash);
+        console.log("userSalt==>" + userSalt);
+
+        //remove appUserConfirmPassword field from appUserRegisterForm
+        delete appUserRegisterJSON["appUserConfirmPassword"];
+        delete appUserRegisterJSON["appUserPassword"];
+
+        appUserRegisterJSON["appUserPassword"] = passwordHash.toString();
+        appUserRegisterJSON["appUserSalt"] = userSalt.toString();
+
+
+        console.log("after delete::appRegisterJSON==>" + JSON.stringify(appUserRegisterJSON));
+
+        //making appUserName as key for appUserRegisterJSON object
+        var appUserKey = appUserRegisterJSON["appUserName"];
+        var appUserRegisterObj = {};
+        appUserRegisterObj[appUserKey] = appUserRegisterJSON;
+
+        //auto login the registered user
+        sessionStorage.setItem("loggedInAppUserName", appUserRegisterJSON["appUserName"]);
+        sessionStorage.setItem("loggedInAppUserPassword", enteredPassword);
+        sessionStorage.setItem("loggedInAppUserSalt", userSalt);
+
+        saveUserInfo(appUserRegisterObj);
+
+        $("#myModal").modal("hide");
+    });
+
+}
+
+/**
+ * Function to check for active session
+ */
+function isActiveSessionExist() {
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    return loggedInAppUserName != undefined;
+}
+
+/**
+ * Function to address activeSession routines
+ */
+function activeSessionRoutines(appUserName) {
+    $("#myModal").modal("hide");
+    $("#logInModalButton").hide();
+
+
+    //$("#loginDisplaySpan").hide();
+    //$("#userDisplaySpan").show();
+
+    $(".dropdown").html(loginButtonHTML(appUserName));
+
+    $("#logOutButton").on("click", function(){
+        clearAppSessionStorage();
+        $("#logInModalButton").show();
+        $("#loginDisplaySpan").show();
+        $(".dropdown-menu").hide();
+        $( this ).hide();
+        $("#loginUserDisplaySpan").html("");
+        $("#loginMessageSpan").html("");
+        $("#signInForm").trigger("reset");
+        //$("#deleteConfig").hide();
+        loadConfigurationFromLocalStorage();
+        //reset the configuration details form
+        $(".dropdown").html(logoutButtonHTML());
+    });
+
+    //$("#loginUserDisplaySpan").html(" Welcome " + appUserName + "!");
+    //$("#displayUsernameSpan").html( appUserName );
+    //$(".dropdown").html(loginButtonHTML(appUserName));
+
+
+    //check if user has entered configuration before login
+    var tempConfigurationObjectString = sessionStorage.getItem("tempConfigurationObject");
+    if(tempConfigurationObjectString != undefined) {
+
+        var tempConfigurationObject = JSON.parse(tempConfigurationObjectString);
+
+        console.log("tempConfigurationObject==>");
+        console.log(tempConfigurationObject);
+
+        sessionStorage.removeItem("tempConfigurationObject");
+
+        localStorageRelatedInitFunctions(tempConfigurationObject["configurationName"], tempConfigurationObject);
+        //loadConfigurationFromLocalStorage();
+    }
+
+    loadConfigurationFromLocalStorage();
+}
+
+/**
+ * Function for SignIn form submission methods
+ */
+function appSignInFormSubmission() {
+    $("#signInForm").on("submit", function(e) {
+
+        e.preventDefault();
+
+        //console.log("signInForm on submit");
+
+        var signInFormJSON = nameValueToJSON($( this ).serializeArray());
+        console.log("signInFormJSON==>" + JSON.stringify(signInFormJSON));
+
+        var enteredAppUserName = signInFormJSON["appUserName"];
+        var enteredAppUserPassword = signInFormJSON["appUserPassword"];
+
+        // retrieve
+        var userInfo = localStorage.getItem("IATUserInfo");
+
+        // check if exists
+        if(userInfo != undefined) {
+            console.log("IATUserInfo==>");
+            console.log(userInfo);
+
+            var userInfoObj = JSON.parse(userInfo);
+            console.log("userInfoObj==>");
+            console.log(userInfoObj);
+
+            var currentUserObj = userInfoObj[enteredAppUserName];
+
+            console.log("userInfoObj==>");
+
+            // if enteredAppUserName exists in localStorage
+            if(currentUserObj != undefined) {
+                console.log(currentUserObj);
+                var currentUserPasswordHash = currentUserObj["appUserPassword"];
+                console.log("currentUserPasswordHash==>" + currentUserPasswordHash);
+
+                var currentAppUserSalt = currentUserObj["appUserSalt"];
+                console.log("currentAppUserSalt==>" + currentAppUserSalt);
+
+                var enteredAppUserPasswordHash = CryptoJS.SHA3(enteredAppUserPassword);
+                console.log("enteredAppUserPasswordHash==>" + enteredAppUserPasswordHash);
+
+                if(currentUserPasswordHash == enteredAppUserPasswordHash){
+                    $("#loginMessageSpan").html("");
+                    console.log("####################### User Sign In successful #######################");
+                    //store login username in session
+                    sessionStorage.setItem("loggedInAppUserName", enteredAppUserName);
+                    sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
+                    sessionStorage.setItem("loggedInAppUserSalt", currentAppUserSalt);
+
+                    activeSessionRoutines(enteredAppUserName);
+
+                } else {
+                    $("#loginMessageSpan").html("User Sign In attempt unsuccessful! Please try again.");
+                    console.log("~~~~~~~~~~~~~~~~~~~~~~~ User Sign In attempt unsuccessful ~~~~~~~~~~~~~");
+                }
+            }
+            else {
+                //console.log("set::interactiveAPIToolUserInfo");
+                //localStorage.setItem("IATUserInfo", userInfoObj);
+                $("#loginMessageSpan").html("Username does not exists!");
+            }
+
+
+        } else {
+            //console.log("set::interactiveAPIToolUserInfo");
+            //localStorage.setItem("IATUserInfo", userInfoObj);
+        }
+
+        // reset form
+        $(this).trigger('reset');
+    });
+}
+
+
+/**
+ * Function to load configuration details from tempConfigurations
+ */
+function loadTempConfiguration() {
+//check if user has entered configuration before login
+    var tempConfigurationObjectString = sessionStorage.getItem("tempConfigurationObject");
+    if(tempConfigurationObjectString != undefined) {
+
+        var tempConfigurationObject = JSON.parse(tempConfigurationObjectString);
+
+        console.log("tempConfigurationObject==>");
+        console.log(tempConfigurationObject);
+
+        //load temprory configuration in the form
+        $('#configuration').loadJSON(tempConfigurationObject);
+    }
+}
 
 /**
  *  jQuery document.getReady function
  **/
 $(function() {
+
+    appRelatedInitFunctions();
+
+
+    /**
+     * for back to top functionality
+     *
+     */
+    $(window).scroll(function () {
+        if ($(this).scrollTop() > 50) {
+            $('#back-to-top').fadeIn();
+        } else {
+            $('#back-to-top').fadeOut();
+        }
+    });
+    // scroll body to 0px on click
+    $('#back-to-top').click(function () {
+        $('#back-to-top').tooltip('hide');
+        $('body,html').animate({
+            scrollTop: 0
+        }, 800);
+        return false;
+    }).tooltip('show');
+
+
+
+    //$('#back-to-top').tooltip('show');
 
 
     //on-load of page related to configuration screen

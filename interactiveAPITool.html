@@ -35,7 +35,29 @@
             <!-- /.navbar-header -->
 
             <ul class="nav navbar-top-links navbar-right">
+                <!-- Button trigger modal -->
+                <div class="dropdown">
+                    <p></p>
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 
+
+
+                        <span id="loginDisplaySpan" style="font-size: large" data-toggle="modal" data-target="#myModal">Login</span>
+
+                    </button>
+
+                </div>
+
+                <!-- Button trigger modal -->
+                <!--<div id="logInDiv">-->
+                    <!--<span id="loginUserDisplaySpan"></span><span></span>-->
+                    <!--<button id="logInModalButton" type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">-->
+                        <!--Login-->
+                    <!--</button>-->
+                    <!--<button id="logOutButton" type="button" class="btn btn-primary btn-lg" >-->
+                        <!--Logout-->
+                    <!--</button>-->
+                <!--</div>-->
 
             </ul>
             <!-- /.navbar-top-links -->
@@ -103,7 +125,7 @@
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="control-group">
-                                                        <label class="control-label" for="companyId">Configuration Name</label>
+                                                        <label class="control-label" for="configurationName">Configuration Name</label>
 
                                                         <!--<div class="controls">-->
                                                         <input type="text" class="form-control" name="configurationName"
@@ -461,6 +483,130 @@
     </div>
     <!-- /#wrapper -->
 
+    <!-- Login Modal start -->
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <!--<div class="modal-header">-->
+                    <!--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+                    <!--<h4 class="modal-title" id="myModalLabel">Modal title</h4>-->
+                <!--</div>-->
+
+                <!--<div class="modal-body">-->
+
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <!--<div class="row">-->
+                            <!--<div class="">-->
+                                <div class=" account-wall">
+                                    <div id="my-tab-content" class="tab-content">
+                                        <div class="tab-pane active" id="login">
+                                            <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                                                 alt="">
+                                            <p class="text-center"><span id="loginMessageSpan"></span> </p>
+                                            <form id="signInForm" class="form-signin" action="" method="">
+                                                <input id="appUserNameSignIn" name="appUserName" type="text" class="form-control" placeholder="Username" required autofocus>
+                                                <input id="appUserPasswordSignIn" name="appUserPassword" type="password" class="form-control" placeholder="Password" required>
+                                                <input type="submit" class="btn btn-lg btn-default btn-block" value="Sign In" />
+                                            </form>
+                                            <div id="tabs" data-tabs="tabs">
+                                                <p class="text-center"><a href="#register" data-toggle="tab">Need an Account?</a></p>
+                                                <p class="text-center"><a href="#select" data-toggle="tab">Select Account</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="register">
+                                            <form id="appUserRegisterForm" class="form-signin" action="" method="">
+                                                <input type="text" id="appUserName" name="appUserName" class="form-control" placeholder="User Name..." required autofocus>
+                                                <!--<input type="email" id="appUserEmail" name="appUserEmail" class="form-control" placeholder="Email Address..." required>-->
+                                                <input type="password" id="appUserPassword" name="appUserPassword" class="form-control" placeholder="Password ..." required>
+                                                <input type="password" id="appUserConfirmPassword" name="appUserConfirmPassword" class="form-control" placeholder="Renter Password ..." required>
+                                                <input type="submit" class="btn btn-lg btn-default btn-block" value="Sign Up" />
+                                            </form>
+                                            <div id="tabs" data-tabs="tabs">
+                                                <p class="text-center"><a href="#login" data-toggle="tab">Have an Account?</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="select">
+                                            <div id="tabs" data-tabs="tabs">
+                                                <div class="media account-select">
+                                                    <a href="#user1" data-toggle="tab">
+                                                        <div class="pull-left">
+                                                            <img class="select-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                                                                 alt="">
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <h4 class="select-name">User Name 1</h4>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <hr />
+                                                <div class="media account-select">
+                                                    <a href="#user2" data-toggle="tab">
+                                                        <div class="pull-left">
+                                                            <img class="select-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                                                                 alt="">
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <h4 class="select-name">User Name 2</h4>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                                <hr />
+                                                <p class="text-center"><a href="#login" data-toggle="tab">Back to Login</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="user1">
+                                            <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                                                 alt="">
+                                            <h3 class="text-center">User Name 1</h3>
+                                            <form class="form-signin" action="" method="">
+                                                <input type="hidden" class="form-control" value="User Name">
+                                                <input type="password" class="form-control" placeholder="Password" autofocus required>
+                                                <input type="submit" class="btn btn-lg btn-default btn-block" value="Sign In" />
+                                            </form>
+                                            <p class="text-center"><a href="#login" data-toggle="tab">Back to Login</a></p>
+                                            <p class="text-center"><a href="#select" data-toggle="tab">Select another Account</a></p>
+                                        </div>
+                                        <div class="tab-pane" id="user2">
+                                            <img class="profile-img" src="https://lh5.googleusercontent.com/-b0-k99FZlyE/AAAAAAAAAAI/AAAAAAAAAAA/eu7opA4byxI/photo.jpg?sz=120"
+                                                 alt="">
+                                            <h3 class="text-center">User Name 2</h3>
+                                            <form class="form-signin" action="" method="">
+                                                <input type="hidden" class="form-control" value="User Name">
+                                                <input type="password" class="form-control" placeholder="Password" autofocus required>
+                                                <input type="submit" class="btn btn-lg btn-default btn-block" value="Sign In" />
+                                            </form>
+                                            <p class="text-center"><a href="#login" data-toggle="tab">Back to Login</a></p>
+                                            <p class="text-center"><a href="#select" data-toggle="tab">Select another Account</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <!--</div>-->
+                        <!--</div>-->
+                    </div>
+
+                <!--</div>-->
+
+                <!--<div class="modal-footer">-->
+                    <!--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+                <!--</div>-->
+            </div>
+        </div>
+    </div>
+    <!-- Login Modal end -->
+
+    <!-- back-to-top UI start -->
+
+    <a id="back-to-top" href="#" class="btn btn-primary btn-lg back-to-top"
+       role="button" title="Back to Top" data-toggle="tooltip" data-placement="top">
+        <span class="glyphicon glyphicon-chevron-up"></span>
+    </a>
+
+    <!-- back-to-top UI end -->
+
     <!-- Core Scripts - Include with every page -->
     <script src="js/jquery-1.10.2.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -475,6 +621,9 @@
     <script src="js/handleCookie.js"></script>
     <script src="js/vkbeautify.js"></script>
     <script src="js/custom.js"></script>
+    <script src="js/cryptoJs/rollups/sha3.js"></script>
+    <script src="js/cryptoJs/rollups/pbkdf2.js"></script>
+    <script src="js/cryptoJs/rollups/aes.js"></script>
 
     <!-- Page-Level Plugin Scripts - Blank -->
 

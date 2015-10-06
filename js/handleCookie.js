@@ -81,6 +81,78 @@ function loadConfiguration() {
 
     populateConfiguration();
 }
+
+/**
+ * Function to populate chooseCompanyID selectbox
+ *
+ */
+function populateConfigurationFromLocalStorage(appUserConfigListObj) {
+
+    var chooseCompanyIDJq = $("#chooseCompanyID");
+    var deleteButtonJq = $("#deleteConfig");
+
+    console.log("$.isEmptyObject(appUserConfigListObj)==>" + $.isEmptyObject(appUserConfigListObj));
+    console.log("appUserConfigListObj==>");
+    console.log(appUserConfigListObj);
+
+    chooseCompanyIDJq.html('');
+
+    //if there are no saved configuration
+    if($.isEmptyObject(appUserConfigListObj)) {
+        chooseCompanyIDJq.html("<option value='#'>Save Configuration to list here</option>");
+        //clear configuration form contents if saved configuration is empty
+        clearFormContents($("#configuration"));
+        chooseCompanyIDJq.trigger("change");
+        deleteButtonJq.hide();
+    } else {
+        $.each(appUserConfigListObj, function(key, value) {
+            console.log("key==>" + key);
+            console.log("value==>" + value);
+            chooseCompanyIDJq.append("<option value='" + value + "' selected = 'true' >" + value + "</option>");
+        });
+
+        console.log("chooseCompanyIDJq==>");
+        console.log(chooseCompanyIDJq.html());
+
+        deleteButtonJq.show();
+        // to initiate the load of configuration details in the configuration form
+        chooseCompanyIDJq.trigger("change");
+    }
+
+}
+
+/**
+ * Function to load Configuration in localStorage to the  configuration form
+ *
+ */
+function loadConfigurationFromLocalStorage() {
+
+    var configurationJq = $('#configuration');
+    var chooseCompanyIDJq = $("#chooseCompanyID");
+
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    var appUserConfigListName = "IAT__" + loggedInAppUserName + "__" + "configList" ;
+
+    // retrieve
+    var appUserConfigListDB = localStorage.getItem(appUserConfigListName);
+
+    if(appUserConfigListDB != undefined) {
+        console.log("appUserConfigListDB==>");
+        console.log(appUserConfigListDB);
+        var appUserConfigListDBJSON = JSON.parse(appUserConfigListDB);
+        console.log("appUserConfigListDBJSON==>");
+        console.log(appUserConfigListDBJSON);
+        populateConfigurationFromLocalStorage(appUserConfigListDBJSON);
+
+    } else {
+        //appUserConfigListDB is empty
+        console.log("else::appUserConfigListDB==>");
+        console.log(appUserConfigListDB);
+        populateConfigurationFromLocalStorage({});
+    }
+
+}
+
 /**
  * function to clear all divs after when there is change in configuration
  */
@@ -110,6 +182,222 @@ function deleteCurrentConfig(valueSelected) {
     var chooseCompanyIDJq = $("#chooseCompanyID");
     chooseCompanyIDJq.html('');
     populateConfiguration();
+}
+
+/**
+ * Function to delete selected configuration from localStorage
+ *
+ */
+function deleteCurrentConfigWithLocalStorage(valueSelected) {
+    //delete the selected value
+
+    var appUserConfigListName = getAppUserConfigListName();
+
+    // retrieve
+    var appUserConfigListDB = localStorage.getItem(appUserConfigListName);
+    if(appUserConfigListDB != undefined) {
+        console.log("appUserConfigListDB==>");
+        console.log(appUserConfigListDB);
+        var appUserConfigListDBJSON = JSON.parse(appUserConfigListDB);
+
+        appUserConfigListDBJSON = $.grep(appUserConfigListDBJSON, function(value) {
+            return value != valueSelected;
+        });
+
+        console.log("after remove():appUserConfigListDB==>");
+        console.log(appUserConfigListDBJSON);
+
+        var appUserConfigListObjectString = JSON.stringify(appUserConfigListDBJSON);
+        //set the appUserConfigListName
+        localStorage.setItem(appUserConfigListName, appUserConfigListObjectString);
+
+        //remove appUserConfigDetailsName
+        var appUserConfigDetailsName =  getAppUserConfigDetailsName(valueSelected);
+        localStorage.removeItem(appUserConfigDetailsName);
+    }
+
+
+    var chooseCompanyIDJq = $("#chooseCompanyID");
+    chooseCompanyIDJq.html('');
+    loadConfigurationFromLocalStorage();
+}
+
+/**
+ * Function to encrypt the Sensitive Data in configDetails
+ */
+function encryptSensitiveData(configObject) {
+
+    var userPassword = configObject["userPassword"];
+    var senderPassword = configObject["senderPassword"];
+
+    var appUserName = sessionStorage.getItem("loggedInAppUserName");
+    var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
+    var appUserSalt = sessionStorage.getItem("loggedInAppUserSalt");
+
+    console.log("userPassword==>" + userPassword);
+    console.log("senderPassword==>" + senderPassword);
+    console.log("appUserPassword==>" + appUserPassword);
+    console.log("appUserSalt==>" + appUserSalt);
+
+    var encryptionKey512Bits = CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
+    console.log("encryptionKey512Bits==>" + encryptionKey512Bits);
+
+
+    var encryptedUserPassword = CryptoJS.AES.encrypt(userPassword, encryptionKey512Bits).toString();
+    console.log("encryptedUserPassword==>" + encryptedUserPassword);
+
+
+    var encryptedSenderPassword = CryptoJS.AES.encrypt(senderPassword, encryptionKey512Bits).toString();
+    console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
+
+    configObject["userPassword"] = encryptedUserPassword;
+    configObject["senderPassword"] = encryptedSenderPassword;
+
+    return configObject;
+}
+
+/**
+ * Function to decrypt the Sensitive Data in configDetails
+ */
+function decryptSensitiveData(configObject) {
+
+    var encryptedUserPassword = configObject["userPassword"];
+    var encryptedSenderPassword = configObject["senderPassword"];
+
+    var appUserName = sessionStorage.getItem("loggedInAppUserName");
+    var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
+    var appUserSalt = sessionStorage.getItem("loggedInAppUserSalt");
+
+    console.log("encryptedUserPassword==>" + encryptedUserPassword);
+    console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
+    console.log("appUserPassword==>" + appUserPassword);
+    console.log("appUserSalt==>" + appUserSalt);
+
+    var encryptionKey512Bits = CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
+    console.log("encryptionKey512Bits==>" + encryptionKey512Bits);
+
+
+    var decryptedUserPassword = CryptoJS.AES.decrypt(encryptedUserPassword, encryptionKey512Bits).toString(CryptoJS.enc.Utf8);
+    console.log("decryptedUserPassword==>" + decryptedUserPassword);
+
+
+    var decryptedSenderPassword = CryptoJS.AES.decrypt(encryptedSenderPassword, encryptionKey512Bits).toString(CryptoJS.enc.Utf8);
+    console.log("decryptedSenderPassword==>" + decryptedSenderPassword);
+
+    configObject["userPassword"] = decryptedUserPassword;
+    configObject["senderPassword"] = decryptedSenderPassword;
+
+    return configObject;
+}
+
+/**
+ * Function to get LoggedInAppUserName if exists
+ */
+function getLoggedInAppUserName() {
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    if(loggedInAppUserName != undefined) {
+        return loggedInAppUserName;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Function to get appUserConfigListName if exists
+ */
+function getAppUserConfigListName() {
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    if(loggedInAppUserName != undefined) {
+        return "IAT__" + loggedInAppUserName + "__" + "configList";
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Function to get appUserConfigListName if exists
+ */
+function getAppUserConfigDetailsName(configurationName) {
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    if(loggedInAppUserName != undefined) {
+        return "IAT__" + loggedInAppUserName + "__" + configurationName;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * Function which calls localStorage related Init methods
+ */
+function localStorageRelatedInitFunctions(configurationName, configObject) {
+
+    //encrypt the sensitive fields in configObject
+    var encryptedConfigObj = encryptSensitiveData(configObject);
+
+    //get login username in session
+    var loggedInAppUserName = getLoggedInAppUserName();
+    if(loggedInAppUserName == false) {
+        return;
+    }
+    var appUserConfigListName = getAppUserConfigListName();
+    var appUserConfigDetailsName = getAppUserConfigDetailsName(configurationName);
+
+    // retrieve
+    var appUserConfigListDB = localStorage.getItem(appUserConfigListName);
+    var configListObjData = [];
+
+    if(appUserConfigListDB != undefined) {
+        console.log("appUserConfigListDB==>");
+        console.log(appUserConfigListDB);
+        var appUserConfigListDBJSON = JSON.parse(appUserConfigListDB);
+
+        //check if configurationName exists in appUserConfigList if-not push element to it or else push it top
+        if($.inArray(configurationName, appUserConfigListDBJSON) === -1) {
+            appUserConfigListDBJSON.push(configurationName);
+        } else {
+            appUserConfigListDBJSON = $.grep(appUserConfigListDBJSON, function(value) {
+                return value != configurationName;
+            });
+            appUserConfigListDBJSON.push(configurationName);
+        }
+
+
+        configListObjData = appUserConfigListDBJSON;
+        console.log("appUserConfigListDBJSON==>");
+        console.log(appUserConfigListDBJSON);
+        console.log("appUserConfigListDB != undefined");
+
+    } else {
+        console.log("else::appUserConfigListDB==>");
+        console.log(appUserConfigListDB);
+
+        console.log("configObject==>");
+        console.log(configObject);
+
+        //var appUserConfigObject = JSON.parse(configObject);
+
+        //var configurationName = configObject["configurationName"];
+
+        configListObjData.push(configurationName);
+
+        console.log("else::configListObjData");
+        console.log(configListObjData);
+
+    }
+
+    // create Configuration List DB
+    localStorageCreateFunction(appUserConfigListName, configListObjData);
+
+    // create Configuration Details DB
+    localStorageCreateFunction(appUserConfigDetailsName, encryptedConfigObj);
+
+}
+
+/**
+ * Function which calls localStorage related Init methods
+ */
+function localStorageCreateFunction(localStorageName, dataObj) {
+    localStorage.setItem(localStorageName, JSON.stringify(dataObj));
 }
 
 
@@ -146,13 +434,37 @@ $(function() {
 
             cookieVar[configurationName] = configurationArrayObject;
 
-            saveCookie();
 
-            //$(this).trigger('reset'); // reset form
 
-            loadConfiguration();
+            var tempConfigurationObject = nameValueToJSON(configurationArray);
 
-            $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success text-center").html("You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.");
+            if(!isActiveSessionExist()) {
+
+                var tempConfigurationObjectString = JSON.stringify(tempConfigurationObject);
+                //set the user input configuration in sessionStorage
+                sessionStorage.setItem("tempConfigurationObject", tempConfigurationObjectString);
+
+                $("#logInModalButton").trigger("click");
+                console.log("after:logInModalButton click trigger");
+
+
+            } else {
+
+                localStorageRelatedInitFunctions(configurationName, tempConfigurationObject);
+                loadConfigurationFromLocalStorage();
+
+                $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success text-center").html("You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.");
+
+            }
+
+
+            //saveCookie();
+
+            ////$(this).trigger('reset'); // reset form
+
+            //loadConfiguration();
+
+
 
         }
 
@@ -171,18 +483,45 @@ $(function() {
             return;
         }
 
-        console.log('value---------------------==>'+JSON.stringify(cookieVar[valueSelected]));
-        $('#sessionId').val('');
+        //using cookie
+        //console.log('value---------------------==>'+JSON.stringify(cookieVar[valueSelected]));
 
+        //using localStorage
+        //get login username in session
+        var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+        var appUserConfigDetailsName = "IAT__" + loggedInAppUserName + "__" + valueSelected;
 
-        configurationJq.trigger('reset');
-        configurationJq.loadJSON(cookieVar[valueSelected]);
+        // retrieve
+        var appUserConfigDetailsDB = localStorage.getItem(appUserConfigDetailsName);
 
-        //$('#configuration').refresh();
+        if(appUserConfigDetailsDB != undefined) {
+            console.log("appUserConfigDetailsDBJSON != undefined");
+
+            console.log("appUserConfigDetailsDB==>");
+            console.log(appUserConfigDetailsDB);
+            var appUserConfigDetailsDBJSON = JSON.parse(appUserConfigDetailsDB);
+            console.log("appUserConfigDetailsDBJSON==>");
+            console.log(appUserConfigDetailsDBJSON);
+
+            configurationJq.trigger("reset");
+            var configObject = decryptSensitiveData(appUserConfigDetailsDBJSON);
+            configurationJq.loadJSON(configObject);
+            console.log("after configurationJq.loadJSON()::configObject==>");
+            configurationJq.loadJSON(configObject);
+
+        } else {
+            //throw new Error("there is something wrong in localStorage:" + appUserConfigDetailsName + " retrieval");
+        }
+
+        //console.log('value---------------------==>' + JSON.stringify(cookieVar[valueSelected]));
+        //configurationJq.trigger('reset');
+        //configurationJq.loadJSON(cookieVar[valueSelected]);
+
 
         //getAllObjects once configuration changes
         getAllObjectsFlag = true;
         clearDivsAfterConfigurationChanges();
+        $('#sessionId').val("");
 
         //$("#configDetailsSaveAlertDiv").html("");
 
@@ -205,14 +544,26 @@ $(function() {
         var valueSelected = chooseCompanyIDJq.val();
         console.log('valueSelected==>'+valueSelected);
         console.log('delete on click');
-        deleteCurrentConfig(valueSelected);
+        //deleteCurrentConfig(valueSelected);
+
+        deleteCurrentConfigWithLocalStorage(valueSelected);
+
     });
 
+    //for initial load-configuration using cookie
     if(docCookies.getItem('interactiveAPIToolCookie')){
-        loadConfiguration();
+        //loadConfiguration();
     }
     else{
         //set default values
     }
+
+    //for initial load-configuration using localStorage
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    if(loggedInAppUserName != undefined) {
+        loadConfigurationFromLocalStorage();
+    }
+
+
 
 });

@@ -444,7 +444,8 @@ $(function() {
                 //set the user input configuration in sessionStorage
                 sessionStorage.setItem("tempConfigurationObject", tempConfigurationObjectString);
 
-                $("#logInModalButton").trigger("click");
+                //$("#logInModalButton").trigger("click");
+                $("#loginDisplaySpan").trigger("click");
                 console.log("after:logInModalButton click trigger");
 
 

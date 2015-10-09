@@ -454,6 +454,8 @@ function appRegistrationFormSubmission() {
         saveUserInfo(appUserRegisterObj);
 
         $("#myModal").modal("hide");
+        //$(".dropdown").html(loginButtonHTML(appUserKey));
+        activeSessionRoutines(appUserKey);
     });
 
 }

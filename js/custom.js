@@ -60,7 +60,7 @@ function getObjectType(){
 }
 
 /*
- *  Function to sot the array
+ *  Function to sort the array
  */
 function sortArrayByKey(inputArray, sortKey) {
     return inputArray.sort(function (a, b) {
@@ -160,7 +160,7 @@ function instantiateFormValidate(formId) {
 function loginButtonHTML(appUserName) {
     return '<p></p>'+
     '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'+
-        '<span id="userDisplaySpan" style="font-size: large">&nbsp;&nbsp;<span id="displayUsernameSpan">'+ appUserName +'</span>&nbsp;'+
+        '<span id="userDisplaySpan" style="font-size: large"><span id="displayUsernameSpan">'+ appUserName +'</span>&nbsp;'+
             '<span class="caret"></span>'+
                         '</span>'+
         '</button>'+
@@ -1294,6 +1294,10 @@ function selectMethodCallbackFunction(data) {
     }
 
     responseData = dataJSON;
+
+    //sort the fields by field Name
+    dataJSON["Type"]["Fields"]["Field"] = sortArrayByKey(dataJSON["Type"]["Fields"]["Field"], "Name");
+
     responseData["Type"]["Fields"] = getAssociativeObjectFromArray(dataJSON["Type"]["Fields"]["Field"]);
 
     console.log(JSON.stringify(dataJSON));
@@ -2801,6 +2805,8 @@ function processResponseData(responseData, method){
                 delete processedResponseData["Type"]["Fields"][value];
             }
         });
+
+        //processedResponseData["Type"]["Fields"] = sortArrayByKey(processedResponseData["Type"]["Fields"], "Name");
 
         //for flat array objects
         //$.each(processedResponseData["Type"]["Fields"]["Field"], function(index, value) {

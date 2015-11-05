@@ -163,3 +163,9 @@ div.has-error > input[required] {
     right: 20px;
     display:none;
 }
+
+.selectAllFieldsSpan {
+    float: right;
+    font-size: .8em; /*font-size: medium;*/
+    margin-top: .5em;
+}

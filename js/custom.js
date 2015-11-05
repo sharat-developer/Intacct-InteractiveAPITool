@@ -2714,7 +2714,11 @@ function selectFieldFormPopulateData(processedData){
     var index = 0;
     var selectFieldFormHTML =
             "<fieldset>"+
-            "<legend>"+selectedMethod+"-method :: select fields</legend>"+
+            "<legend>"+selectedMethod+"-method :: select fields"+
+            "   <span class='selectAllFieldsSpan'>"+
+            "       <input  type='checkbox' name='selectAllFields' id='selectAllFields' >&nbsp;Select All&nbsp;"+
+            "   </span>"+
+            "</legend>"+
             "<div class='row'>"
         ;
     $.each(processedData["Type"]["Fields"], function(key, value){
@@ -2779,6 +2783,16 @@ function selectFieldFormPopulateData(processedData){
     //}
     constructReturnFormatForm();
     constructDocParIdForm(responseData["Type"]["_Name"], selectedMethod, true);
+
+    //select all fields checkbox functionality
+    $('#selectAllFields').on("click", function() {
+
+       if($("#selectAllFields:checked").length > 0) {
+           $("input[name=selectedFields]").prop("checked", true);
+       } else {
+           $("input[name=selectedFields]").prop("checked", false);
+       }
+    });
 }
 
 /**

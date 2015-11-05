@@ -160,7 +160,7 @@ function instantiateFormValidate(formId) {
 function loginButtonHTML(appUserName) {
     return '<p></p>'+
     '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'+
-        '<span id="userDisplaySpan" style="font-size: large"><span id="displayUsernameSpan">'+ appUserName +'</span>&nbsp;'+
+        '<span id="userDisplaySpan" style="font-size: large"><span id="displayUsernameSpan">'+ appUserName +'</span>&nbsp;&nbsp;'+
             '<span class="caret"></span>'+
                         '</span>'+
         '</button>'+

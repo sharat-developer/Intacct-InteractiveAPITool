@@ -22,3 +22,14 @@ Usage
 ------------
 
 Key-in your Company configuration details and save it, then go to API-3.0 and API-2.1 Tabs for Building and Posting API Requests.
+
+Ext Libraries Used
+------------
+* jQuery 
+    License - https://github.com/jquery/jquery/blob/master/LICENSE.txt
+    
+* Twitter Bootstrap
+    License - https://github.com/twbs/bootstrap/blob/master/LICENSE
+    
+* CryptoJS 
+    License - https://code.google.com/archive/p/crypto-js/wikis/License.wiki

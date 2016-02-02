@@ -43,6 +43,18 @@ body {
 
 /* Top Right Navigation Dropdown Styles */
 
+.dropdown {
+    padding-right: 2em;
+}
+
+.navbar-right .dropdown-menu {
+    right: 2em;
+}
+
+.navbar-header {
+    padding-left: 1em;
+}
+
 .navbar-top-links li {
     display: inline-block;
 }

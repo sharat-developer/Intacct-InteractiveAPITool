@@ -362,6 +362,7 @@ function appRelatedInitFunctions() {
         console.log("localStorage is not supported by browser");
     }
 
+    populateTabsSelectUserDiv();
     appRegistrationFormSubmission();
     appSignInFormSubmission();
 }
@@ -523,11 +524,11 @@ function activeSessionRoutines(appUserName) {
  * Function for SignIn form submission methods
  */
 function appSignInFormSubmission() {
-    $("#signInForm").on("submit", function(e) {
-
+    //form-signin
+    $(".form-signin").on("submit", function(e) {
         e.preventDefault();
 
-        //console.log("signInForm on submit");
+        console.log("signInForm on submit");
 
         var signInFormJSON = nameValueToJSON($( this ).serializeArray());
         console.log("signInFormJSON==>" + JSON.stringify(signInFormJSON));
@@ -2970,4 +2971,75 @@ function setPostStartTime(dtdVersion) {
     console.log("postStartTime==>" + postStartTime);
     postStartTimeJq.val(postStartTime);
 
+}
+
+/*
+ * Populate TabsSelectUserDiv by fetching the Users from localStorage
+ *
+ */
+function populateTabsSelectUserDiv() {
+    // retrieve
+    var userInfo = localStorage.getItem("IATUserInfo");
+
+    // check if exists
+    if(userInfo != undefined) {
+        console.log("IATUserInfo==>");
+        console.log(userInfo);
+
+        var userInfoObj = JSON.parse(userInfo);
+        console.log("userInfoObj==>");
+        console.log(userInfoObj);
+
+        var tabsSelectUserHTML = "";
+        var tabsUsersHTML = "";
+
+        var index = 0;
+        $.each(userInfoObj , function(key,v){
+
+            index++;
+            console.log("key==>");
+            console.log(key);
+
+            console.log("index==>");
+            console.log(index);
+
+
+            tabsSelectUserHTML +=
+                "<div class='media account-select'>"+
+                "                                                    <a href='#user-"+ index +"' data-toggle='tab'>"+
+                "                                                        <div class='pull-left'>"+
+                "                                                            <img class='select-img' src='../img/defaultUserDP.png'"+
+                "                                                                 alt=''>"+
+                "                                                        </div>"+
+                "                                                        <div class='media-body'>"+
+                "                                                            <h4 class='select-name'>" + key + "</h4>"+
+                "                                                        </div>"+
+                "                                                    </a>"+
+                "                                                </div>"+
+                "                                                <hr />";
+
+            tabsUsersHTML +=
+                "<div class='tab-pane' id='user-" + index + "'>"+
+                "                                            <img class='profile-img' src='../img/defaultUserDP.png'"+
+                "                                                 alt=''>"+
+                "                                            <h3 class='text-center'>" + key + "</h3>"+
+                "											 <form id='signInForm' class='form-signin' action='' method=''>"+
+                "                                                <input id='appUserNameSignIn' name='appUserName' type='hidden' value='" + key + "'>"+
+                "                                                <input id='appUserPasswordSignIn' name='appUserPassword' type='password' class='form-control' placeholder='Password' required>"+
+                "                                                <input type='submit' class='btn btn-lg btn-default btn-block' value='Sign In' />"+
+                "                                            </form>"+
+                "                                            <p class='text-center'><a href='#login' data-toggle='tab'>Back to Login</a></p>"+
+                "                                            <p class='text-center'><a href='#select' data-toggle='tab'>Select another Account</a></p>"+
+                "                                        </div>";
+
+        });
+
+        tabsSelectUserHTML +="<p class='text-center'><a href='#login' data-toggle='tab'>Back to Login</a></p>";
+
+        $("#tabsSelectUser").html(tabsSelectUserHTML);
+        $("#my-tab-content").append(tabsUsersHTML);
+
+
+
+    }
 }

@@ -313,16 +313,6 @@ function getGetListOperationXML(requestContent_2_1, operation) {
     return (operationXML == null) ? ("") : (operationXML[1]);
 }
 
-
-/**
- * Function to delete sessionStorage variables related to this App
- */
-function clearAppSessionStorage() {
-    sessionStorage.removeItem("loggedInAppUserName");
-    sessionStorage.removeItem("loggedInAppUserPassword");
-    sessionStorage.removeItem("loggedInAppUserSalt");
-}
-
 /**
  * Function which calls all App related Init methods
  */
@@ -332,15 +322,7 @@ function appRelatedInitFunctions() {
     //$("#userDisplaySpan").hide();
 
     $("#deleteConfig").hide();
-    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
-    if(loggedInAppUserName != undefined) {
-        activeSessionRoutines(loggedInAppUserName);
-    } else {
-        $("#logInModalButton").show();
-        $("#loginDisplaySpan").show();
-        //$(".dropdown-menu").hide();
-        loadTempConfiguration();
-    }
+
     // is localStorage available?
     if (typeof window.localStorage != "undefined") {
 
@@ -360,57 +342,22 @@ function appRelatedInitFunctions() {
         //localStorage.removeItem("IATUserInfo");
     } else {
         console.log("localStorage is not supported by browser");
+        alert("'localStorage' is not supported by browser");
+    }
+
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    if(loggedInAppUserName != undefined) {
+        activeSessionRoutines(loggedInAppUserName);
+    } else {
+        $("#logInModalButton").show();
+        $("#loginDisplaySpan").show();
+        //$(".dropdown-menu").hide();
+        loadTempConfiguration();
     }
 
     populateTabsSelectUserDiv();
     appRegistrationFormSubmission();
     appSignInFormSubmission();
-}
-
-/**
- * Function to save User Info in localStorage
- */
-function saveUserInfo( userInfo ) {
-
-    var userInfoObj = [];
-
-    // is localStorage available?
-    if (typeof window.localStorage != "undefined") {
-
-        // retrieve
-        var userInfoDB = localStorage.getItem("IATUserInfo");
-        var loggedInUserName = "";
-
-        // store
-        if(userInfoDB != undefined) {
-            console.log("IATUserInfo==>");
-            console.log(userInfoDB);
-            var userInfoDBJSON = JSON.parse(userInfoDB);
-
-            $.each(userInfo, function(key, val) {
-                console.log("userInfoKey==>" + key);
-                console.log("userInfoVal==>" + val);
-                loggedInUserName = key;
-                userInfoDBJSON[key] = val;
-
-            });
-
-            //set IATUserInfo DB
-            localStorage.setItem("IATUserInfo", JSON.stringify(userInfoDBJSON));
-
-        } else {
-            console.log("set::interactiveAPIToolUserInfo");
-            userInfoObj = userInfo;
-
-            //initialize the IATUserInfo DB
-            localStorage.setItem("IATUserInfo", JSON.stringify(userInfoObj));
-        }
-        // delete
-        //localStorage.removeItem("IATUserInfo");
-    } else {
-        clearAppSessionStorage();
-        console.log("localStorage is not supported by browser");
-    }
 }
 
 /**
@@ -449,7 +396,12 @@ function appRegistrationFormSubmission() {
 
         //auto login the registered user
         sessionStorage.setItem("loggedInAppUserName", appUserRegisterJSON["appUserName"]);
-        sessionStorage.setItem("loggedInAppUserPassword", enteredPassword);
+        //sessionStorage.setItem("loggedInAppUserPassword", enteredPassword);
+
+        var encodedPassword = getBase64EncodedString(enteredPassword);
+        console.log("encodedPassword==>" + encodedPassword);
+        sessionStorage.setItem("loggedInAppUserPasswordEn", encodedPassword);
+
         sessionStorage.setItem("loggedInAppUserSalt", userSalt);
 
         saveUserInfo(appUserRegisterObj);
@@ -569,7 +521,12 @@ function appSignInFormSubmission() {
                     console.log("####################### User Sign In successful #######################");
                     //store login username in session
                     sessionStorage.setItem("loggedInAppUserName", enteredAppUserName);
-                    sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
+                    //sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
+
+                    var encodedPassword = getBase64EncodedString(enteredAppUserPassword);
+                    console.log("encodedPassword==>" + encodedPassword);
+                    sessionStorage.setItem("loggedInAppUserPasswordEn", encodedPassword);
+
                     sessionStorage.setItem("loggedInAppUserSalt", currentAppUserSalt);
 
                     activeSessionRoutines(enteredAppUserName);

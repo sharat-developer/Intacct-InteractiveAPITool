@@ -231,12 +231,16 @@ function encryptSensitiveData(configObject) {
     var senderPassword = configObject["senderPassword"];
 
     var appUserName = sessionStorage.getItem("loggedInAppUserName");
-    var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
+    //var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
+    var appUserPasswordEn = sessionStorage.getItem("loggedInAppUserPasswordEn");
     var appUserSalt = sessionStorage.getItem("loggedInAppUserSalt");
+
+    var appUserPassword = getBase64DecodedString(appUserPasswordEn);
 
     console.log("userPassword==>" + userPassword);
     console.log("senderPassword==>" + senderPassword);
     console.log("appUserPassword==>" + appUserPassword);
+    console.log("appUserPassword==>" + appUserPasswordEn);
     console.log("appUserSalt==>" + appUserSalt);
 
     var encryptionKey512Bits = CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
@@ -265,7 +269,10 @@ function decryptSensitiveData(configObject) {
     var encryptedSenderPassword = configObject["senderPassword"];
 
     var appUserName = sessionStorage.getItem("loggedInAppUserName");
-    var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
+
+    //var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
+    var appUserPasswordEn = sessionStorage.getItem("loggedInAppUserPasswordEn");
+    var appUserPassword = getBase64DecodedString(appUserPasswordEn);
     var appUserSalt = sessionStorage.getItem("loggedInAppUserSalt");
 
     console.log("encryptedUserPassword==>" + encryptedUserPassword);
@@ -391,6 +398,86 @@ function localStorageRelatedInitFunctions(configurationName, configObject) {
     // create Configuration Details DB
     localStorageCreateFunction(appUserConfigDetailsName, encryptedConfigObj);
 
+}
+
+/**
+ * Function to delete sessionStorage variables related to this App
+ */
+function clearAppSessionStorage() {
+    sessionStorage.removeItem("loggedInAppUserName");
+    sessionStorage.removeItem("loggedInAppUserPassword");
+    sessionStorage.removeItem("loggedInAppUserPasswordEn");
+    sessionStorage.removeItem("loggedInAppUserSalt");
+}
+
+/**
+ * Function to convert raw string to Base64 encoded string
+ */
+function getBase64EncodedString(rawStr) {
+    //var wordArray = CryptoJS.enc.Utf8.parse(rawStr);
+    //var base64 = CryptoJS.enc.Base64.stringify(wordArray);
+    var words = CryptoJS.enc.Utf8.parse(rawStr); // WordArray object
+    var base64 = CryptoJS.enc.Base64.stringify(words); // string: 'SGVsbG8gd29ybGQ='
+    console.log('Base64EncodedString==>', base64);
+    return base64;
+}
+
+/**
+ * Function to convert Base64 encoded string to raw string
+ */
+function getBase64DecodedString(encodedStr) {
+    //var parsedWordArray = CryptoJS.enc.Base64.parse(encodedStr);
+    //var parsedStr = parsedWordArray.toString(CryptoJS.enc.Utf8);
+    var words = CryptoJS.enc.Base64.parse(encodedStr);
+    var parsedStr = CryptoJS.enc.Utf8.stringify(words); // 'Hello world'
+    console.log("Base64DecodedString:",parsedStr);
+    return parsedStr;
+}
+
+/**
+ * Function to save User Info in localStorage
+ */
+function saveUserInfo( userInfo ) {
+
+    var userInfoObj = [];
+
+    // is localStorage available?
+    if (typeof window.localStorage != "undefined") {
+
+        // retrieve
+        var userInfoDB = localStorage.getItem("IATUserInfo");
+        var loggedInUserName = "";
+
+        // store
+        if(userInfoDB != undefined) {
+            console.log("IATUserInfo==>");
+            console.log(userInfoDB);
+            var userInfoDBJSON = JSON.parse(userInfoDB);
+
+            $.each(userInfo, function(key, val) {
+                console.log("userInfoKey==>" + key);
+                console.log("userInfoVal==>" + val);
+                loggedInUserName = key;
+                userInfoDBJSON[key] = val;
+
+            });
+
+            //set IATUserInfo DB
+            localStorage.setItem("IATUserInfo", JSON.stringify(userInfoDBJSON));
+
+        } else {
+            console.log("set::interactiveAPIToolUserInfo");
+            userInfoObj = userInfo;
+
+            //initialize the IATUserInfo DB
+            localStorage.setItem("IATUserInfo", JSON.stringify(userInfoObj));
+        }
+        // delete
+        //localStorage.removeItem("IATUserInfo");
+    } else {
+        clearAppSessionStorage();
+        console.log("localStorage is not supported by browser");
+    }
 }
 
 /**

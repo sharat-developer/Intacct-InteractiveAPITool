@@ -22,7 +22,7 @@ function constructXMLRequest(payload, apiSession) {
 function customAJAXPost(functionXMLString, credentialJSON, sessionId, dtdVersion){
 
     //var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", dtdVersion || "3.0");
-    var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], credentialJSON['controlId'], credentialJSON['uniqueId'], "3.0", credentialJSON['policyId'], credentialJSON['encodingType'], credentialJSON['urlEncodedXML']);
+    var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], credentialJSON['controlId'], credentialJSON['uniqueId'], dtdVersion, credentialJSON['policyId'], credentialJSON['encodingType'], credentialJSON['urlEncodedXML']);
 
     if(sessionId){
         apiSession.ip_setSessionID(sessionId);

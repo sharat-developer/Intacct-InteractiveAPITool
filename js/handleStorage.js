@@ -111,8 +111,8 @@ function populateConfigurationFromLocalStorage(appUserConfigListObj) {
             chooseCompanyIDJq.append("<option value='" + value + "' selected = 'true' >" + value + "</option>");
         });
 
-        console.log("chooseCompanyIDJq==>");
-        console.log(chooseCompanyIDJq.html());
+        //console.log("chooseCompanyIDJq==>");
+        //console.log(chooseCompanyIDJq.html());
 
         deleteButtonJq.show();
         // to initiate the load of configuration details in the configuration form
@@ -237,22 +237,22 @@ function encryptSensitiveData(configObject) {
 
     var appUserPassword = getBase64DecodedString(appUserPasswordEn);
 
-    console.log("userPassword==>" + userPassword);
-    console.log("senderPassword==>" + senderPassword);
-    console.log("appUserPassword==>" + appUserPassword);
-    console.log("appUserPassword==>" + appUserPasswordEn);
-    console.log("appUserSalt==>" + appUserSalt);
+    //console.log("userPassword==>" + userPassword);
+    //console.log("senderPassword==>" + senderPassword);
+    //console.log("appUserPassword==>" + appUserPassword);
+    //console.log("appUserPassword==>" + appUserPasswordEn);
+    //console.log("appUserSalt==>" + appUserSalt);
 
     var encryptionKey512Bits = CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
-    console.log("encryptionKey512Bits==>" + encryptionKey512Bits);
+    //console.log("encryptionKey512Bits==>" + encryptionKey512Bits);
 
 
     var encryptedUserPassword = CryptoJS.AES.encrypt(userPassword, encryptionKey512Bits).toString();
-    console.log("encryptedUserPassword==>" + encryptedUserPassword);
+    //console.log("encryptedUserPassword==>" + encryptedUserPassword);
 
 
     var encryptedSenderPassword = CryptoJS.AES.encrypt(senderPassword, encryptionKey512Bits).toString();
-    console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
+    c//onsole.log("encryptedSenderPassword==>" + encryptedSenderPassword);
 
     configObject["userPassword"] = encryptedUserPassword;
     configObject["senderPassword"] = encryptedSenderPassword;
@@ -275,21 +275,21 @@ function decryptSensitiveData(configObject) {
     var appUserPassword = getBase64DecodedString(appUserPasswordEn);
     var appUserSalt = sessionStorage.getItem("loggedInAppUserSalt");
 
-    console.log("encryptedUserPassword==>" + encryptedUserPassword);
-    console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
-    console.log("appUserPassword==>" + appUserPassword);
-    console.log("appUserSalt==>" + appUserSalt);
+    //console.log("encryptedUserPassword==>" + encryptedUserPassword);
+    //console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
+    //console.log("appUserPassword==>" + appUserPassword);
+    //console.log("appUserSalt==>" + appUserSalt);
 
     var encryptionKey512Bits = CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
     console.log("encryptionKey512Bits==>" + encryptionKey512Bits);
 
 
     var decryptedUserPassword = CryptoJS.AES.decrypt(encryptedUserPassword, encryptionKey512Bits).toString(CryptoJS.enc.Utf8);
-    console.log("decryptedUserPassword==>" + decryptedUserPassword);
+    //console.log("decryptedUserPassword==>" + decryptedUserPassword);
 
 
     var decryptedSenderPassword = CryptoJS.AES.decrypt(encryptedSenderPassword, encryptionKey512Bits).toString(CryptoJS.enc.Utf8);
-    console.log("decryptedSenderPassword==>" + decryptedSenderPassword);
+    //console.log("decryptedSenderPassword==>" + decryptedSenderPassword);
 
     configObject["userPassword"] = decryptedUserPassword;
     configObject["senderPassword"] = decryptedSenderPassword;
@@ -430,7 +430,7 @@ function getBase64EncodedString(rawStr) {
     //var base64 = CryptoJS.enc.Base64.stringify(wordArray);
     var words = CryptoJS.enc.Utf8.parse(rawStr); // WordArray object
     var base64 = CryptoJS.enc.Base64.stringify(words); // string: 'SGVsbG8gd29ybGQ='
-    console.log('Base64EncodedString==>', base64);
+    //console.log('Base64EncodedString==>', base64);
     return base64;
 }
 
@@ -442,7 +442,7 @@ function getBase64DecodedString(encodedStr) {
     //var parsedStr = parsedWordArray.toString(CryptoJS.enc.Utf8);
     var words = CryptoJS.enc.Base64.parse(encodedStr);
     var parsedStr = CryptoJS.enc.Utf8.stringify(words); // 'Hello world'
-    console.log("Base64DecodedString:",parsedStr);
+    //console.log("Base64DecodedString:",parsedStr);
     return parsedStr;
 }
 
@@ -735,8 +735,8 @@ $(function() {
             console.log("appUserConfigDetailsDB==>");
             console.log(appUserConfigDetailsDB);
             var appUserConfigDetailsDBJSON = JSON.parse(appUserConfigDetailsDB);
-            console.log("appUserConfigDetailsDBJSON==>");
-            console.log(appUserConfigDetailsDBJSON);
+            //console.log("appUserConfigDetailsDBJSON==>");
+            //console.log(appUserConfigDetailsDBJSON);
 
             configurationJq.trigger("reset");
             var configObject = decryptSensitiveData(appUserConfigDetailsDBJSON);

@@ -399,15 +399,27 @@ function localStorageRelatedInitFunctions(configurationName, configObject) {
     localStorageCreateFunction(appUserConfigDetailsName, encryptedConfigObj);
 
 }
+/**
+ *  Function to removeItems from sessionStorage
+ */
+function removeSessionItems() {
+    sessionStorage.removeItem("loggedInAppUserName");
+    sessionStorage.removeItem("loggedInAppUserPassword");
+    sessionStorage.removeItem("loggedInAppUserPasswordEn");
+    sessionStorage.removeItem("loggedInAppUserSalt");
+}
 
 /**
  * Function to delete sessionStorage variables related to this App
  */
 function clearAppSessionStorage() {
-    sessionStorage.removeItem("loggedInAppUserName");
-    sessionStorage.removeItem("loggedInAppUserPassword");
-    sessionStorage.removeItem("loggedInAppUserPasswordEn");
-    sessionStorage.removeItem("loggedInAppUserSalt");
+    //removeItems from sessionStorage to kill the session
+    removeSessionItems();
+
+    window.memoryStorage = {"loggedOut" : true};
+
+    localStorage.setItem('endSession', JSON.stringify(window.memoryStorage));
+    localStorage.removeItem('endSession');
 }
 
 /**
@@ -489,12 +501,147 @@ function localStorageCreateFunction(localStorageName, dataObj) {
 
 
 /**
+ *  Function to save loggedInAppUserName, loggedInAppUserPassword, loggedInAppUserSalt in sessionStorage
+ * @param loggedInAppUserName
+ * @param loggedInAppUserPassword
+ * @param loggedInAppUserSalt
+ */
+function saveSession(loggedInAppUserName, loggedInAppUserPassword, loggedInAppUserSalt) {
+    //store login username in session
+    sessionStorage.setItem("loggedInAppUserName", loggedInAppUserName);
+    //sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
+
+    var encodedPassword = getBase64EncodedString(loggedInAppUserPassword);
+    console.log("encodedPassword==>" + encodedPassword);
+
+    sessionStorage.setItem("loggedInAppUserPasswordEn", encodedPassword);
+    sessionStorage.setItem("loggedInAppUserSalt", loggedInAppUserSalt);
+
+    //save session in memoryStorage also for cross-tab authentication
+    window.memoryStorage = sessionStorage;
+    localStorage.setItem('sessionStorage', JSON.stringify(window.memoryStorage));
+    localStorage.removeItem('sessionStorage');
+}
+
+/**
+ *  Function to save loggedInAppUserName, loggedInAppUserPassword, loggedInAppUserSalt in sessionStorage
+ * @param loggedInAppUserName
+ * @param loggedInAppUserPasswordEn
+ * @param loggedInAppUserSalt
+ */
+function savePasswordEncodedSession(loggedInAppUserName, loggedInAppUserPasswordEn, loggedInAppUserSalt) {
+    //store login username in session
+    sessionStorage.setItem("loggedInAppUserName", loggedInAppUserName);
+    //sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
+
+    sessionStorage.setItem("loggedInAppUserPasswordEn", loggedInAppUserPasswordEn);
+    sessionStorage.setItem("loggedInAppUserSalt", loggedInAppUserSalt);
+
+    //save session in memoryStorage also for cross-tab authentication
+    window.memoryStorage = sessionStorage;
+    window.memoryStorage = sessionStorage;
+    localStorage.setItem('sessionStorage', JSON.stringify(window.memoryStorage));
+    localStorage.removeItem('sessionStorage');
+}
+
+/**
+ *  Function to initiate loadConfiguration if session exists
+ */
+function setSessionOnPageLoad() {
+    //for initial load-configuration using sessionStorage
+    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    if(loggedInAppUserName != undefined) {
+        console.log("user session already exist in sessionStorage==>");
+        console.log(sessionStorage);
+
+        window.memoryStorage = sessionStorage;
+
+        activeSessionRoutines(loggedInAppUserName);
+        console.log("window.memoryStorage==>");
+        console.log(window.memoryStorage);
+    } else {
+        console.log("user session doesn't exist in sessionStorage==>");
+        console.log(sessionStorage);
+        console.log("window.memoryStorage==>");
+        console.log(window.memoryStorage);
+
+        var sessionInMemory = window.memoryStorage;
+        console.log("sessionInMemory==>");
+        console.log(sessionInMemory);
+
+        if(sessionInMemory["loggedInAppUserName"] != undefined) {
+            savePasswordEncodedSession(sessionInMemory["loggedInAppUserName"], sessionInMemory["loggedInAppUserPasswordEn"], sessionInMemory["loggedInAppUserSalt"]);
+            activeSessionRoutines(sessionInMemory["loggedInAppUserName"]);
+        }
+    }
+}
+/**
+ *  Function to check if object 'o' is empty
+ * @param o
+ * @returns {boolean}
+ */
+function isEmpty(o) {
+    for (var i in o) {
+        return false;
+    }
+    return true;
+}
+
+/**
  * document.ready() function
  */
 $(function() {
     //$("form").submit(function(){
     //    alert("Submitted");
     //});
+
+    /* Sharing memoryStorage between tabs for secure multi-tab authentication since sessionStorage will not support multi-tab */
+    /* multi-tab authentication start */
+    window.memoryStorage = {};
+
+    if (isEmpty(memoryStorage)) {
+        // Ask other tabs for memoryStorage
+        localStorage.setItem('getSessionStorage', Date.now());
+    }
+
+    window.addEventListener('storage', function (event) {
+
+        //console.log('storage event', event);
+
+        if (event.key == 'getSessionStorage') {
+            // Some tab asked for the memoryStorage -> send it
+
+            console.log("memoryStorage==>");
+            console.log(window.memoryStorage);
+
+            localStorage.setItem('sessionStorage', JSON.stringify(window.memoryStorage));
+            localStorage.removeItem('sessionStorage');
+
+        } else if (event.key == 'sessionStorage' ) {//&& isEmpty(memoryStorage)
+            // sessionStorage is empty -> fill it
+
+            var data = JSON.parse(event.newValue),
+                value;
+
+            for (key in data) {
+                window.memoryStorage[key] = data[key];
+            }
+
+            setSessionOnPageLoad();
+        } else if (event.key == 'endSession') {//
+            // session is logged-out remove session variables
+            //clearAppSessionStorage();
+            removeSessionItems();
+
+            $("#logOutButton").trigger("click");
+        }
+    });
+
+    window.addEventListener('load', function () {
+        setSessionOnPageLoad();
+    });
+
+    /* multi-tab authentication end */
 
     var chooseCompanyIDJq = $("#chooseCompanyID");
 
@@ -646,11 +793,8 @@ $(function() {
         //set default values
     }
 
-    //for initial load-configuration using localStorage
-    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
-    if(loggedInAppUserName != undefined) {
-        loadConfigurationFromLocalStorage();
-    }
+    //initiate loadConfiguration if session exists
+    setSessionOnPageLoad();
 
 
 

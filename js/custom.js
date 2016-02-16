@@ -394,17 +394,11 @@ function appRegistrationFormSubmission() {
         var appUserRegisterObj = {};
         appUserRegisterObj[appUserKey] = appUserRegisterJSON;
 
-        //auto login the registered user
-        sessionStorage.setItem("loggedInAppUserName", appUserRegisterJSON["appUserName"]);
-        //sessionStorage.setItem("loggedInAppUserPassword", enteredPassword);
-
-        var encodedPassword = getBase64EncodedString(enteredPassword);
-        console.log("encodedPassword==>" + encodedPassword);
-        sessionStorage.setItem("loggedInAppUserPasswordEn", encodedPassword);
-
-        sessionStorage.setItem("loggedInAppUserSalt", userSalt);
-
         saveUserInfo(appUserRegisterObj);
+
+        //auto login the registered user
+        //save user-credential in sessionStorage
+        saveSession(appUserRegisterJSON["appUserName"], enteredPassword, userSalt);
 
         $("#myModal").modal("hide");
         //$(".dropdown").html(loginButtonHTML(appUserKey));
@@ -510,8 +504,6 @@ function appSignInFormSubmission() {
                 var currentUserPasswordHash = currentUserObj["appUserPassword"];
                 console.log("currentUserPasswordHash==>" + currentUserPasswordHash);
 
-                var currentAppUserSalt = currentUserObj["appUserSalt"];
-                console.log("currentAppUserSalt==>" + currentAppUserSalt);
 
                 var enteredAppUserPasswordHash = CryptoJS.SHA3(enteredAppUserPassword);
                 console.log("enteredAppUserPasswordHash==>" + enteredAppUserPasswordHash);
@@ -519,15 +511,12 @@ function appSignInFormSubmission() {
                 if(currentUserPasswordHash == enteredAppUserPasswordHash){
                     $("#loginMessageSpan").html("");
                     console.log("####################### User Sign In successful #######################");
-                    //store login username in session
-                    sessionStorage.setItem("loggedInAppUserName", enteredAppUserName);
-                    //sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
 
-                    var encodedPassword = getBase64EncodedString(enteredAppUserPassword);
-                    console.log("encodedPassword==>" + encodedPassword);
-                    sessionStorage.setItem("loggedInAppUserPasswordEn", encodedPassword);
+                    var currentAppUserSalt = currentUserObj["appUserSalt"];
+                    console.log("currentAppUserSalt==>" + currentAppUserSalt);
 
-                    sessionStorage.setItem("loggedInAppUserSalt", currentAppUserSalt);
+                    //save user-credential in sessionStorage
+                    saveSession(enteredAppUserName, enteredAppUserPassword, currentAppUserSalt);
 
                     activeSessionRoutines(enteredAppUserName);
 

@@ -333,7 +333,7 @@ function appRelatedInitFunctions() {
         if(userInfo != undefined) {
             console.log("IATUserInfo==>");
             console.log(userInfo);
-            console.log(JSON.parse(userInfo));
+            //console.log(JSON.parse(userInfo));
         } else {
             //console.log("set::interactiveAPIToolUserInfo");
             //localStorage.setItem("IATUserInfo", userInfoObj);
@@ -2932,6 +2932,13 @@ function populateTabsSelectUserDiv() {
         console.log("IATUserInfo==>");
         console.log(userInfo);
 
+        if(isEmpty(userInfo)) {
+            var tabsSelectUserHTML = "";
+                tabsSelectUserHTML +="<div class='media account-select'><p class='text-center'>There is no registered User.</p><p align='center'> <a href='#register' data-toggle='tab'>Please Register</a></p></div>";
+            $("#tabsSelectUser").html(tabsSelectUserHTML);
+            return;
+        }
+
         var userInfoObj = JSON.parse(userInfo);
         console.log("userInfoObj==>");
         console.log(userInfoObj);
@@ -2986,6 +2993,13 @@ function populateTabsSelectUserDiv() {
         $("#my-tab-content").append(tabsUsersHTML);
 
 
+
+    } else { //no user exists, create one using register
+
+        var tabsSelectUserHTML = "";
+        tabsSelectUserHTML +=
+        tabsSelectUserHTML +="<p class='text-center'>There is no registered User.<a href='#register' data-toggle='tab'>Please Register</a></p>";
+        $("#tabsSelectUser").html(tabsSelectUserHTML);
 
     }
 }

@@ -252,7 +252,7 @@ function encryptSensitiveData(configObject) {
 
 
     var encryptedSenderPassword = CryptoJS.AES.encrypt(senderPassword, encryptionKey512Bits).toString();
-    c//onsole.log("encryptedSenderPassword==>" + encryptedSenderPassword);
+    //console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
 
     configObject["userPassword"] = encryptedUserPassword;
     configObject["senderPassword"] = encryptedSenderPassword;

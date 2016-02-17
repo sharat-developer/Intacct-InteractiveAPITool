@@ -709,8 +709,8 @@ $(function() {
 
             credentialJSON = nameValueToJSON(configurationJq.serializeArray());
 
-            console.log("credentialJSON==>");
-            console.log(credentialJSON);
+            //console.log("credentialJSON==>");
+            //console.log(credentialJSON);
             var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", "3.0");
             //var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], credentialJSON['controlId'], credentialJSON['uniqueId'], "3.0", credentialJSON['policyId'], credentialJSON['encodingType']);
 
@@ -877,9 +877,10 @@ function populateSelectObject(responseData){
 
         //selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
         var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
-        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        //selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'><div><p>" + errorString + "</p></div><div><p>Response Data:" + JSON.stringify (responseDataJSON) + "</p></div></div>");
 
-        console.log('data: ' + JSON.stringify (responseDataJSON));
+        console.log('Response Data: ' + JSON.stringify (responseDataJSON));
         alert("Sender Authentication Failure!");
         throw new Error("Sender Authentication Failure!");
     }
@@ -893,9 +894,10 @@ function populateSelectObject(responseData){
 
         //selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
         var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
-        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        //selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'><div><p>" + errorString + "</p></div><div><p>Response Data:" + JSON.stringify (responseDataJSON) + "</p></div></div>");
 
-        console.log('data: ' + JSON.stringify (responseDataJSON));
+        console.log('Response Data: ' + JSON.stringify (responseDataJSON));
         alert("User Authentication Failure!");
         throw new Error("User Authentication Failure!");
     }
@@ -1207,9 +1209,10 @@ function selectMethodCallbackFunction(data) {
         //selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
 
         var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
-        selectFieldDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        //selectFieldDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        selectFieldDivJq.html("<div class='alert alert-danger' role='alert'><div><p>" + errorString + "</p></div><div><p>Response Data:" + JSON.stringify (responseDataJSON) + "</p></div></div>");
 
-        console.log('data: ' + JSON.stringify (responseDataJSON));
+        console.log('Response Data: ' + JSON.stringify (responseDataJSON));
         alert("Sender Authentication Failure!");
         throw new Error("Sender Authentication Failure!");
     }
@@ -1223,9 +1226,10 @@ function selectMethodCallbackFunction(data) {
 
         //selectFieldDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
         var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
-        selectFieldDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        //selectFieldDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        selectFieldDivJq.html("<div class='alert alert-danger' role='alert'><div><p>" + errorString + "</p></div><div><p>Response Data:" + JSON.stringify (responseDataJSON) + "</p></div></div>");
 
-        console.log('data: ' + JSON.stringify (responseDataJSON));
+        console.log('Response Data: ' + JSON.stringify (responseDataJSON));
         alert("User Authentication Failure!");
         throw new Error("User Authentication Failure!");
     }

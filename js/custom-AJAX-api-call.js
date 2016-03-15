@@ -30,7 +30,7 @@ function customAJAXPost(functionXMLString, credentialJSON, sessionId, dtdVersion
         apiSession.ip_setCredentials( credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], credentialJSON['clientId'],credentialJSON['locationId'] );
     }
 
-    var processedXML = constructXMLRequest(functionXMLString, apiSession);
+    //var processedXML = constructXMLRequest(functionXMLString, apiSession);
 
     //credentialJSON['endPointURL']
     var postURL = credentialJSON['endPointURL'];
@@ -78,12 +78,17 @@ function customSendRequest(apiSession, payload, callback, dtdVersion) {
     var xmlDoc = "";
 
     //cmbs custom
-    if(payload.indexOf('<content>') > -1) {
-        xmlDoc= apiSession.getRecHeaderWithOutContent() + payload + apiSession.getRecFooterWithOutContent();
+    // if the user's API Request itself is complete with control (sender authentication) and operation (user auth, function) XML block
+    if(payload.indexOf('<?xml') > -1) {
+        xmlDoc= payload;
     } else {
-        xmlDoc= apiSession.getRecHeader() + payload + apiSession.getRecFooter();
-    }
 
+        if(payload.indexOf('<content>') > -1) {
+            xmlDoc= apiSession.getRecHeaderWithOutContent() + payload + apiSession.getRecFooterWithOutContent();
+        } else {
+            xmlDoc= apiSession.getRecHeader() + payload + apiSession.getRecFooter();
+        }
+    }
 
     apiSession.lastRequest = xmlDoc;
     var xRequest = apiSession.getXMLHTTPRequest();

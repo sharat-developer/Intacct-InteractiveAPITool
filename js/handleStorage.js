@@ -2,8 +2,6 @@
  * Created by shegde on 08-10-2014.
  */
 
-var cookieVar= {};//new Array();
-
 //{'name' :companyId, 'value' : 'INTACCT'} ==> {companyId : 'INTACCT'}
 function nameValueToJSON(nameValueObject){
     var jsonObj ={};
@@ -13,74 +11,6 @@ function nameValueToJSON(nameValueObject){
     return jsonObj;
 }
 
-/**
- * Function to save the cookie object as cookie string interactiveAPIToolCookie
- *
- */
-function saveCookie() {
-    var cookieVal = JSON.stringify(cookieVar);
-    console.log('cookieVal==>'+cookieVal);
-
-
-    var sec=3600000*24*30;
-    //console.log('Here we go');
-    //console.log('$_SERVER[HTTP_HOST]==>'+ "<?php echo $_SERVER['HTTP_HOST']; ?>");
-    //console.log('$_SERVER[REQUEST_URI]==>'+"<?php echo $_SERVER['REQUEST_URI']; ?>");
-    console.log('window.location.pathname==>'+window.location.pathname);
-    console.log('window.location.hostname==>'+window.location.hostname);
-    //console.log('window.location.pathname -1 ==>'+window.location.pathname.substring(1));
-    if(docCookies.setItem('interactiveAPIToolCookie', cookieVal, sec, '', window.location.hostname)){
-        console.log('interactiveAPIToolCookie set');
-    }
-}
-
-/**
- * Function to populate chooseCompanyID selectbox
- *
- */
-function populateConfiguration() {
-    var chooseCompanyIDJq = $("#chooseCompanyID");
-    var deleteButtonJq = $("#deleteConfig");
-
-    console.log("$.isEmptyObject(cookieVar)==>" + $.isEmptyObject(cookieVar));
-
-    //if there are no saved configuration
-    if($.isEmptyObject(cookieVar)) {
-        chooseCompanyIDJq.html("<option value='#'>Save Configuration to list here</option>");
-        //clear configuration form contents if saved configuration is empty
-        clearFormContents($("#configuration"));
-        chooseCompanyIDJq.trigger( "change" );
-        deleteButtonJq.hide();
-    } else {
-        $.each(cookieVar, function(key, value) {
-            chooseCompanyIDJq.append("<option value='"+key+"' selected = 'true' >"+key+"</option>");
-        });
-
-        deleteButtonJq.show();
-        chooseCompanyIDJq.trigger( "change" );
-    }
-
-
-}
-/**
- * Function to load Configuration to the  configuration form
- * 
- */
-function loadConfiguration() {
-
-    var configurationJq = $('#configuration');
-    var chooseCompanyIDJq = $("#chooseCompanyID");
-    var cookieVarString =docCookies.getItem('interactiveAPIToolCookie');
-
-    //console.log('cookieVarString--------------------==>'+cookieVarString);
-    cookieVar = $.parseJSON(cookieVarString);
-    console.log("cookieVar==>" + cookieVar);
-
-    chooseCompanyIDJq.html('');
-    //console.log('cookieLength==>'+cookieVar.length);
-
-    populateConfiguration();
-}
 
 /**
  * Function to populate chooseCompanyID selectbox
@@ -169,20 +99,6 @@ function clearDivsAfterConfigurationChanges() {
     $("#configDetailsSaveAlertDiv").removeClass("alert").html("");
 }
 
-/**
- * Function to delete selected configuration from cookie
- *
- */
-function deleteCurrentConfig(valueSelected) {
-    //delete the selected value
-    delete cookieVar[valueSelected];
-
-    console.log('after delete::cookieVar==>'+ cookieVar);
-    saveCookie();
-    var chooseCompanyIDJq = $("#chooseCompanyID");
-    chooseCompanyIDJq.html('');
-    populateConfiguration();
-}
 
 /**
  * Function to delete selected configuration from localStorage
@@ -666,10 +582,6 @@ $(function() {
             var configurationArrayObject = nameValueToJSON(configurationArray);
             console.log('companyCred-------------------------------------==>'+JSON.stringify(configurationArrayObject));
 
-            cookieVar[configurationName] = configurationArrayObject;
-
-
-
             var tempConfigurationObject = nameValueToJSON(configurationArray);
 
             if(!isActiveSessionExist()) {
@@ -692,15 +604,6 @@ $(function() {
 
             }
 
-
-            //saveCookie();
-
-            ////$(this).trigger('reset'); // reset form
-
-            //loadConfiguration();
-
-
-
         }
 
     );
@@ -718,8 +621,6 @@ $(function() {
             return;
         }
 
-        //using cookie
-        //console.log('value---------------------==>'+JSON.stringify(cookieVar[valueSelected]));
 
         //using localStorage
         //get login username in session
@@ -747,10 +648,6 @@ $(function() {
         } else {
             //throw new Error("there is something wrong in localStorage:" + appUserConfigDetailsName + " retrieval");
         }
-
-        //console.log('value---------------------==>' + JSON.stringify(cookieVar[valueSelected]));
-        //configurationJq.trigger('reset');
-        //configurationJq.loadJSON(cookieVar[valueSelected]);
 
 
         //getAllObjects once configuration changes
@@ -785,13 +682,7 @@ $(function() {
 
     });
 
-    //for initial load-configuration using cookie
-    if(docCookies.getItem('interactiveAPIToolCookie')){
-        //loadConfiguration();
-    }
-    else{
-        //set default values
-    }
+
 
     //initiate loadConfiguration if session exists
     setSessionOnPageLoad();

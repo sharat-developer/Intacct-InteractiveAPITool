@@ -27,6 +27,13 @@ function clearFormContents(formJq) {
 }
 
 /**
+ *  Function to convert '.' in a string to '_'
+ **/
+function convertDotToUnderScore(inputString) {
+    return inputString.replace(/\./g, '_');
+}
+
+/**
  *  Function to encode the HTML
  *  value contains characters like '&', '>' or '<' converted to XML escape charactes
  */
@@ -753,6 +760,16 @@ $(function() {
         clearFormContents(formJq);
     });
 
+    $("#intacctAppLogin").on("click", function(){
+
+        //constructSSOXMLShowFormPopulateData_generic();
+        //myTabJq.find("a#API_generic_ConstructorTab").trigger("click");
+        objectSelectDivPopulateData_2_1();
+        constructSSOXMLShowFormPopulateData_2_1();
+        myTabJq.find("a#API2_1_ConstructorTab").trigger("click");
+    });
+
+
 
     //$("form").on("submit", function(e) {
     //    e.preventDefault();
@@ -1274,35 +1291,35 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
     var showResponseDivHTML =
             //"<div class='row'>"+
-                "<ul id='responseTab' class='nav nav-tabs nav-custom'>"+
-                    "<li class='active'><a  id='responseXMLTab' href='#responseXML' data-toggle='tab'>API Response</a></li>"+
-                    "<li><a  id='requestXMLTab' href='#requestXML' data-toggle='tab'>API Request</a></li>"+
+                "<ul id='responseTab_3_0' class='nav nav-tabs nav-custom'>"+
+                    "<li class='active'><a  id='responseXMLTab_3_0' href='#responseXML_3_0' data-toggle='tab'>API Response</a></li>"+
+                    "<li><a  id='requestXMLTab_3_0' href='#requestXML_3_0' data-toggle='tab'>API Request</a></li>"+
                 "</ul>"+
                 "<div id='responseTabContent' class='tab-content'>"+
-                    "<div class='tab-pane fade active in' id='responseXML'>"+
+                    "<div class='tab-pane fade active in' id='responseXML_3_0'>"+
                         //"<div class='row'>"+
-                            "<form id='showResponseForm' class='form-horizontal'  method='post'  action='#'>" +
+                            "<form id='showResponseForm_3_0' class='form-horizontal'  method='post'  action='#'>" +
                             "<legend>"+selectedMethod+"-method :: API Response</legend>"+
                             "<fieldset>" +
                             "   <div class='col-sm-12' >"+
                             "		<div class='form-group'>"+
                             "		<label class='control-label'>API Response</label>"+
-                            "       <textarea id='showResponse' class='form-control' >"+apiResponse+"</textarea>"+
+                            "       <textarea id='showResponse_3_0' class='form-control' >"+apiResponse+"</textarea>"+
                             "		</div>"+
                             "	</div>" +
                             "</fieldset>"+
                             "</form>"+
                         //"</div>"+
                     "</div>"+
-                    "<div class='tab-pane fade' id='requestXML'>"+
+                    "<div class='tab-pane fade' id='requestXML_3_0'>"+
                         //"<div class='row'>"+
-                            "<form id='showRequestForm' class='form-horizontal'  method='post'  action='#'>" +
+                            "<form id='showRequestForm_3_0' class='form-horizontal'  method='post'  action='#'>" +
                                 "<legend>"+selectedMethod+"-method :: API Request</legend>"+
                                 "<fieldset>" +
                                 "   <div class='col-sm-12' >"+
                                 "		<div class='form-group'>"+
                                 "		<label class='control-label'>API Request</label>"+
-                                "       <textarea  rows='30' id='showRequest' class='form-control'></textarea>"+ //" + xmlDocAPIRequest + "
+                                "       <textarea  rows='30' id='showRequest_3_0' class='form-control'></textarea>"+ //" + xmlDocAPIRequest + "
                                 "		</div>"+
                                 "	</div>" +
                                 "</fieldset>"+
@@ -1313,7 +1330,7 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
            // "</div>"
         ;
 
-    $('#showResponseDiv').html(showResponseDivHTML);
+    $('#showResponseDiv_3_0').html(showResponseDivHTML);
 
     //$('#showResponseForm').append(
     //    "<fieldset>" +
@@ -1328,7 +1345,7 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
 
     //$('textarea').autoResize();
-    var showResponseJq = $("textarea#showResponse");
+    var showResponseJq = $("textarea#showResponse_3_0");
     //resizeTextArea();
     console.log("showResponseJq[0].scrollHeight==>" +showResponseJq[0].scrollHeight);
     showResponseJq.height( (showResponseJq[0].scrollHeight)-12);
@@ -1347,7 +1364,7 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
     //showRequestJq.
 
-    var showRequestJq = $("#showRequest");
+    var showRequestJq = $("#showRequest_3_0");
     //following didnt work
     //console.log("showRequestJq[0].scrollHeight==>" +showRequestJq[0].scrollHeight);
     //showRequestJq.height( (showRequestJq[0].scrollHeight)-12 );
@@ -1494,8 +1511,8 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
 
     executeXMLFormJq.on("submit", function(event){
         event.preventDefault();
-        $("#showResponseForm").html('');
-        $("#showResponseDiv").html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
+        $("#showResponseForm_3_0").html('');
+        $("#showResponseDiv_3_0").html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
 
 
         var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
@@ -1627,6 +1644,47 @@ function objectSelectDivPopulateData_2_1() {
         constructXMLShowFormPopulateData_2_1(createXML);
     });
 
+}
+
+/**
+ *  Function to show the request XML
+ **/
+function mockExecuteXMLForm_2_1(requestContent_SSO, operation) {
+
+    //$("#showResponseForm_2_1").html('');
+    $("#showResponseDiv_2_1").html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
+
+    var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
+    //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
+
+    //console.log("credentialJSON==>");
+    //console.log(credentialJSON);
+
+    var apiDTD = "";
+    if(operation == "SSO") {
+        apiDTD = "2.1";
+        var apiSession = new API_Session(credentialJSON['endPointURL'], credentialJSON['senderId'], credentialJSON['senderPassword'], "", "", apiDTD);
+        var sessionIdJq = $("#sessionId");
+        var sessionId = sessionIdJq.val();
+
+        if(sessionId != ""){
+            apiSession.ip_setSessionID(sessionId);
+        }else{
+            apiSession.ip_setCredentials(credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], "", "");
+        }
+        customSendRequest(apiSession, requestContent_SSO, readyStateChangeCallback, "2.1_SSO");
+    }
+}
+
+/**
+ *  Function to show the request XML
+ **/
+function constructSSOXMLShowFormPopulateData_2_1() {
+    var requestContent_SSO = "<content><function controlid='testControlId'><init_session><activity></activity></init_session> </function></content>"
+        ;
+    constructXMLShowFormPopulateData_2_1(requestContent_SSO);
+
+    mockExecuteXMLForm_2_1(requestContent_SSO, "SSO");
 }
 
 /**
@@ -2826,6 +2884,76 @@ function processResponseData(responseData, method){
 
     return processedResponseData;
 }
+
+/**
+ * function to open the URL in new tab
+ * @param url
+ */
+function openInNewTab(url) {
+    var win=window.open(url, '_blank');
+    win.focus();
+}
+
+/**
+ *  Function to parse URL from 'init_session' and to login to app with the URL
+ **/
+function parseURLAndLoginToApp(xmlResponse) {
+    var x2js = new X2JS();
+    var selectObjectDivJq = $('#selectObjectDiv');
+
+    //console.log("responseData==>");
+    //console.log(responseData);
+
+    //alert("data==>" + data);
+    var responseDataJSON = x2js.xml_str2json(xmlResponse);
+
+    console.log("responseDataJSON==>");
+    console.log(responseDataJSON);
+    //alert(jsonData);
+    if(responseDataJSON == null) {
+        //selectObjectDivJq.html("<b style='color : red'>Check Network connection, also make sure the Post URL is correct.</b>");
+        var errorString = "Check Network connection, also make sure the Post URL is correct.";
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+
+        alert("Connection Failure!");
+        throw new Error("Connection Failure!");
+    }
+
+    var senderAuthenticationStatus = responseDataJSON["response"]["control"]["status"];
+
+    if(senderAuthenticationStatus != "success") {
+
+        //selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
+        //selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'><div><p>" + errorString + "</p></div><div><p>Response Data:" + JSON.stringify (responseDataJSON) + "</p></div></div>");
+
+        console.log('Response Data: ' + JSON.stringify (responseDataJSON));
+        alert("Sender Authentication Failure!");
+        throw new Error("Sender Authentication Failure!");
+    }
+
+    var userAuthenticationStatus = responseDataJSON["response"]["operation"]["authentication"]["status"];
+
+    if(userAuthenticationStatus  != "success") {
+
+        //selectObjectDivJq.html("<b style='color : red'>Check CompanyConfig!!! make sure credentials are correct :)</b>");
+        var errorString = "Check CompanyConfig!!! make sure credentials are correct :)";
+        //selectObjectDivJq.html("<div class='alert alert-danger' role='alert'>" + errorString + "</div>");
+        selectObjectDivJq.html("<div class='alert alert-danger' role='alert'><div><p>" + errorString + "</p></div><div><p>Response Data:" + JSON.stringify (responseDataJSON) + "</p></div></div>");
+
+        console.log('Response Data: ' + JSON.stringify (responseDataJSON));
+        alert("User Authentication Failure!");
+        throw new Error("User Authentication Failure!");
+    }
+
+    var dataJSON = responseDataJSON["response"]["operation"]["result"]["data"];
+    var loginURL = dataJSON["sessioninfo"]["url"];
+    console.log("loginURL==>");
+    console.log(loginURL);
+
+    openInNewTab(loginURL);
+}
 /**
  *  Function to show response headers like response state, response text and response time
  **/
@@ -2862,9 +2990,10 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
                 var postEndTime = new Date().getTime();
                 console.log("postEndTime==>" + postEndTime);
 
-                var postStatTImeHTMLId =  (dtdVersion == "3.0")? ("postStartTime"):("postStartTime_2_1");
-                var postStartTimeJq = $("#" + postStatTImeHTMLId);
-                var postStartTime = parseInt(postStartTimeJq.val());
+                //var postStatTImeHTMLId =  (dtdVersion == "3.0")? ("postStartTime"):("postStartTime_2_1");
+                //var postStartTimeJq = $("#" + postStatTImeHTMLId);
+                //var postStartTime = parseInt(postStartTimeJq.val());
+                var postStartTime = getPostStartTime(dtdVersion);
                 console.log("postStartTime==>" + postStartTime);
 
                 var responseTime = postEndTime - postStartTime;
@@ -2886,6 +3015,9 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
                     populateShowApiResponseDiv(xRequest.responseText, xmlRequestBody);
                 } else if(dtdVersion == "2.1") {
                     populateShowApiResponseDiv_2_1(xRequest.responseText, xmlRequestBody);
+                }  else if(dtdVersion == "2.1_SSO") {
+                    populateShowApiResponseDiv_2_1(xRequest.responseText, xmlRequestBody);
+                    parseURLAndLoginToApp(xRequest.responseText);
                 }
                 //document.getElementById('xmlresponse').value = xRequest.responseText;
             }
@@ -2900,25 +3032,44 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
             break;
     }
 
-    var responseMetricsFormId = (dtdVersion == "3.0")? ("responseMetricsForm"):("responseMetricsForm_2_1");
+    var responseMetricsFormId = "responseMetricsForm_" + convertDotToUnderScore(dtdVersion);
     responseHeaderDivHTML = "<form id='" + responseMetricsFormId + "' class='form-horizontal'  method='post'  action='#'>" +
         "<legend>Response Metrics</legend>"+
         "<fieldset>" +
         "<div class='" + alertClass + "' role='alert'>" + responseHeaderString + "</div>"+
         "</fieldset>"+
         "</form>";
-    var responseMetricDivId = (dtdVersion == "3.0")? ("responseMetricDiv"):("responseMetricDiv_2_1");
+    var responseMetricDivId = "responseMetricDiv_" + convertDotToUnderScore(dtdVersion);
     $("#" + responseMetricDivId).html(responseHeaderDivHTML);
+}
+
+/*
+ *  getPostStartTime in hidden input HTML component
+ */
+function getPostStartTime(dtdVersion) {
+    var dtdVersionId = convertDotToUnderScore(dtdVersion);
+    var postStatTimeId =  "postStartTime_" + dtdVersionId;
+    var postStartTimeJq = $("#" + postStatTimeId);
+    console.log("getPostStartTime::postStartTimeJq.val==>" + postStartTimeJq.val());
+    var postStartTime = parseInt(postStartTimeJq.val());
+    console.log("dtdVersion==>" + dtdVersion);
+    console.log("getPostStartTime::postStartTime==>" + postStartTime);
+    return postStartTime;
 }
 
 /*
  *  setPostStartTime in hidden input HTML component
  */
 function setPostStartTime(dtdVersion) {
-    var postStatTImeId =  (dtdVersion == "3.0")? ("postStartTime"):("postStartTime_2_1");
-    var postStartTimeJq = $("#" + postStatTImeId);
+    var dtdVersionId = convertDotToUnderScore(dtdVersion);
+    var postStatTimeId =  "postStartTime_" + dtdVersionId;
+    var postStartTimeJq = $("#" + postStatTimeId);
+
+    console.log("postStartTimeJq==>");
+    console.log(postStartTimeJq);
+
     var postStartTime = new Date().getTime();
-    console.log("postStartTime==>" + postStartTime);
+    console.log("setPostStartTime::postStartTime==>" + postStartTime);
     postStartTimeJq.val(postStartTime);
 
 }

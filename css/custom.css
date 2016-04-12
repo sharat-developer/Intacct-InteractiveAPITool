@@ -169,3 +169,13 @@ div.has-error > input[required] {
     font-size: .8em; /*font-size: medium;*/
     margin-top: .5em;
 }
+
+.pager {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    text-align: left;
+}
+
+#currentRequest_3_0 {
+    width: 1.2em;
+}

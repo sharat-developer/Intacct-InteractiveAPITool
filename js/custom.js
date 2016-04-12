@@ -19,6 +19,8 @@ var UPDATE_REQ_FIELDS_CUSTOM  = ["id"];
 var VALID_OPERATIONS = {"=":"=",">": "&amp;gt;", "<":"&amp;lt;", ">=":"&amp;gt;=", "<=":"&amp;lt;=", "in":"in", "not in":"not in", "like":"like", "not like":"not like"};
 var GET_LIST_OBJECTS = ["accountgroup", "achbankconfiguration", "adjjournal", "allocation", "apaccountlabel", "apadjustment", "apadjustmentbatch", "appayment", "appaymentrequest", "apterm", "araccountlabel", "aradjustment", "aradjustmentbatch", "arpayment", "arpaymentbatch", "arterm", "artransactiondef", "bankaccount", "bill", "billbatch", "cctransaction", "class", "company_info", "contact", "contacttaxgroup", "csnhistory", "custglgroup", "customer", "customerachinfo", "customerbankaccount", "customerchargecard", "customerppackage", "customervisibility", "department", "earningtype", "employee", "employeepref", "employeerate", "expenseadjustmentreport", "expensereport", "expensereportbatch", "expensetypes", "glaccount", "glbudget", "glbudgetitem", "glentry", "gltransaction", "icitem", "icitemtotals", "ictotal", "ictransaction", "ictransactiondef", "invoice", "invoicebatch", "itemglgroup", "itemtaxgroup", "itemtotal", "journal", "location", "locationentity", "locationgroup", "popricelist", "potransaction", "potransactiondef", "pricelistitem", "productline", "project", "projectstatus", "projecttype", "recursotransaction", "renewalmacro", "reportingperiod", "revrecchangelog", "revrecschedule", "revrecscheduleentry", "revrectemplate", "smarteventlog", "sopricelist", "sotransaction", "sotransactiondef", "statglaccount", "statjournal", "stkittransaction", "subscription", "supdoc", "supdocfolder", "task", "taxdetail", "taxschedule", "taxscheduledetail", "taxschedulemap", "territory", "timesheet", "timetype", "trxcurrencies", "uom", "vendglgroup", "vendor", "vendorentityaccount", "vendorpref", "vendorvisibility", "vsoeallocation", "vsoeitempricelist", "vsoepricelist", "warehouse"];
 
+var REQUEST_HISTORY_LIMIT = 10;
+
 /**
  *  Function to clear contents in the form
  **/
@@ -1457,6 +1459,102 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
 }
 
 /**
+ * function to populateCreateXML
+ * @param apiRequest
+ * @param apiVersion
+ */
+function populateCreateXML(apiRequest, apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
+    //$('textarea').autoResize();
+    var createXMLJq = $("textarea#createXML_" + apiVersionId);
+    //createXMLJq.height( (createXMLJq[0].scrollHeight)-12);
+
+    var xmlDocAPIRequestLength = apiRequest.toString().split(/\r\n|\r|\n/).length;
+    console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
+    createXMLJq.attr("rows", xmlDocAPIRequestLength);
+    createXMLJq.val(apiRequest);
+}
+
+/**
+ * function setCurrentRequestIndex
+ * @param currentIndex
+ * @param apiVersionId
+ */
+function setCurrentRequestIndex(currentIndex, apiVersionId) {
+    console.log("currentIndex==>");
+    console.log(Number(currentIndex));
+    $("#currentRequest_" + apiVersionId).val(Number(currentIndex) + 1); //.prop("readonly", true);
+}
+
+/**
+ * function getCurrentRequestIndex
+ * @param apiVersionId
+ */
+function getCurrentRequestIndex(apiVersionId) {
+    var uICurrentReqIndex = $("#currentRequest_" + apiVersionId).val();
+    return (Number(uICurrentReqIndex) - 1) % REQUEST_HISTORY_LIMIT;
+}
+
+/**
+ * function to attach all navigation callbacks
+ * @param apiVersion
+ */
+function requestHistoryNavigationCallbacks(apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
+    var firstRequestId = "firstRequest_" + apiVersionId;
+    $("#" + firstRequestId).on("click", function (e) {
+        e.preventDefault();
+        console.log(firstRequestId + "onClick function");
+        console.log("apiVersionId==>");
+        console.log(apiVersionId);
+        var firstReqHist = getFirstRequestFromRequestHistory(apiVersion);
+        if(firstReqHist) {
+            populateCreateXML(firstReqHist, apiVersion);
+        }
+    });
+
+    var lastRequestId = "lastRequest_" + apiVersionId;
+    $("#" + lastRequestId).on("click", function (e) {
+        e.preventDefault();
+        console.log(lastRequestId + "onClick function");
+        console.log("apiVersionId==>");
+        console.log(apiVersionId);
+        var lastReqHist = getLastRequestFromRequestHistory(apiVersion);
+        if(lastReqHist) {
+            populateCreateXML(lastReqHist, apiVersion);
+        }
+    });
+
+    var previousRequestId = "previousRequest_" + apiVersionId;
+    $("#" + previousRequestId).on("click", function (e) {
+        e.preventDefault();
+        console.log(lastRequestId + "onClick function");
+        console.log("apiVersionId==>");
+        console.log(apiVersionId);
+        var previousReqHist = getPreviousRequestFromRequestHistory(apiVersion);
+        if(previousReqHist) {
+            populateCreateXML(previousReqHist, apiVersion);
+        }
+    });
+
+    var nextRequestId = "nextRequest_" + apiVersionId;
+    $("#" + nextRequestId).on("click", function (e) {
+        e.preventDefault();
+        console.log(nextRequestId + "onClick function");
+        console.log("apiVersionId==>");
+        console.log(apiVersionId);
+        var nextReqHist = getNextRequestFromRequestHistory(apiVersion);
+        if(nextReqHist) {
+            populateCreateXML(nextReqHist, apiVersion);
+        }
+    });
+
+    ////TODO - fix the currentRequest Numbers on UI, temp fix we are just hiding the component on screen
+    $("#currentRequest_" + apiVersionId).parent().hide();
+
+}
+
+/**
  *  Function to show the content part of request XML constructed by the API-3.0 Request Builder
  **/
 function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
@@ -1468,19 +1566,32 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
     }
     $('#createXMLShowDiv').html("<form id='createXMLShowForm' class='form-horizontal'  method='post'  action='#'>" +
         legendString +
+        "   <nav>" +
+        "        <ul class='pager'>" +
+        "        <li><a href='#' name='firstRequest_3_0' id='firstRequest_3_0'>\<<</a></li>" +
+        "        <li><a href='#' name='previousRequest_3_0' id='previousRequest_3_0'>\<</a></li>" +
+        "        <li><span><input name='currentRequest_3_0' id='currentRequest_3_0' readonly /></span></li>" +
+        "        <li><a href='#' name='nextRequest_3_0' id='nextRequest_3_0'>\></a></li>" +
+        "        <li><a href='#' name='lastRequest_3_0' id='lastRequest_3_0'>\>\></a></li>" +
+        "        </ul>" +
+        "   </nav>" +
         "</form>"
     );
+
+    requestHistoryNavigationCallbacks("3.0");
+
+
     $('#createXMLShowForm').append(
         "<fieldset><div class='col-sm-12' >"+
         "		<div class='form-group'>"+
         "		<label class='control-label'>API Request</label>"+
-        "       <textarea id='createXML' class='form-control' >"+data+"</textarea>"+
+        "       <textarea id='createXML_3_0' class='form-control' >"+data+"</textarea>"+
 //            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
         "		</div>"+
         "	</div></fieldset>"
     );
     //$('textarea').autoResize();
-    var createXMLJq = $("textarea#createXML");
+    var createXMLJq = $("textarea#createXML_3_0");
     //createXMLJq.height( (createXMLJq[0].scrollHeight)-12);
 
     var xmlDocAPIRequestLength = data.split(/\r\n|\r|\n/).length;
@@ -1518,7 +1629,7 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
         var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
         //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
 
-        customAJAXPost($("#createXML").val(), credentialJSON, $("#sessionId").val(), "3.0");
+        customAJAXPost($("#createXML_3_0").val(), credentialJSON, $("#sessionId").val(), "3.0");
     });
 }
 
@@ -1697,8 +1808,19 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
 
         "<form id='createXMLShowForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
         "<legend>API-2.1 Request XML</legend>"+
+        "<nav>" +
+        "        <ul class='pager'>" +
+        "        <li><a href='#' name='firstRequest_2_1' id='firstRequest_2_1'>\<<</a></li>" +
+        "        <li><a href='#' name='previousRequest_2_1' id='previousRequest_2_1'>\<</a></li>" +
+        "        <li><span><input name='currentRequest_2_1' id='currentRequest_2_1' readonly /></span></li>" +
+        "        <li><a href='#' name='nextRequest_2_1' id='nextRequest_2_1'>\></a></li>" +
+        "        <li><a href='#' name='lastRequest_2_1' id='lastRequest_2_1'>\>\></a></li>" +
+        "        </ul>" +
+        "        </nav>" +
         "</form>"
     );
+
+    requestHistoryNavigationCallbacks("2.1");
 
 
     $('#createXMLShowForm_2_1').append(

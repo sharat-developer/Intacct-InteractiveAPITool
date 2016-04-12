@@ -2,6 +2,17 @@
  * Created by shegde on 08-10-2014.
  */
 
+/**
+ * mod operation doesn't work for negative number fix
+ * NOTE - not working as expected :(
+ * @param n
+ * @returns {number}
+ */
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+};
+
+
 //{'name' :companyId, 'value' : 'INTACCT'} ==> {companyId : 'INTACCT'}
 function nameValueToJSON(nameValueObject){
     var jsonObj ={};
@@ -504,6 +515,296 @@ function isEmpty(o) {
 }
 
 /**
+ * function to get Current AppUserConfigDetailsName from localStorage
+ */
+function getCurrentAppUserConfigDetailsName() {
+    var configurationName = $('#configurationName').val();
+    return getAppUserConfigDetailsName(configurationName);
+}
+
+/**
+ * function to get updated RequestHistory circular array
+ * @param ddtVersionId
+ * @param requestHistory
+ * @param payload
+ */
+function getUpdatedRequestHistory(ddtVersionId, requestHistory, payload) {
+
+    var dtdHistory = requestHistory[ddtVersionId];
+    var headIndex = dtdHistory["headIndex"];
+    var requests = dtdHistory["requests"];
+    console.log("headIndex==>");
+    console.log(headIndex);
+    console.log("requests==>");
+    console.log(requests);
+
+    if(headIndex == -1){
+        requestHistory[ddtVersionId] = {
+            "headIndex" : 0, "requests" : [payload]
+        };
+    } else {
+        headIndex = (headIndex + 1) % REQUEST_HISTORY_LIMIT;
+        console.log("new:headIndex==>");
+        console.log(headIndex);
+        requests[headIndex] = payload;
+        console.log("new:requests==>");
+        console.log(requests);
+        requestHistory[ddtVersionId] = {
+            "headIndex" : headIndex, "requests" : requests
+        };
+    }
+
+    return requestHistory;
+}
+
+/**
+ *
+ * @param storageName
+ * @param key
+ * @param value
+ */
+function updateValueOfKeyInLocalStorage(storageName, key, value) {
+    // retrieve
+    var localStorageDB = localStorage.getItem(storageName);
+    if(localStorageDB != undefined) {
+        var localStorageDBJSON = JSON.parse(localStorageDB);
+        console.log("localStorageDBJSON==>");
+        console.log(localStorageDBJSON);
+        localStorageDBJSON[key] = value;
+
+        var localStorageDBJSONString = JSON.stringify(localStorageDBJSON);
+        //set the localStorage with new updated value
+        localStorage.setItem(storageName, localStorageDBJSONString);
+        return localStorageDBJSON;
+    }
+}
+
+/**
+ * function to getFirstRequestFromAPIRequestHistory
+ * @param apiReqHist
+ * @param headIndex
+ * @param currentIndex
+ * @returns {*}
+ */
+function getPreviousRequestFromAPIRequestHistory(apiReqHist, headIndex, currentIndex) {
+    console.log("apiReqHist==>");
+    console.log(apiReqHist);
+    console.log("headIndex==>");
+    console.log(headIndex);
+    console.log("currentIndex==>");
+    console.log(currentIndex);
+    var previousIndex =  (((currentIndex - 1) % REQUEST_HISTORY_LIMIT)+ REQUEST_HISTORY_LIMIT) % REQUEST_HISTORY_LIMIT ;
+    console.log("previousIndex==>");
+    console.log(previousIndex);
+    if(apiReqHist["requests"][previousIndex]) {
+        return previousIndex;
+    }
+    return false;
+}
+
+/**
+ * function to getNextRequestFromAPIRequestHistory
+ * @param apiReqHist
+ * @param headIndex
+ * @param currentIndex
+ * @returns {*}
+ */
+function getNextRequestFromAPIRequestHistory(apiReqHist, headIndex, currentIndex) {
+    console.log("apiReqHist==>");
+    console.log(apiReqHist);
+    console.log("headIndex==>");
+    console.log(headIndex);
+    console.log("currentIndex==>");
+    console.log(currentIndex);
+    var nextIndex =  (currentIndex + 1) % REQUEST_HISTORY_LIMIT ;
+    if(apiReqHist["requests"][nextIndex]) {
+        return nextIndex;
+    }
+    return false;
+}
+
+/**
+ * function to get Last RequestHistory
+ * @param apiVersion
+ */
+function getNextRequestFromRequestHistory(apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
+    var requestHistory = getRequestHistoryFromDB();
+    if(requestHistory) {
+        var apiReqHist = requestHistory[apiVersionId];
+        var headIndex = apiReqHist["headIndex"];
+        var currentIndex = getCurrentRequestIndex(apiVersionId);
+        var nextIndex = getNextRequestFromAPIRequestHistory(apiReqHist, headIndex, currentIndex);
+        setCurrentRequestIndex(nextIndex, apiVersionId);
+        return apiReqHist["requests"][nextIndex];
+    }
+    return false;
+}
+
+/**
+ * function to get Last RequestHistory
+ * @param apiVersion
+ */
+function getPreviousRequestFromRequestHistory(apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
+    var requestHistory = getRequestHistoryFromDB();
+    if(requestHistory) {
+        var apiReqHist = requestHistory[apiVersionId];
+        var headIndex = apiReqHist["headIndex"];
+        var currentIndex = getCurrentRequestIndex(apiVersionId);
+        var previousIndex = getPreviousRequestFromAPIRequestHistory(apiReqHist, headIndex, currentIndex);
+        setCurrentRequestIndex(previousIndex, apiVersionId);
+        return apiReqHist["requests"][previousIndex];
+    }
+    return false;
+}
+
+/**
+ * function to getLastRequestFromAPIRequestHistory
+ * @param apiReqHist
+ * @param headIndex
+ * @returns {*}
+ */
+function getLastRequestFromAPIRequestHistory(apiReqHist, headIndex) {
+    console.log("apiReqHist==>");
+    console.log(apiReqHist);
+    console.log("headIndex==>");
+    console.log(headIndex);
+    if(apiReqHist["requests"][headIndex]) {
+        return headIndex;
+    } else { //not likely
+        return false;   
+    }
+}
+
+/**
+ * function to getFirstRequestFromAPIRequestHistory
+ * @param apiReqHist
+ * @param headIndex
+ * @returns {*}
+ */
+function getFirstRequestFromAPIRequestHistory(apiReqHist, headIndex) {
+    console.log("apiReqHist==>");
+    console.log(apiReqHist);
+    console.log("headIndex==>");
+    console.log(headIndex);
+    for(var i = 1; i <= REQUEST_HISTORY_LIMIT; i++) {
+        console.log("i==>");
+        console.log(i);
+        var firstIndex = ((headIndex + REQUEST_HISTORY_LIMIT + i) % REQUEST_HISTORY_LIMIT);
+        console.log("firstIndex==>");
+        console.log(firstIndex);
+        if(apiReqHist["requests"][firstIndex]) {
+            return firstIndex;
+        }
+    }
+    return false;
+}
+
+
+/**
+ * function to get Last RequestHistory
+ * @param apiVersion
+ */
+function getLastRequestFromRequestHistory(apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
+    var requestHistory = getRequestHistoryFromDB();
+    if(requestHistory) {
+        var apiReqHist = requestHistory[apiVersionId];
+        var headIndex = apiReqHist["headIndex"];
+        var lastIndex = getLastRequestFromAPIRequestHistory(apiReqHist, headIndex);
+        setCurrentRequestIndex(lastIndex, apiVersionId);
+        return apiReqHist["requests"][lastIndex];
+    }
+    return false;
+}
+
+/**
+ * function to get First RequestHistory
+ * @param apiVersion
+ */
+function getFirstRequestFromRequestHistory(apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
+    var requestHistory = getRequestHistoryFromDB();
+    if(requestHistory) {
+        var apiReqHist = requestHistory[apiVersionId];
+        var headIndex = apiReqHist["headIndex"];
+        var firstIndex = getFirstRequestFromAPIRequestHistory(apiReqHist, headIndex);
+        setCurrentRequestIndex(firstIndex, apiVersionId);
+        return apiReqHist["requests"][firstIndex];
+    }
+    return false;
+}
+
+/**
+ * function to get the Request History
+ * @returns {boolean}
+ */
+function getRequestHistoryFromDB() {
+
+    var appUserConfigDetailsName =  getCurrentAppUserConfigDetailsName();
+    // retrieve
+    var appUserConfigDetailsDB = localStorage.getItem(appUserConfigDetailsName);
+
+    if(appUserConfigDetailsDB != undefined) {
+        console.log("appUserConfigDetailsDBJSON != undefined");
+
+        console.log("appUserConfigDetailsDB==>");
+        console.log(appUserConfigDetailsDB);
+        var appUserConfigDetailsDBJSON = JSON.parse(appUserConfigDetailsDB);
+        console.log("appUserConfigDetailsDBJSON==>");
+        console.log(appUserConfigDetailsDBJSON);
+
+        var requestHistory = appUserConfigDetailsDBJSON["requestHistory"];
+        return requestHistory;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * function to saveAPIPayloadInRequestHistory
+ * @param payload
+ * @param apiDTDVersion
+ */
+function saveAPIPayloadInRequestHistory(payload, apiDTDVersion) {
+    console.log("payload==>");
+    console.log(payload);
+    console.log("apiDTDVersion==>");
+    console.log(apiDTDVersion);
+
+    var appUserConfigDetailsName =  getCurrentAppUserConfigDetailsName();
+
+    // retrieve
+    var appUserConfigDetailsDB = localStorage.getItem(appUserConfigDetailsName);
+
+    if(appUserConfigDetailsDB != undefined) {
+        console.log("appUserConfigDetailsDBJSON != undefined");
+
+        console.log("appUserConfigDetailsDB==>");
+        console.log(appUserConfigDetailsDB);
+        var appUserConfigDetailsDBJSON = JSON.parse(appUserConfigDetailsDB);
+        console.log("appUserConfigDetailsDBJSON==>");
+        console.log(appUserConfigDetailsDBJSON);
+
+        var requestHistory = appUserConfigDetailsDBJSON["requestHistory"];
+        var ddtVersionId =  convertDotToUnderScore(apiDTDVersion);
+
+        var newRequestHistory = getUpdatedRequestHistory(ddtVersionId, requestHistory, payload);
+
+        console.log("newRequestHistory==>");
+        console.log(newRequestHistory);
+
+        // update the newRequestHistory into 'appUserConfigDetailsName' localStorage
+        updateValueOfKeyInLocalStorage(appUserConfigDetailsName, "requestHistory", newRequestHistory);
+
+    } else {
+        //throw new Error("there is something wrong in localStorage:" + appUserConfigDetailsName + " retrieval");
+    }
+
+}
+
+/**
  * document.ready() function
  */
 $(function() {
@@ -596,6 +897,19 @@ $(function() {
 
 
             } else {
+
+                //initializing requestHistory
+                var requestHistory = {
+                    "3_0":{ "headIndex" : -1, "requests" : []
+                    },
+                    "2_1":{ "headIndex" : -1, "requests" : []
+                    }
+                };
+                //store the request-history
+                tempConfigurationObject["requestHistory"] = requestHistory;
+
+                console.log("requestHistory==>");
+                console.log(requestHistory);
 
                 localStorageRelatedInitFunctions(configurationName, tempConfigurationObject);
                 loadConfigurationFromLocalStorage();

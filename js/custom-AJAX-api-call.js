@@ -75,6 +75,9 @@ function execute(postData, endPoint){
  */
 function customSendRequest(apiSession, payload, callback, dtdVersion) {
 
+    ////save the API payload(functionString) as the request-history in the localStorage
+    saveAPIPayloadInRequestHistory(payload, apiSession["dtdversion"]);
+
     var xmlDoc = "";
 
     //cmbs custom

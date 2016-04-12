@@ -207,6 +207,10 @@ API_Session.prototype.getXMLHTTPRequest = function() {
             }
         }
     }
+
+    //// using the ajaxURL reference in callback function
+    xreq.ajaxURL = this.ajaxURL;
+
     return xreq;
 };
 /**

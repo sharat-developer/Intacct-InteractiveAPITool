@@ -1464,6 +1464,7 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
  * @param apiVersion
  */
 function populateCreateXML(apiRequest, apiVersion) {
+    apiRequest = vkbeautify.xml(apiRequest);
     var apiVersionId = convertDotToUnderScore(apiVersion);
     //$('textarea').autoResize();
     var createXMLJq = $("textarea#createXML_" + apiVersionId);
@@ -1549,6 +1550,16 @@ function requestHistoryNavigationCallbacks(apiVersion) {
         }
     });
 
+
+    var formatRequestId = "formatRequest_" + apiVersionId;
+    var createXMLId = "createXML_" + apiVersionId;
+    $("#" + formatRequestId).on("click", function (e) {
+        e.preventDefault();
+
+        var apiRequest = $("#" + createXMLId).val();
+        populateCreateXML(apiRequest, apiVersionId);
+    });
+
     ////TODO - fix the currentRequest Numbers on UI, temp fix we are just hiding the component on screen
     $("#currentRequest_" + apiVersionId).parent().hide();
 
@@ -1573,6 +1584,7 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
         "        <li><span><input name='currentRequest_3_0' id='currentRequest_3_0' readonly /></span></li>" +
         "        <li><a href='#' name='nextRequest_3_0' id='nextRequest_3_0'>\></a></li>" +
         "        <li><a href='#' name='lastRequest_3_0' id='lastRequest_3_0'>\>\></a></li>" +
+        "        <li><a href='#' name='formatRequest_3_0' id='formatRequest_3_0'>Format</a></li>" +
         "        </ul>" +
         "   </nav>" +
         "</form>"
@@ -1590,13 +1602,8 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
         "		</div>"+
         "	</div></fieldset>"
     );
-    //$('textarea').autoResize();
-    var createXMLJq = $("textarea#createXML_3_0");
-    //createXMLJq.height( (createXMLJq[0].scrollHeight)-12);
 
-    var xmlDocAPIRequestLength = data.split(/\r\n|\r|\n/).length;
-    console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
-    createXMLJq.attr("rows", xmlDocAPIRequestLength);
+    populateCreateXML(data, "3.0");
 
 
     if(constructedXMLFlag === true) {
@@ -1624,7 +1631,7 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
         event.preventDefault();
         $("#showResponseForm_3_0").html('');
         $("#showResponseDiv_3_0").html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
-
+        $("#responseMetricDiv_3_0").hide();
 
         var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
         //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
@@ -1764,6 +1771,7 @@ function mockExecuteXMLForm_2_1(requestContent_SSO, operation) {
 
     //$("#showResponseForm_2_1").html('');
     $("#showResponseDiv_2_1").html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
+    $("#responseMetricDiv_2_1").hide();
 
     var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
     //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
@@ -1815,6 +1823,7 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         "        <li><span><input name='currentRequest_2_1' id='currentRequest_2_1' readonly /></span></li>" +
         "        <li><a href='#' name='nextRequest_2_1' id='nextRequest_2_1'>\></a></li>" +
         "        <li><a href='#' name='lastRequest_2_1' id='lastRequest_2_1'>\>\></a></li>" +
+        "        <li><a href='#' name='formatRequest_2_1' id='formatRequest_2_1'>Format</a></li>" +
         "        </ul>" +
         "        </nav>" +
         "</form>"
@@ -1833,19 +1842,7 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         "	</div>" +
         "</fieldset>"
     );
-    //$('textarea').autoResize();
-    var createXML_2_1Jq = $("textarea#createXML_2_1");
-    //createXML_2_1Jq.height( 200 );
-
-
-    //createXML_2_1Jq.val(formatXml(requestContent_2_1));
-    requestContent_2_1 = vkbeautify.xml(requestContent_2_1);
-    createXML_2_1Jq.val(requestContent_2_1);
-    //console.log("createXML_2_1Jq[0].scrollHeight==>" +createXML_2_1Jq[0].scrollHeight);
-    //createXML_2_1Jq.height( (createXML_2_1Jq[0].scrollHeight)-12);
-    var xmlDocAPIRequestLength = requestContent_2_1.split(/\r\n|\r|\n/).length;
-    console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
-    createXML_2_1Jq.attr("rows", xmlDocAPIRequestLength);
+    populateCreateXML(data, "2.1");
 
     var executeXMLDiv_2_1Jq = $('#executeXMLDiv_2_1');
 
@@ -1869,7 +1866,7 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         event.preventDefault();
         //$("#showResponseForm_2_1").html('');
         $("#showResponseDiv_2_1").html("<img height='50em' width='50em' src='./img/ajax-loader.gif' id='loading-indicator' />");
-
+        $("#responseMetricDiv_2_1").hide();
 
         var credentialJSON = nameValueToJSON($('#configuration').serializeArray());
         //console.log('credentialJSON==>'+JSON.stringify(credentialJSON));
@@ -3087,11 +3084,10 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
 
     var responseHeaderDivHTML = "";
     var responseHeaderString = "";
+    var requestPostUrlString = "";
     var alertClass = "alert alert-success";
-    $("#showResponseDiv").show();
 
-    switch (xRequest.readyState)
-    {
+    switch (xRequest.readyState) {
         case 0 :
             responseHeaderString = "Request not initialize...";
             break;
@@ -3106,8 +3102,7 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
             break;
         case 4 :
             // if "OK"
-            if (xRequest.status==200)
-            {
+            if (xRequest.status == 200) {
                 // XML data is OK
                 var postEndTime = new Date().getTime();
                 console.log("postEndTime==>" + postEndTime);
@@ -3142,9 +3137,7 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
                     parseURLAndLoginToApp(xRequest.responseText);
                 }
                 //document.getElementById('xmlresponse').value = xRequest.responseText;
-            }
-            else
-            {
+            } else {
                 alertClass = "alert alert-danger";
                 responseHeaderString = "Problem retrieving XML data from server. &nbsp;&nbsp;&nbsp;<strong>Status Text:</strong>" + xRequest.statusText + " &nbsp;&nbsp;&nbsp;<strong>Status Code:</strong> " + xRequest.status;
                 $("#showResponseDiv").hide();
@@ -3154,15 +3147,17 @@ function readyStateChangeCallback(xRequest, xmlRequestBody, dtdVersion) {
             break;
     }
 
+    requestPostUrlString = "<strong>Post URL:</strong>" + xRequest.ajaxURL;
+
     var responseMetricsFormId = "responseMetricsForm_" + convertDotToUnderScore(dtdVersion);
     responseHeaderDivHTML = "<form id='" + responseMetricsFormId + "' class='form-horizontal'  method='post'  action='#'>" +
         "<legend>Response Metrics</legend>"+
         "<fieldset>" +
-        "<div class='" + alertClass + "' role='alert'>" + responseHeaderString + "</div>"+
+        "<div class='" + alertClass + "' role='alert'><p>" + requestPostUrlString + "</p><p>" +  responseHeaderString + "</p></div>"+
         "</fieldset>"+
         "</form>";
     var responseMetricDivId = "responseMetricDiv_" + convertDotToUnderScore(dtdVersion);
-    $("#" + responseMetricDivId).html(responseHeaderDivHTML);
+    $("#" + responseMetricDivId).html(responseHeaderDivHTML).show();
 }
 
 /*

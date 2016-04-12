@@ -150,6 +150,28 @@ function deleteCurrentConfigWithLocalStorage(valueSelected) {
 }
 
 /**
+ * function to create  and get EncryptionKey
+ * @param appUserPassword
+ * @param appUserSalt
+ */
+function createEncryptionKey(appUserPassword, appUserSalt) {
+    return CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
+}
+
+/**
+ * function to get EncryptionKey from sessionStorage
+ *
+ */
+function getLoggedInAppUserEncryptionKey() {
+    var loggedInAppUserKey =  sessionStorage.getItem("loggedInAppUserKey");
+    if(loggedInAppUserKey != undefined) {
+        return loggedInAppUserKey;
+    } else {
+        return false;
+    }
+}
+
+/**
  * Function to encrypt the Sensitive Data in configDetails
  */
 function encryptSensitiveData(configObject) {
@@ -157,12 +179,6 @@ function encryptSensitiveData(configObject) {
     var userPassword = configObject["userPassword"];
     var senderPassword = configObject["senderPassword"];
 
-    var appUserName = sessionStorage.getItem("loggedInAppUserName");
-    //var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
-    var appUserPasswordEn = sessionStorage.getItem("loggedInAppUserPasswordEn");
-    var appUserSalt = sessionStorage.getItem("loggedInAppUserSalt");
-
-    var appUserPassword = getBase64DecodedString(appUserPasswordEn);
 
     //console.log("userPassword==>" + userPassword);
     //console.log("senderPassword==>" + senderPassword);
@@ -170,7 +186,7 @@ function encryptSensitiveData(configObject) {
     //console.log("appUserPassword==>" + appUserPasswordEn);
     //console.log("appUserSalt==>" + appUserSalt);
 
-    var encryptionKey512Bits = CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
+    var encryptionKey512Bits = getLoggedInAppUserEncryptionKey();
     //console.log("encryptionKey512Bits==>" + encryptionKey512Bits);
 
 
@@ -195,19 +211,7 @@ function decryptSensitiveData(configObject) {
     var encryptedUserPassword = configObject["userPassword"];
     var encryptedSenderPassword = configObject["senderPassword"];
 
-    var appUserName = sessionStorage.getItem("loggedInAppUserName");
-
-    //var appUserPassword = sessionStorage.getItem("loggedInAppUserPassword");
-    var appUserPasswordEn = sessionStorage.getItem("loggedInAppUserPasswordEn");
-    var appUserPassword = getBase64DecodedString(appUserPasswordEn);
-    var appUserSalt = sessionStorage.getItem("loggedInAppUserSalt");
-
-    //console.log("encryptedUserPassword==>" + encryptedUserPassword);
-    //console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
-    //console.log("appUserPassword==>" + appUserPassword);
-    //console.log("appUserSalt==>" + appUserSalt);
-
-    var encryptionKey512Bits = CryptoJS.PBKDF2(appUserPassword, appUserSalt, { keySize: 512/32 }).toString();
+    var encryptionKey512Bits = getLoggedInAppUserEncryptionKey();
     console.log("encryptionKey512Bits==>" + encryptionKey512Bits);
 
 
@@ -240,7 +244,7 @@ function getLoggedInAppUserName() {
  * Function to get appUserConfigListName if exists
  */
 function getAppUserConfigListName() {
-    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    var loggedInAppUserName = getLoggedInAppUserName();
     if(loggedInAppUserName != undefined) {
         return "IAT__" + loggedInAppUserName + "__" + "configList";
     } else {
@@ -252,7 +256,7 @@ function getAppUserConfigListName() {
  * Function to get appUserConfigListName if exists
  */
 function getAppUserConfigDetailsName(configurationName) {
-    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    var loggedInAppUserName = getLoggedInAppUserName();
     if(loggedInAppUserName != undefined) {
         return "IAT__" + loggedInAppUserName + "__" + configurationName;
     } else {
@@ -331,9 +335,7 @@ function localStorageRelatedInitFunctions(configurationName, configObject) {
  */
 function removeSessionItems() {
     sessionStorage.removeItem("loggedInAppUserName");
-    sessionStorage.removeItem("loggedInAppUserPassword");
-    sessionStorage.removeItem("loggedInAppUserPasswordEn");
-    sessionStorage.removeItem("loggedInAppUserSalt");
+    sessionStorage.removeItem("loggedInAppUserKey");
 }
 
 /**
@@ -438,11 +440,8 @@ function saveSession(loggedInAppUserName, loggedInAppUserPassword, loggedInAppUs
     sessionStorage.setItem("loggedInAppUserName", loggedInAppUserName);
     //sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
 
-    var encodedPassword = getBase64EncodedString(loggedInAppUserPassword);
-    console.log("encodedPassword==>" + encodedPassword);
-
-    sessionStorage.setItem("loggedInAppUserPasswordEn", encodedPassword);
-    sessionStorage.setItem("loggedInAppUserSalt", loggedInAppUserSalt);
+    var loggedInAppUserEncryptionKey = createEncryptionKey(loggedInAppUserPassword, loggedInAppUserSalt);
+    sessionStorage.setItem("loggedInAppUserKey", loggedInAppUserEncryptionKey);
 
     //save session in memoryStorage also for cross-tab authentication
     window.memoryStorage = sessionStorage;
@@ -451,21 +450,16 @@ function saveSession(loggedInAppUserName, loggedInAppUserPassword, loggedInAppUs
 }
 
 /**
- *  Function to save loggedInAppUserName, loggedInAppUserPassword, loggedInAppUserSalt in sessionStorage
+ *  Function to save loggedInAppUserName, loggedInAppUserKey in sessionStorage
  * @param loggedInAppUserName
- * @param loggedInAppUserPasswordEn
- * @param loggedInAppUserSalt
+ * @param loggedInAppUserKey
  */
-function savePasswordEncodedSession(loggedInAppUserName, loggedInAppUserPasswordEn, loggedInAppUserSalt) {
+function savePasswordEncodedSession(loggedInAppUserName, loggedInAppUserKey) {
     //store login username in session
     sessionStorage.setItem("loggedInAppUserName", loggedInAppUserName);
-    //sessionStorage.setItem("loggedInAppUserPassword", enteredAppUserPassword);
-
-    sessionStorage.setItem("loggedInAppUserPasswordEn", loggedInAppUserPasswordEn);
-    sessionStorage.setItem("loggedInAppUserSalt", loggedInAppUserSalt);
-
+    sessionStorage.setItem("loggedInAppUserKey", loggedInAppUserKey);
+    
     //save session in memoryStorage also for cross-tab authentication
-    window.memoryStorage = sessionStorage;
     window.memoryStorage = sessionStorage;
     localStorage.setItem('sessionStorage', JSON.stringify(window.memoryStorage));
     localStorage.removeItem('sessionStorage');
@@ -476,7 +470,7 @@ function savePasswordEncodedSession(loggedInAppUserName, loggedInAppUserPassword
  */
 function setSessionOnPageLoad() {
     //for initial load-configuration using sessionStorage
-    var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+    var loggedInAppUserName = getLoggedInAppUserName();
     if(loggedInAppUserName != undefined) {
         console.log("user session already exist in sessionStorage==>");
         console.log(sessionStorage);
@@ -497,7 +491,7 @@ function setSessionOnPageLoad() {
         console.log(sessionInMemory);
 
         if(sessionInMemory["loggedInAppUserName"] != undefined) {
-            savePasswordEncodedSession(sessionInMemory["loggedInAppUserName"], sessionInMemory["loggedInAppUserPasswordEn"], sessionInMemory["loggedInAppUserSalt"]);
+            savePasswordEncodedSession(sessionInMemory["loggedInAppUserName"], sessionInMemory["loggedInAppUserKey"]);
             activeSessionRoutines(sessionInMemory["loggedInAppUserName"]);
         }
     }
@@ -938,7 +932,7 @@ $(function() {
 
         //using localStorage
         //get login username in session
-        var loggedInAppUserName = sessionStorage.getItem("loggedInAppUserName");
+        var loggedInAppUserName = getLoggedInAppUserName();
         var appUserConfigDetailsName = "IAT__" + loggedInAppUserName + "__" + valueSelected;
 
         // retrieve

@@ -1842,7 +1842,7 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         "	</div>" +
         "</fieldset>"
     );
-    populateCreateXML(data, "2.1");
+    populateCreateXML(requestContent_2_1, "2.1");
 
     var executeXMLDiv_2_1Jq = $('#executeXMLDiv_2_1');
 

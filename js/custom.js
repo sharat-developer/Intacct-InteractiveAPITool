@@ -1511,9 +1511,10 @@ function populateCreateXML(apiRequest, apiVersion) {
 /**
  * function setCurrentRequestIndex
  * @param currentIndex
- * @param apiVersionId
+ * @param apiVersion
  */
-function setCurrentRequestIndex(currentIndex, apiVersionId) {
+function setCurrentRequestIndex(currentIndex, apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
     console.log("currentIndex==>");
     console.log(Number(currentIndex));
     $("#currentRequest_" + apiVersionId).val(Number(currentIndex) + 1); //.prop("readonly", true);
@@ -1636,6 +1637,16 @@ function constructedXMLShowFormPopulateData(data, constructedXMLFlag){
     );
 
     populateCreateXML(data, "3.0");
+
+    ////populate the currentRequest_ with headIndex
+    var requestHistory = getRequestHistoryFromDB();
+    if(requestHistory) {
+        var headIndex = getHeadIndexFromRequestHistory(requestHistory, "3.0");
+        console.log("headIndex==>");
+        console.log(headIndex);
+        setCurrentRequestIndex((headIndex + 1), "3.0");
+    }
+
 
 
     if(constructedXMLFlag === true) {
@@ -1875,6 +1886,15 @@ function constructXMLShowFormPopulateData_2_1(requestContent_2_1) {
         "</fieldset>"
     );
     populateCreateXML(requestContent_2_1, "2.1");
+
+    ////populate the currentRequest_ with headIndex
+    var requestHistory = getRequestHistoryFromDB();
+    if(requestHistory) {
+        var headIndex = getHeadIndexFromRequestHistory(requestHistory, "2.1");
+        console.log("headIndex==>");
+        console.log(headIndex);
+        setCurrentRequestIndex((headIndex + 1), "2.1");
+    }
 
     var executeXMLDiv_2_1Jq = $('#executeXMLDiv_2_1');
 

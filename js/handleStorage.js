@@ -694,6 +694,8 @@ function getFirstRequestFromAPIRequestHistory(apiReqHist, headIndex) {
 }
 
 
+//todo disable the relevant navigation buttons http://stackoverflow.com/questions/23385741/how-to-disable-anchor-tag-in-jquery
+
 /**
  * function to get Last RequestHistory
  * @param apiVersion
@@ -757,10 +759,11 @@ function getRequestHistoryFromDB() {
 /**
  * function to getHeadIndexFromRequestHistory
  * @param reqHist
- * @param apiVersionId
+ * @param apiVersion
  * @returns {*}
  */
-function getHeadIndexFromRequestHistory(reqHist, apiVersionId) {
+function getHeadIndexFromRequestHistory(reqHist, apiVersion) {
+    var apiVersionId = convertDotToUnderScore(apiVersion);
     return reqHist[apiVersionId]["headIndex"];
 }
 
@@ -801,7 +804,7 @@ function saveAPIPayloadInRequestHistory(payload, apiDTDVersion) {
         updateValueOfKeyInLocalStorage(appUserConfigDetailsName, "requestHistory", newRequestHistory);
         
         //update the currentRequest_[ddtVersionId] to have the headIndex in it so that requestHistory navigation will run smooth
-        var headIndex = getHeadIndexFromRequestHistory(newRequestHistory, ddtVersionId);
+        var headIndex = getHeadIndexFromRequestHistory(newRequestHistory, apiDTDVersion);
         setCurrentRequestIndex(headIndex, ddtVersionId);
 
     } else {

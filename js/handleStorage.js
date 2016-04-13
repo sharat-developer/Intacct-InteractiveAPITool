@@ -476,8 +476,6 @@ function setSessionOnPageLoad() {
         console.log(sessionStorage);
 
         window.memoryStorage = sessionStorage;
-
-        activeSessionRoutines(loggedInAppUserName);
         console.log("window.memoryStorage==>");
         console.log(window.memoryStorage);
     } else {

@@ -755,6 +755,16 @@ function getRequestHistoryFromDB() {
 }
 
 /**
+ * function to getHeadIndexFromRequestHistory
+ * @param reqHist
+ * @param apiVersionId
+ * @returns {*}
+ */
+function getHeadIndexFromRequestHistory(reqHist, apiVersionId) {
+    return reqHist[apiVersionId]["headIndex"];
+}
+
+/**
  * function to saveAPIPayloadInRequestHistory
  * @param payload
  * @param apiDTDVersion
@@ -789,6 +799,10 @@ function saveAPIPayloadInRequestHistory(payload, apiDTDVersion) {
 
         // update the newRequestHistory into 'appUserConfigDetailsName' localStorage
         updateValueOfKeyInLocalStorage(appUserConfigDetailsName, "requestHistory", newRequestHistory);
+        
+        //update the currentRequest_[ddtVersionId] to have the headIndex in it so that requestHistory navigation will run smooth
+        var headIndex = getHeadIndexFromRequestHistory(newRequestHistory, ddtVersionId);
+        setCurrentRequestIndex(headIndex, ddtVersionId);
 
     } else {
         //throw new Error("there is something wrong in localStorage:" + appUserConfigDetailsName + " retrieval");

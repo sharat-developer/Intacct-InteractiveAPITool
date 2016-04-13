@@ -821,6 +821,18 @@ function constructInspectXML( keyForm ){
 }
 
 /**
+ *  Function to construct and return InstallApp method XML request
+ **/
+function constructInstallAppXML( keyForm ){
+    var  installAppXMLData = nameValueToJSON( keyForm.serializeArray())['installAppXMLData'];
+
+    var xmlString = "<" + selectedMethod + ">";
+    xmlString += "<appxml><![CDATA[" + installAppXMLData + "]]></appxml>";
+    xmlString += "</"+selectedMethod+">";
+    return xmlString;
+}
+
+/**
  *  Function to construct and return readMore method XML request
  **/
 function constructReadMoreXML( keyForm ){
@@ -978,6 +990,7 @@ function populateSelectObject(responseData){
                 "                                            <option value='#'>--select a generic method--</option>" +
                 "                                            <option value='getAPISession'>getAPISession</option>" +
                 "                                            <option value='getUserPermissions'>getUserPermissions</option>" +
+                "                                            <option value='installApp'>installApp</option>" +
                 "                                        </select>" +
                 "                                    </div>"
             );
@@ -1041,6 +1054,25 @@ function populateSelectObject(responseData){
                         apiSession.ip_setCredentials(credentialJSON['companyId'], credentialJSON['userName'], credentialJSON['userPassword'], "", "");
                     }
                     apiSession.ip_readByQuery("USERINFO", "LOGINID","", "", "xml", selectMethodCallbackFunction);
+                } else if(selectedMethod == "installApp"){ //handle installApp method separately
+                    console.log("selectedMethod ==>" + selectedMethod);
+                    constructKeyInputForm(selectedMethod);
+
+                    selectFieldDivJq.html("");
+                    docParIdDivJq.html(
+                        "<div class='row'>" +
+                        "<div class='col-md-8 col-md-offset-4'>"+
+                        "<button type='button' id = 'constructInstallAppXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+                        "</div>" +
+                        "</div>"
+                    );
+                    $("#constructInstallAppXMLBtn").on("click", function(){
+                        var xmlString = constructInstallAppXML( $("#keyForm"));
+                        xmlString = constructContentWrapper(xmlString);
+                        constructedXMLShowFormPopulateData(xmlString, true);
+                    });
+
+                    return;
                 }
 
 
@@ -2361,7 +2393,7 @@ function constructUserInputForm(dataJSON) {
     userIdJq.on("change", function() {
         selectFieldDivJq.html("");
         var userId = $(this).val();
-        xmlString = constructGetUserPermissionsXML(userId);
+        var xmlString = constructGetUserPermissionsXML(userId);
         xmlString = constructContentWrapper(xmlString);
         constructedXMLShowFormPopulateData(xmlString, true);
     });
@@ -2411,7 +2443,7 @@ function constructKeyInputForm(methodName){
         );
 
         return;
-    }else if(methodName.indexOf("readMore") != -1) {
+    } else if(methodName.indexOf("readMore") != -1) {
         keyOrQueryDivHTML =
             "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
         ;
@@ -2460,8 +2492,44 @@ function constructKeyInputForm(methodName){
 
         });
 
+        return;
+
+    } else if(methodName.indexOf("installApp") != -1) {
+        keyOrQueryDivHTML =
+            "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
+        ;
+
+        //var index = 0;
+        keyFormHTML =
+            "<fieldset>" +
+            "<legend>" + selectedMethod + "-method::Input App XML</legend>" +
+            "<div class='row'>"
+        ;
+
+        var data = "<!-- paste the XML starting from <Application> here, like <Application id='10032' origId='100227@10006' orderNo='16' isSystem='F' version='1' companyNo='34466622' > ...</Application> -->";
+
+        keyFormHTML +=
+            "<div class='col-sm-12' >"+
+            "		<div class='control-group'>"+
+            "		<label class='control-label'>App XML</label>"+
+            "       <textarea id='installAppXMLData' name='installAppXMLData' class='form-control' >"+data+"</textarea>"+
+//            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
+            "		</div>"+
+            "	</div>";
+
+        keyFormHTML +=
+            "</div>" +
+            "</fieldset>"
+        ;
+        keyOrQueryDivHTML += keyFormHTML;
+        keyOrQueryDivJq.html(
+            keyOrQueryDivHTML +
+            "</form>"
+            // + "<div id='queryComponentDiv'></div>"
+        );
 
         return;
+
     }   else if(methodName.indexOf("Query") != -1) { //keyOrQueryDiv
         keyOrQueryDivHTML =
                 "<form id='queryHiddenForm' class='form-horizontal'  method='post'  action='#'>"
@@ -2570,7 +2638,7 @@ function constructKeyInputForm(methodName){
         //var index = 0;
         keyFormHTML =
                 "<fieldset>" +
-                "<legend>" + selectedMethod + "-method :: input comma seperated keys</legend>" +
+                "<legend>" + selectedMethod + "-method :: input comma separated keys</legend>" +
                 "<div class='row'>"
             ;
         var keysPlaceholder = "Comma Separated Values of RECORDNO";

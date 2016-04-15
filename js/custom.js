@@ -659,6 +659,7 @@ $(function() {
             //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
             $("#returnFormatDiv").html("");
+            $("#pageSizeDiv").html("");
             docParIdDivJq.html("");
             $("#executeXMLDiv").html("");
             $( "#queryForm").html("");
@@ -700,6 +701,7 @@ $(function() {
             //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
             $("#returnFormatDiv").html("");
+            $("#pageSizeDiv").html("");
             docParIdDivJq.html("");
             $("#executeXMLDiv").html("");
             $( "#queryForm").html("");
@@ -976,6 +978,7 @@ function populateSelectObject(responseData){
         //$("#createXMLShowDiv").html("");
         $("#keyOrQueryDiv").html("");
         $("#returnFormatDiv").html("");
+        $("#pageSizeDiv").html("");
         $("#docParIdDiv").html("");
         //$("#executeXMLDiv").html("");
         $( "#queryForm").html("");
@@ -1015,6 +1018,7 @@ function populateSelectObject(responseData){
                 //$("#createXMLShowDiv").html("");
                 $("#keyOrQueryDiv").html("");
                 $("#returnFormatDiv").html("");
+                $("#pageSizeDiv").html("");
                 docParIdDivJq.html("");
                 //$("#executeXMLDiv").html("");
                 $( "#queryForm").html("");
@@ -1111,6 +1115,7 @@ function populateSelectObject(responseData){
             //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
             $("#returnFormatDiv").html("");
+            $("#pageSizeDiv").html("");
             docParIdDivJq.html("");
             //$("#executeXMLDiv").html("");
             $( "#queryForm").html("");
@@ -2728,6 +2733,38 @@ function constructReturnFormatForm(){
 }
 
 /**
+ *  Function to construct pageSizeForm HTML component
+ **/
+function constructPageSizeForm() {
+    //pageSizeDiv
+    var pageSizeDivHTML =
+            "<form id='pageSizeForm' class='form-horizontal'  method='post'  action='#'>"
+        ;
+    var pageSizeFormHTML =
+            "<fieldset>"+
+            "<legend>"+selectedMethod+"-method :: input Page Size </legend>"+
+            "<div class='row'>"
+        ;
+    pageSizeFormHTML +=
+        "<div class='col-md-5' >" +
+        "		<div class='control-group'>" +
+        "		<label class='control-label'> Page Size </label>" + //class='control-label'
+        "			<input type='text' name='pagesize' placeholder='' class='form-control' value='100' />" +
+        "           <p class='help-block'>Maximum PageSize=1000</p>" +
+        "</div>"
+    ;
+    pageSizeFormHTML +=
+        "</div>"+
+        "</fieldset>"
+    ;
+    pageSizeDivHTML += pageSizeFormHTML;
+    $('#pageSizeDiv').html(
+        pageSizeDivHTML +
+        "</form>"
+    );
+}
+
+/**
  *  Function to extract the values from form Object and to create well-formatted CSV string
  **/
 function constructFormCSV(formObj, inputName){
@@ -2802,7 +2839,7 @@ function constructReadByQueryXML( queryForm ){
  *  Function to construct XML string for read, readByQuery and readByName methods,
  *  by reading input values from selectedFieldsForm, keyForm, returnFormatForm and docParIdForm
  **/
-function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, docParIdForm){
+function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, pageSizeForm, docParIdForm){
     var formCSV = constructFormCSV(selectedFieldsForm, "selectedFields");
     var xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
     xmlString += getTabOffsetString(3) + "<object>" + responseData["Type"]["_Name"]+"</object>\n";
@@ -2812,11 +2849,13 @@ function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, doc
         //var queryXML = constructReadByQueryXML($("#queryForm"));
         xmlString += getTabOffsetString(3)+"<query>"+constructReadByQueryXML($("#queryForm"))+"</query>\n";
 
+        xmlString += constructFormXML(pageSizeForm, 3);
+
         var selectObjectJq = $("#selectObject");
         var currentObject = selectObjectJq.val();
 
         if( currentObject == "PODOCUMENT" || currentObject == "SODOCUMENT") {
-            xmlString += getTabOffsetString(3) + "<docparid>" + $("#docparid").val()+ "</docparid>\n";
+            xmlString += constructFormXML(docParIdForm, 3);//getTabOffsetString(3) + "<docparid>" + $("#docparid").val()+ "</docparid>\n";
         }
     }
 
@@ -2887,13 +2926,13 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
         if($("#keyForm").length > 0) {
             console.log("$(#keyForm).length > 0");
             if(triggerFormValidation("keyForm")) {
-                var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
+                var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#pageSizeForm"), $("#docParIdForm"));
                 xmlString = constructContentWrapper(xmlString);
                 constructedXMLShowFormPopulateData(xmlString, true);
             }
 
         } else {
-            var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#docParIdForm"));
+            var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#pageSizeForm"), $("#docParIdForm"));
             xmlString = constructContentWrapper(xmlString);
             constructedXMLShowFormPopulateData(xmlString, true);
         }
@@ -2998,6 +3037,10 @@ function selectFieldFormPopulateData(processedData){
     //    //constructRelationForm();
     //}
     constructReturnFormatForm();
+    if(selectedMethod.indexOf("readByQuery") > -1) {
+        constructPageSizeForm();
+    }
+
     constructDocParIdForm(responseData["Type"]["_Name"], selectedMethod, true);
 
     //select all fields checkbox functionality

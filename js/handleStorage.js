@@ -478,6 +478,7 @@ function setSessionOnPageLoad() {
         window.memoryStorage = sessionStorage;
         console.log("window.memoryStorage==>");
         console.log(window.memoryStorage);
+        activeSessionRoutines(loggedInAppUserName);
     } else {
         console.log("user session doesn't exist in sessionStorage==>");
         console.log(sessionStorage);

@@ -107,6 +107,21 @@ API_Session.prototype.ip_readByQuery = function(object, fields, query, pagesize,
     this.sendRequest(payload, callback);
 };
 /**
+ * readView API
+ */
+API_Session.prototype.ip_readView = function(view, filters, pagesize, returnFormat, callback) {
+
+    var payload =
+        '<readView>'+
+        this.xmlNode('view', view)+
+        ( pagesize != null ? this.xmlNode('pagesize', pagesize) : '' ) +
+        ( returnFormat != null ? this.xmlNode('returnFormat', returnFormat) : '' ) +
+        ( filters != null ? this.processFields( { filters: filters} ) : '' ) +
+        '</readView>';
+
+    this.sendRequest(payload, callback);
+};
+/**
  * readMore API
  */
 API_Session.prototype.ip_readMore = function(object, callback) {

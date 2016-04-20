@@ -658,6 +658,7 @@ $(function() {
             $("#putValueFieldDiv").html("");
             //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
+            $("#inputViewDiv").html("");
             $("#returnFormatDiv").html("");
             $("#pageSizeDiv").html("");
             docParIdDivJq.html("");
@@ -700,6 +701,7 @@ $(function() {
             $("#putValueFieldDiv").html("");
             //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
+            $("#inputViewDiv").html("");
             $("#returnFormatDiv").html("");
             $("#pageSizeDiv").html("");
             docParIdDivJq.html("");
@@ -842,9 +844,16 @@ function constructReadMoreXML( keyForm ){
     var  keyFormObj = nameValueToJSON( keyForm.serializeArray());
     var  readMoreWithResultId = keyFormObj['readMoreWithResultId'];
     var xmlString = getTabOffsetString(2)+"<"+selectedMethod+"> \n";
+    var resultIdTag = $("#previousSelectMethod").val();
+    var object = $("#selectObject").val();
 
     if(readMoreWithResultId) {
-        xmlString += getTabOffsetString(3) + "<resultId>" + keyFormObj['resultId'] +"</resultId>\n";
+        if(resultIdTag == "view"){
+            xmlString += getTabOffsetString(3) + "<"+ resultIdTag+ ">" + object + "#" + keyFormObj['resultId'] +"</" + resultIdTag + ">\n";
+        } else {
+            xmlString += getTabOffsetString(3) + "<"+ resultIdTag+ ">" + keyFormObj['resultId'] +"</" + resultIdTag + ">\n";
+        }
+
     } else {
         xmlString += getTabOffsetString(3)+"<object>"+$("#selectObject").val()+"</object>\n";
     }
@@ -977,6 +986,7 @@ function populateSelectObject(responseData){
         $("#putValueFieldDiv").html("");
         //$("#createXMLShowDiv").html("");
         $("#keyOrQueryDiv").html("");
+        $("#inputViewDiv").html("");
         $("#returnFormatDiv").html("");
         $("#pageSizeDiv").html("");
         $("#docParIdDiv").html("");
@@ -1017,6 +1027,7 @@ function populateSelectObject(responseData){
                 $("#putValueFieldDiv").html("");
                 //$("#createXMLShowDiv").html("");
                 $("#keyOrQueryDiv").html("");
+                $("#inputViewDiv").html("");
                 $("#returnFormatDiv").html("");
                 $("#pageSizeDiv").html("");
                 docParIdDivJq.html("");
@@ -1097,6 +1108,7 @@ function populateSelectObject(responseData){
             "                                            <option value='read'>read</option>" +
             "                                            <option value='readByName'>readByName</option>" +
             "                                            <option value='readByQuery'>readByQuery</option>" +
+            "                                            <option value='readView'>readView</option>" +
             "                                            <option value='readMore'>readMore</option>" +
             "                                            <option value='delete'>delete</option>" +
             "                                        </select>" +
@@ -1114,6 +1126,7 @@ function populateSelectObject(responseData){
             $("#putValueFieldDiv").html("");
             //$("#createXMLShowDiv").html("");
             $("#keyOrQueryDiv").html("");
+            $("#inputViewDiv").html("");
             $("#returnFormatDiv").html("");
             $("#pageSizeDiv").html("");
             docParIdDivJq.html("");
@@ -1138,7 +1151,7 @@ function populateSelectObject(responseData){
                 docParIdDivJq.html(
                     "<div class='row'>" +
                     "<div class='col-md-8 col-md-offset-4'>"+
-                    "<button type='button' id = 'constructReadMoreXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+                    "<button type='button' id='constructReadMoreXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
                     "</div>" +
                     "</div>"
                 );
@@ -1228,7 +1241,54 @@ function populateSelectObject(responseData){
 
     selectObjectJq.trigger("change");
 }
+/**
+ *  Function to construct  inputView form
+ *  used mainly for read* methods
+ **/
+function constructInputViewForm(processedData) {
 
+    console.log('processedData==>');
+    console.log(processedData);
+    var inputViewDivJq = $('#inputViewDiv');
+    var selectFieldDivJq = $('#selectFieldDiv');
+
+    selectFieldDivJq.html("");
+
+    var inputViewDivHTML =
+        "<form id='inputViewForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator'>"
+    ;
+
+    //var index = 0;
+    var inputViewFormHTML =
+        "<fieldset>" +
+        "<legend>" + selectedMethod + "-method :: input View original Id</legend>" +
+        "<div class='row'>"
+    ;
+    var keysPlaceholder = "12345678@12345";
+
+    inputViewFormHTML +=
+        "<div class='col-md-5' >" +
+        "		<div class='control-group'>" +
+        "		<label class='control-label'> OriginalId </label>" + //class='control-label'
+        "			<input type='text' name='originalId' placeholder='"+keysPlaceholder+"' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
+        "</div>"
+    ;
+    inputViewFormHTML +=
+        "</div>" +
+        "</fieldset>"
+    ;
+    inputViewDivHTML += inputViewFormHTML;
+    inputViewDivJq.html(
+        inputViewDivHTML +
+        "</form>"
+        // + "<div id='queryComponentDiv'></div>"
+    );
+
+    constructPageSizeForm();
+    constructReturnFormatForm();
+    constructDocParIdForm(responseData["Type"]["_Name"], selectedMethod, false);
+    
+}
 /**
  *  AJAX Callback Function, inspect for an object call
  **/
@@ -1310,7 +1370,9 @@ function selectMethodCallbackFunction(data) {
     console.log(JSON.stringify(dataJSON));
 
     var processedResponseData = processResponseData(responseData, selectedMethod);
-    if(selectedMethod.indexOf("read") > -1){
+    if(selectedMethod.indexOf("readView") > -1){
+        constructInputViewForm(processedResponseData);
+    } else if(selectedMethod.indexOf("read") > -1){
         selectFieldFormPopulateData(processedResponseData);
     }else{
         objectSelectFieldFormPopulateData(processedResponseData);
@@ -2469,7 +2531,35 @@ function constructKeyInputForm(methodName){
 
         return;
     } else if(methodName.indexOf("readMore") != -1) {
-        keyOrQueryDivHTML =
+
+
+        var previousMethodSelectFormHTML  =
+            "<form id='previousMethodSelectForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
+        ;
+
+        previousMethodSelectFormHTML =
+            "<fieldset>" +
+            "<legend>" + selectedMethod + "-method :: Choose previous method</legend>" +
+            "<div id='previousSelectMethodDiv' class='row col-md-5' >"
+        ;
+        previousMethodSelectFormHTML +=
+            "<label class='control-label' for='previousSelectMethod'>Select the Previous Method on which readMore has to run</label>" +
+            "                                    <div class='controls'>" +
+            "                                        <select id='previousSelectMethod' class='form-control' name='previousSelectMethod'>" +
+            "                                            <option value='resultId'>readByQuery</option>" +
+            "                                            <option value='view'>readView</option>" +
+            "                                            <option value='reportId'>readReport</option>" +
+            "                                        </select>" +
+            "                                    </div>"
+        ;
+        previousMethodSelectFormHTML +=
+            "</div>" +
+            "</fieldset>"+
+            "</form>"
+        ;
+        keyOrQueryDivHTML += previousMethodSelectFormHTML;
+
+        keyOrQueryDivHTML +=
             "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
         ;
 
@@ -2482,7 +2572,7 @@ function constructKeyInputForm(methodName){
         keyFormHTML +=
             "<div class='col-md-5' >"+
             "		<div class='checkbox'>"+
-            "			    <input type='checkbox' id='readMoreWithResultId' name='readMoreWithResultId' value='true'>" + "readMore with ResultId" +
+            "			    <input type='checkbox' id='readMoreWithResultId' name='readMoreWithResultId' value='true'>" + "readMore with Id" +
             "			    </input>"+
             "		</div>"+
             "</div>"
@@ -2505,8 +2595,8 @@ function constructKeyInputForm(methodName){
                 $("#readMoreWithResultIdDiv").append(
                     "<div id='resultIdDiv' class='col-md-5' >" +
                     "		<div class='control-group'>" +
-                    "		    <label class='control-label'> Result Id </label>" + //class='control-label'
-                    "			    <input type='text' id='resultId' name='resultId' placeholder='Input readByQuery or readView resultId' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
+                    "		    <label class='control-label'> resultId/originalId/reportId </label>" + //class='control-label'
+                    "			    <input type='text' id='resultId' name='resultId' placeholder='Input readByQuery resultId or readView originalId or readReport reportId' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
                     "       </div>"+
                     "</div>"
                 );
@@ -2555,7 +2645,7 @@ function constructKeyInputForm(methodName){
 
         return;
 
-    }   else if(methodName.indexOf("Query") != -1) { //keyOrQueryDiv
+    }   else if(methodName.indexOf("readByQuery") != -1) { //keyOrQueryDiv
         keyOrQueryDivHTML =
                 "<form id='queryHiddenForm' class='form-horizontal'  method='post'  action='#'>"
             ;
@@ -2834,14 +2924,45 @@ function constructReadByQueryXML( queryForm ){
     }
     return xmlString;
 }
+/**
+ * function getReadViewDefaultFilterXML
+ */
+function getReadViewDefaultFilterXML() {
+    return "<!-- you can also use filters here, like below snippet  --><!-- <filters>"+
+        "    <filterCondition>AND</filterCondition>" +
+        "    <filterExpression>" +
+        "        <field>amt_due</field>" +
+        "        <operator>greater than</operator>" +
+        "        <value>1000</value>" +
+        "    </filterExpression>" +
+        "    <filterExpression>" +
+        "        <field>amt_due</field>" +
+        "        <operator>less than</operator>" +
+        "        <value>50000</value>" +
+        "    </filterExpression>" +
+        "</filters> -->";
+}
 
 /**
  *  Function to construct XML string for read, readByQuery and readByName methods,
- *  by reading input values from selectedFieldsForm, keyForm, returnFormatForm and docParIdForm
+ *  by reading input values from selectedFieldsForm, keyForm, returnFormatForm  docParIdForm and inputViewForm
  **/
-function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, pageSizeForm, docParIdForm){
+function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, pageSizeForm, docParIdForm, inputViewForm) {
+    var xmlString = "";
+    if(inputViewForm) { // handle readView separetely
+
+        var originalId = inputViewForm.find('input[name=originalId]').val();
+
+        xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
+        xmlString += getTabOffsetString(3) + "<view>" + responseData["Type"]["_Name"] + "#" + originalId + "</view>\n";
+        xmlString += constructFormXML(pageSizeForm, 3);
+        xmlString += constructFormXML(returnFormatForm, 3);
+        xmlString += getReadViewDefaultFilterXML();
+        return xmlString;
+    }
+    
     var formCSV = constructFormCSV(selectedFieldsForm, "selectedFields");
-    var xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
+    xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
     xmlString += getTabOffsetString(3) + "<object>" + responseData["Type"]["_Name"]+"</object>\n";
     xmlString += getTabOffsetString(3) + "<fields>"+formCSV+"</fields>\n";
 
@@ -2932,7 +3053,7 @@ function constructDocParIdForm(value, methodName, readByQueryFlag){
             }
 
         } else {
-            var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#pageSizeForm"), $("#docParIdForm"));
+            var xmlString = constructReadStarXML($("#selectFieldForm"), $("#keyForm"), $("#returnFormatForm"), $("#pageSizeForm"), $("#docParIdForm"), $("#inputViewForm"));
             xmlString = constructContentWrapper(xmlString);
             constructedXMLShowFormPopulateData(xmlString, true);
         }
@@ -3036,10 +3157,11 @@ function selectFieldFormPopulateData(processedData){
     //if(selectedMethod == "readRelated"){
     //    //constructRelationForm();
     //}
-    constructReturnFormatForm();
     if(selectedMethod.indexOf("readByQuery") > -1) {
         constructPageSizeForm();
     }
+
+    constructReturnFormatForm();
 
     constructDocParIdForm(responseData["Type"]["_Name"], selectedMethod, true);
 

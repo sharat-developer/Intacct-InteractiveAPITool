@@ -853,6 +853,27 @@ function constructInspectXML( keyForm ){
 }
 
 /**
+ *  Function to construct and return Consolidate method XML request
+ **/
+function constructConsolidateXML( keyForm ){
+    // var consolidateXMLEntitiesString =
+    //     "<entities>" +
+    //     "        <csnentity>" +
+    //     "          <entityid></entityid>" +
+    //     "          <bsrate></bsrate>" +
+    //     "          <warate></warate>" +
+    //     "        </csnentity>" +
+    //     "</entities>";
+
+    var xmlString = "<" + selectedMethod + ">";
+    xmlString += constructFormXML(keyForm, 3);
+    // xmlString += consolidateXMLEntitiesString;
+    xmlString += "</"+selectedMethod+">";
+
+    return xmlString;
+}
+
+/**
  *  Function to construct and return InstallApp method XML request
  **/
 function constructInstallAppXML( keyForm ){
@@ -1032,6 +1053,7 @@ function populateSelectObject(responseData){
                 "                                            <option value='getAPISession'>getAPISession</option>" +
                 "                                            <option value='getUserPermissions'>getUserPermissions</option>" +
                 "                                            <option value='installApp'>installApp</option>" +
+                "                                            <option value='consolidate'>consolidate</option>" +
                 "                                        </select>" +
                 "                                    </div>"
             );
@@ -1111,6 +1133,25 @@ function populateSelectObject(responseData){
                     );
                     $("#constructInstallAppXMLBtn").on("click", function(){
                         var xmlString = constructInstallAppXML( $("#keyForm"));
+                        xmlString = constructContentWrapper(xmlString);
+                        constructedXMLShowFormPopulateData(xmlString, true);
+                    });
+
+                    return;
+                } else if(selectedMethod == "consolidate"){ //handle installApp method separately
+                    console.log("selectedMethod ==>" + selectedMethod);
+                    constructKeyInputForm(selectedMethod);
+
+                    selectFieldDivJq.html("");
+                    docParIdDivJq.html(
+                        "<div class='row'>" +
+                        "<div class='col-md-8 col-md-offset-4'>"+
+                        "<button type='button' id = 'consolidateXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+                        "</div>" +
+                        "</div>"
+                    );
+                    $("#consolidateXMLBtn").on("click", function(){
+                        var xmlString = constructConsolidateXML( $("#keyForm"));
                         xmlString = constructContentWrapper(xmlString);
                         constructedXMLShowFormPopulateData(xmlString, true);
                     });
@@ -2690,6 +2731,79 @@ function constructKeyInputForm(methodName){
             }
 
         });
+
+        return;
+
+    } else if(methodName.indexOf("consolidate") != -1) {
+
+        var consolidateXMLEntitiesString =
+            "<csnentity>" +
+            "      <entityid></entityid>" +
+            "      <bsrate></bsrate>" +
+            "      <warate></warate>" +
+            "</csnentity>"
+            ;
+
+        consolidateXMLEntitiesString = vkbeautify.xml(consolidateXMLEntitiesString);
+        var consolidateXMLEntitiesStringLength = consolidateXMLEntitiesString.toString().split(/\r\n|\r|\n/).length;
+        keyOrQueryDivHTML =
+            "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
+        ;
+
+        //var index = 0;
+        keyFormHTML =
+            "<fieldset>" +
+            "<legend>" + selectedMethod + "-method</legend>" +
+            "<div class='row'>"
+        ;
+
+        keyFormHTML +=
+            "<div class='col-md-5' >"+
+            "		<div class='control-group'>"+
+            "		<label class='control-label'>Book Id</label>"+
+           "			<input type='text' class='form-control '  name='bookid' />"+  //"+((value.isRequired)?'has-error':'')+"
+            "		</div>"+
+            "	</div>"+
+            "   <div class='col-md-5' >" +
+            "	    	<div class='control-group'>" +
+            "		        <label class='control-label'>Logical Operator</label>" +
+            "               <select id='offline' class='form-control' name='offline'>"+
+            "			        <option value='T'>True</option>"+  //"+((value.isRequired)?'has-error':'')+"
+            "			        <option value='F'>False</option>"+
+            "               </select>"+
+            "           </div>" +
+            "   </div>" +
+            "   <div class='col-md-5' >"+
+            "		<div class='control-group'>"+
+            "		<label class='control-label'>Email Id</label>"+
+            "			<input type='email' class='form-control '  name='email' />"+  //"+((value.isRequired)?'has-error':'')+"
+            "		</div>"+
+            "	</div>" +
+            "   <div class='col-md-5' >"+
+            "		<div class='control-group'>"+
+            "		<label class='control-label'>Reporting Period Name</label>"+
+            "			<input type='reportingperiodname' class='form-control '  name='reportingperiodname' />"+  //"+((value.isRequired)?'has-error':'')+"
+            "		</div>"+
+            "	</div>" +
+            "   <div class='col-md-10' >"+
+            "		<div class='control-group'>"+
+            "		<label class='control-label'>Entities</label>"+
+            "       <textarea id='entities' name='entities' class='form-control' rows='" + consolidateXMLEntitiesStringLength + "'>" + consolidateXMLEntitiesString + "</textarea>"+
+//            "			<input type='text' class='form-control '  name='createXML' value='"+data+"'/>"+  //"+((value.isRequired)?'has-error':'')+"
+            "		</div>"+
+            "	</div>";
+        ;
+
+        keyFormHTML +=
+            "</div>" +
+            "</fieldset>"
+        ;
+        keyOrQueryDivHTML += keyFormHTML;
+        keyOrQueryDivJq.html(
+            keyOrQueryDivHTML +
+            "</form>"
+            // + "<div id='queryComponentDiv'></div>"
+        );
 
         return;
 

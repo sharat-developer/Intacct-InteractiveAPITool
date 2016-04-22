@@ -812,6 +812,34 @@ function constructDeleteXML( keyForm ){
 }
 
 /**
+ *  Function to construct and return ReadReport method XML request
+ **/
+function constructReadReportXML( keyForm ){
+
+    var  returnDef = nameValueToJSON( keyForm.serializeArray())['returnDef'];
+    var  reportId = nameValueToJSON( keyForm.serializeArray())['reportId'];
+
+    var xmlString = getTabOffsetString(2)+"<"+selectedMethod+((returnDef)?(" returnDef = 'true'"):(""))+"> \n";
+    xmlString += getTabOffsetString(3)+"<report>" + reportId + "</report>\n";
+    
+    if(!returnDef) {
+        xmlString += "<!--   "+
+            "	<returnFormat>xml</returnFormat>" +
+            "      <waitTime>0</waitTime>" +
+            "      <arguments>" +
+            "        <APBILL.TEST_DATE>" +
+            "          <FROM_DATE>1/1/2014</FROM_DATE>" +
+            "          <TO_DATE>12/31/2016</TO_DATE>" +
+            "        </APBILL.TEST_DATE>" +
+            "      </arguments>" +
+            "	  -->";
+    }
+    
+    xmlString += getTabOffsetString(2)+"</"+selectedMethod+">\n";
+    return xmlString;
+}
+
+/**
  *  Function to construct and return Inspect method XML request
  **/
 function constructInspectXML( keyForm ){
@@ -1108,8 +1136,9 @@ function populateSelectObject(responseData){
             "                                            <option value='read'>read</option>" +
             "                                            <option value='readByName'>readByName</option>" +
             "                                            <option value='readByQuery'>readByQuery</option>" +
-            "                                            <option value='readView'>readView</option>" +
             "                                            <option value='readMore'>readMore</option>" +
+            "                                            <option value='readView'>readView</option>" +
+            "                                            <option value='readReport'>readReport</option>" +
             "                                            <option value='delete'>delete</option>" +
             "                                        </select>" +
             "                                    </div>"
@@ -1195,6 +1224,24 @@ function populateSelectObject(responseData){
                 );
                 $("#constructInspectXMLBtn").on("click", function(){
                     var xmlString = constructInspectXML( $("#keyForm"));
+                    xmlString = constructContentWrapper(xmlString);
+                    constructedXMLShowFormPopulateData(xmlString, true);
+                });
+
+                return;
+            } else if(selectedMethod == "readReport"){ //handle readReport method separately
+                constructKeyInputForm(selectedMethod);
+
+                selectFieldDivJq.html("");
+                docParIdDivJq.html(
+                    "<div class='row'>" +
+                    "<div class='col-md-8 col-md-offset-4'>"+
+                    "<button type='button' id = 'constructReadReportXMLBtn' class='btn btn-primary' >Construct Request XML</button>"+ //type='submit' onsubmit='constructCreateXML();'
+                    "</div>" +
+                    "</div>"
+                );
+                $("#constructReadReportXMLBtn").on("click", function(){
+                    var xmlString = constructReadReportXML( $("#keyForm"));
                     xmlString = constructContentWrapper(xmlString);
                     constructedXMLShowFormPopulateData(xmlString, true);
                 });
@@ -2516,6 +2563,43 @@ function constructKeyInputForm(methodName){
             "			    <input type='checkbox' id='inspectWithDetail' name='inspectWithDetail' value='true' >"+"Inspect With Detail"+
             "			    </input>"+
             "		</div>"+
+            "</div>"
+        ;
+        keyFormHTML +=
+            "</div>" +
+            "</fieldset>"
+        ;
+        keyOrQueryDivHTML += keyFormHTML;
+        keyOrQueryDivJq.html(
+            keyOrQueryDivHTML +
+            "</form>"
+            // + "<div id='queryComponentDiv'></div>"
+        );
+
+        return;
+    } else if(methodName.indexOf("readReport") != -1) {
+        keyOrQueryDivHTML =
+            "<form id='keyForm' class='form-horizontal'  method='post'  action='#' role='form' data-toggle='validator' >"
+        ;
+
+        //var index = 0;
+        keyFormHTML =
+            "<fieldset>" +
+            "<legend>" + selectedMethod + "-method :: return Definition</legend>" +
+            "<div class='row'>"
+        ;
+        keyFormHTML +=
+            "<div class='col-md-5' >"+
+            "		<div class= 'checkbox'>"+
+            "			    <input type='checkbox' id='returnDef' name='returnDef' value='true' >"+ "returnDef" +
+            "			    </input>"+
+            "		</div>"+
+            "</div>" +
+            "<div id='reportIdDiv' class='col-md-5' >" +
+            "		<div class='control-group'>" +
+            "		    <label class='control-label'> reportId </label>" + //class='control-label'
+            "			    <input type='text' id='reportId' name='reportId' placeholder='reportId' class='form-control'  required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
+            "       </div>"+
             "</div>"
         ;
         keyFormHTML +=

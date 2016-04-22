@@ -3147,7 +3147,7 @@ function getReadViewDefaultFilterXML() {
  **/
 function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, pageSizeForm, docParIdForm, inputViewForm) {
     var xmlString = "";
-    if(inputViewForm) { // handle readView separetely
+    if(selectedMethod == "readView") { // handle readView separetely
 
         var originalId = inputViewForm.find('input[name=originalId]').val();
 
@@ -3156,6 +3156,7 @@ function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, pag
         xmlString += constructFormXML(pageSizeForm, 3);
         xmlString += constructFormXML(returnFormatForm, 3);
         xmlString += getReadViewDefaultFilterXML();
+        xmlString += getTabOffsetString(2) + "</"+selectedMethod+"> \n";
         return xmlString;
     }
     

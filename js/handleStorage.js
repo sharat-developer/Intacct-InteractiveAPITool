@@ -471,7 +471,10 @@ function savePasswordEncodedSession(loggedInAppUserName, loggedInAppUserKey) {
 function setSessionOnPageLoad() {
     //for initial load-configuration using sessionStorage
     var loggedInAppUserName = getLoggedInAppUserName();
-    if(loggedInAppUserName != undefined) {
+    console.log("loggedInAppUserName==>");
+    console.log(loggedInAppUserName);
+
+    if(loggedInAppUserName) {
         console.log("user session already exist in sessionStorage==>");
         console.log(sessionStorage);
 

@@ -14,7 +14,7 @@ To install the extension into Chrome (tested on Version 44.0.2403.125 m)
     
         git clone https://github.com/sharat-developer/Intacct-InteractiveAPITool.git
                       
-* In Chrome, go to chrome://extensions/
+* In Chrome, go to "chrome://extensions/"
 * Enable "Developer Mode" via the checkbox at the top
 * Click the "Load unpacked extension..." button and select the folder where you extracted the zip file
 
@@ -22,7 +22,7 @@ Usage
 ------------
 * Launch "InteractiveAPITool" from Chrome Apps
 * Key-in your Company configuration details then go to API-3.0 and API-2.1 Tabs for Building and Posting API Requests.
-* If you want store the Company configuration for later use, then click on "save" button which opens a login pop-up.
+* If you want store the Company configuration for later use, then click on "Save" button which opens a login pop-up.
 * In login pop-up click on "Need an Account?" link and sign-up for creating an account.
 
 Ext Libraries Used

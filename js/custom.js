@@ -21,7 +21,7 @@ var UPDATE_REQ_FIELDS_CUSTOM  = ["id"];
 var VALID_OPERATIONS = {"=":"=", ">": "&gt;", "<":"&lt;", ">=":"&gt;=", "<=":"&lt;=", "in":"in", "not in":"not in", "like":"like", "not like":"not like"};
 var GET_LIST_OBJECTS = ["accountgroup", "achbankconfiguration", "adjjournal", "allocation", "apaccountlabel", "apadjustment", "apadjustmentbatch", "appayment", "appaymentrequest", "apterm", "araccountlabel", "aradjustment", "aradjustmentbatch", "arpayment", "arpaymentbatch", "arterm", "artransactiondef", "bankaccount", "bill", "billbatch", "cctransaction", "class", "company_info", "contact", "contacttaxgroup", "csnhistory", "custglgroup", "customer", "customerachinfo", "customerbankaccount", "customerchargecard", "customerppackage", "customervisibility", "department", "earningtype", "employee", "employeepref", "employeerate", "expenseadjustmentreport", "expensereport", "expensereportbatch", "expensetypes", "glaccount", "glbudget", "glbudgetitem", "glentry", "gltransaction", "icitem", "icitemtotals", "ictotal", "ictransaction", "ictransactiondef", "invoice", "invoicebatch", "itemglgroup", "itemtaxgroup", "itemtotal", "journal", "location", "locationentity", "locationgroup", "popricelist", "potransaction", "potransactiondef", "pricelistitem", "productline", "project", "projectstatus", "projecttype", "recursotransaction", "renewalmacro", "reportingperiod", "revrecchangelog", "revrecschedule", "revrecscheduleentry", "revrectemplate", "smarteventlog", "sopricelist", "sotransaction", "sotransactiondef", "statglaccount", "statjournal", "stkittransaction", "subscription", "supdoc", "supdocfolder", "task", "taxdetail", "taxschedule", "taxscheduledetail", "taxschedulemap", "territory", "timesheet", "timetype", "trxcurrencies", "uom", "vendglgroup", "vendor", "vendorentityaccount", "vendorpref", "vendorvisibility", "vsoeallocation", "vsoeitempricelist", "vsoepricelist", "warehouse"];
 
-var REQUEST_HISTORY_LIMIT = 10;
+var REQUEST_HISTORY_LIMIT = 30;
 
 /**
  *  Function to clear contents in the form
@@ -2964,7 +2964,7 @@ function constructKeyInputForm(methodName){
             "<div class='col-md-5' >" +
             "		<div class='control-group'>" +
             "		<label class='control-label'> keys </label>" + //class='control-label'
-            "			<input type='text' name='keys' placeholder='"+keysPlaceholder+"' class='form-control' required />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
+            "			<input type='text' name='keys' placeholder='"+keysPlaceholder+"' class='form-control' />" +  //"+((value.isRequired)?'has-error':'')+"                "		</div>" +
             "</div>"
         ;
         keyFormHTML +=

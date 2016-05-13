@@ -13,7 +13,7 @@ To install the extension into Chrome (tested on Version 44.0.2403.125 m)
     or checkout via git
     
         git clone https://github.com/sharat-developer/Intacct-InteractiveAPITool.git
-        
+                      
 * In Chrome, go to chrome://extensions/
 * Enable "Developer Mode" via the checkbox at the top
 * Click the "Load unpacked extension..." button and select the folder where you extracted the zip file

@@ -197,8 +197,9 @@ function encryptSensitiveData(configObject) {
     var encryptedSenderPassword = CryptoJS.AES.encrypt(senderPassword, encryptionKey512Bits).toString();
     //console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
 
-    configObject["userPassword"] = encryptedUserPassword;
-    configObject["senderPassword"] = encryptedSenderPassword;
+    //storing of password removed for security concerns
+    configObject["userPassword"] = "";//encryptedUserPassword;
+    configObject["senderPassword"] = "";//encryptedSenderPassword;
 
     return configObject;
 }
@@ -222,8 +223,10 @@ function decryptSensitiveData(configObject) {
     var decryptedSenderPassword = CryptoJS.AES.decrypt(encryptedSenderPassword, encryptionKey512Bits).toString(CryptoJS.enc.Utf8);
     //console.log("decryptedSenderPassword==>" + decryptedSenderPassword);
 
-    configObject["userPassword"] = decryptedUserPassword;
-    configObject["senderPassword"] = decryptedSenderPassword;
+
+    //storing of password removed for security concerns
+    configObject["userPassword"] = "";//decryptedUserPassword;
+    configObject["senderPassword"] = "";//decryptedSenderPassword;
 
     return configObject;
 }
@@ -881,6 +884,9 @@ $(function() {
     configurationJq.submit(function (e) {
             e.preventDefault();
 
+            var userPassword = $("#userPassword").value();
+            var senderPassword = $("#senderPassword").value();
+
             var formId = $(this).attr("id");
             //instantiateFormValidate(formId);
             //formValidation is false do not save the value
@@ -926,6 +932,9 @@ $(function() {
 
                 localStorageRelatedInitFunctions(configurationName, tempConfigurationObject);
                 loadConfigurationFromLocalStorage();
+
+                $("#userPassword").value(userPassword);
+                $("#senderPassword").value(senderPassword);
 
                 $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success text-center").html("You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.");
 

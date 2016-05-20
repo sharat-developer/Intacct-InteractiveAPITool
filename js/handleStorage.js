@@ -884,8 +884,8 @@ $(function() {
     configurationJq.submit(function (e) {
             e.preventDefault();
 
-            var userPassword = $("#userPassword").value();
-            var senderPassword = $("#senderPassword").value();
+            var userPassword = $("#userPassword").val();
+            var senderPassword = $("#senderPassword").val();
 
             var formId = $(this).attr("id");
             //instantiateFormValidate(formId);
@@ -933,8 +933,8 @@ $(function() {
                 localStorageRelatedInitFunctions(configurationName, tempConfigurationObject);
                 loadConfigurationFromLocalStorage();
 
-                $("#userPassword").value(userPassword);
-                $("#senderPassword").value(senderPassword);
+                $("#userPassword").val(userPassword);
+                $("#senderPassword").val(senderPassword);
 
                 $("#configDetailsSaveAlertDiv").attr("class", "alert alert-success text-center").html("You have saved the Company Configuration Details! &nbsp;Now you can choose it from above Saved Configuration to load it.");
 

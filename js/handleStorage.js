@@ -197,9 +197,11 @@ function encryptSensitiveData(configObject) {
     var encryptedSenderPassword = CryptoJS.AES.encrypt(senderPassword, encryptionKey512Bits).toString();
     //console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
 
-    //storing of password removed for security concerns
-    configObject["userPassword"] = "";//encryptedUserPassword;
-    configObject["senderPassword"] = "";//encryptedSenderPassword;
+    ////storing of password removed for security concerns
+    //configObject["userPassword"] = encryptedUserPassword;
+    configObject["userPassword"] = "";
+    //configObject["senderPassword"] = "encryptedSenderPassword";
+    configObject["senderPassword"] = "";
 
     return configObject;
 }
@@ -224,9 +226,11 @@ function decryptSensitiveData(configObject) {
     //console.log("decryptedSenderPassword==>" + decryptedSenderPassword);
 
 
-    //storing of password removed for security concerns
-    configObject["userPassword"] = "";//decryptedUserPassword;
-    configObject["senderPassword"] = "";//decryptedSenderPassword;
+    ////storing of password removed for security concerns
+    //configObject["userPassword"] = decryptedUserPassword;
+    configObject["userPassword"] = "";
+    //configObject["senderPassword"] = decryptedSenderPassword;
+    configObject["senderPassword"] = "";
 
     return configObject;
 }

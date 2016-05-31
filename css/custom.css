@@ -179,3 +179,7 @@ div.has-error > input[required] {
 #currentRequest_3_0 {
     width: 1.2em;
 }
+
+#hideFieldsAnchor {
+    font-size: 1.5em;
+}

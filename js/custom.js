@@ -31,6 +31,13 @@ function clearFormContents(formJq) {
 }
 
 /**
+ *  Function to get ConfigDetails from configuration form
+ **/
+function getCurrentConfigDetails() {
+    return nameValueToJSON($('#configuration').serializeArray());
+}
+
+/**
  *  Function to convert '.' in a string to '_'
  **/
 function convertDotToUnderScore(inputString) {
@@ -3375,6 +3382,28 @@ function selectFieldFormPopulateData(processedData){
            $("input[name=selectedFields]").prop("checked", false);
        }
     });
+
+    var credentialJSON = getCurrentConfigDetails();
+    console.log('credentialJSON["hideFields"]');
+    console.log(credentialJSON["hideFields"]);
+    if(credentialJSON["hideFields"] == "true") {
+        $('#selectFieldDiv').prepend(
+            '<div class="line-break"></div>' +
+            '<a id="hideFieldsAnchor"></a>' +
+            '<div class="line-break"></div>'
+        );
+        $("#hideFieldsAnchor").on("click", function() {
+
+            if($("#selectFieldForm").toggle().is(':visible')){
+                $(this).text('-Hide Fields');
+            }else{
+                $(this).text('+Show Fields');
+            }
+
+        }).text("+Show Fields");
+        //$(this).text("Show More Options");
+        $("#selectFieldForm").hide();
+    }
 }
 
 /**

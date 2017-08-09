@@ -22,8 +22,8 @@ Usage
 ------------
 * Launch "InteractiveAPITool" from Chrome Apps
 * Key-in your Company configuration details then go to API-3.0 and API-2.1 Tabs for Building and Posting API Requests.
-* If you want store the Company configuration for later use, then click on "Save" button which opens a login pop-up.
-* In login pop-up click on "Need an Account?" link and sign-up for creating an account.
+* If you want store the Company configuration for later use, click on "Save" button which opens a login pop-up.
+* Click on "Need an Account?" link and sign-up for creating an account.
 
 Ext Libraries Used
 ------------

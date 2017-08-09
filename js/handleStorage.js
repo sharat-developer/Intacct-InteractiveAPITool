@@ -198,10 +198,11 @@ function encryptSensitiveData(configObject) {
     //console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
 
     ////storing of password removed for security concerns
-    configObject["userPassword"] = encryptedUserPassword;
     //configObject["userPassword"] = "";
-    configObject["senderPassword"] = encryptedSenderPassword;
+    configObject["userPassword"] = encryptedUserPassword;
+
     //configObject["senderPassword"] = "";
+    configObject["senderPassword"] = encryptedSenderPassword;
 
     return configObject;
 }
@@ -227,10 +228,11 @@ function decryptSensitiveData(configObject) {
 
 
     ////storing of password removed for security concerns
-    configObject["userPassword"] = decryptedUserPassword;
     //configObject["userPassword"] = "";
-    configObject["senderPassword"] = decryptedSenderPassword;
+    configObject["userPassword"] = decryptedUserPassword;
+
     //configObject["senderPassword"] = "";
+    configObject["senderPassword"] = decryptedSenderPassword;
 
     return configObject;
 }

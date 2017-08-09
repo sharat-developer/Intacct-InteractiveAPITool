@@ -198,10 +198,10 @@ function encryptSensitiveData(configObject) {
     //console.log("encryptedSenderPassword==>" + encryptedSenderPassword);
 
     ////storing of password removed for security concerns
-    //configObject["userPassword"] = encryptedUserPassword;
-    configObject["userPassword"] = "";
-    //configObject["senderPassword"] = "encryptedSenderPassword";
-    configObject["senderPassword"] = "";
+    configObject["userPassword"] = encryptedUserPassword;
+    //configObject["userPassword"] = "";
+    configObject["senderPassword"] = encryptedSenderPassword;
+    //configObject["senderPassword"] = "";
 
     return configObject;
 }
@@ -227,10 +227,10 @@ function decryptSensitiveData(configObject) {
 
 
     ////storing of password removed for security concerns
-    //configObject["userPassword"] = decryptedUserPassword;
-    configObject["userPassword"] = "";
-    //configObject["senderPassword"] = decryptedSenderPassword;
-    configObject["senderPassword"] = "";
+    configObject["userPassword"] = decryptedUserPassword;
+    //configObject["userPassword"] = "";
+    configObject["senderPassword"] = decryptedSenderPassword;
+    //configObject["senderPassword"] = "";
 
     return configObject;
 }
@@ -465,7 +465,7 @@ function savePasswordEncodedSession(loggedInAppUserName, loggedInAppUserKey) {
     //store login username in session
     sessionStorage.setItem("loggedInAppUserName", loggedInAppUserName);
     sessionStorage.setItem("loggedInAppUserKey", loggedInAppUserKey);
-    
+
     //save session in memoryStorage also for cross-tab authentication
     window.memoryStorage = sessionStorage;
     localStorage.setItem('sessionStorage', JSON.stringify(window.memoryStorage));
@@ -676,7 +676,7 @@ function getLastRequestFromAPIRequestHistory(apiReqHist, headIndex) {
     if(apiReqHist["requests"][headIndex]) {
         return headIndex;
     } else { //not likely
-        return false;   
+        return false;
     }
 }
 
@@ -813,7 +813,7 @@ function saveAPIPayloadInRequestHistory(payload, apiDTDVersion) {
 
         // update the newRequestHistory into 'appUserConfigDetailsName' localStorage
         updateValueOfKeyInLocalStorage(appUserConfigDetailsName, "requestHistory", newRequestHistory);
-        
+
         //update the currentRequest_[ddtVersionId] to have the headIndex in it so that requestHistory navigation will run smooth
         var headIndex = getHeadIndexFromRequestHistory(newRequestHistory, apiDTDVersion);
         setCurrentRequestIndex(headIndex, ddtVersionId);

@@ -1,5 +1,5 @@
 /**
- * Created by Sharat Hegde <shegde@intacct.com> on 8/12/2015.
+ * Created by Sharat Hegde on 8/12/2015.
  */
 /**
  * vkBeautify - javascript plugin to pretty-print or minify text in XML, JSON, CSS and SQL formats.

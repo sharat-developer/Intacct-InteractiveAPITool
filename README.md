@@ -9,11 +9,11 @@ To install the extension into Chrome (tested on Version 44.0.2403.125 m)
 * Download the source zip file using below URL and extract it :
 
     [https://github.com/sharat-developer/Intacct-InteractiveAPITool/archive/master.zip](../../archive/master.zip)
-    
+
     or checkout via git
-    
+
         git clone https://github.com/sharat-developer/Intacct-InteractiveAPITool.git
-                      
+
 * In Chrome, go to "chrome://extensions/"
 * Enable "Developer Mode" via the checkbox at the top
 * Click the "Load unpacked extension..." button and select the folder where you extracted the zip file
@@ -27,11 +27,11 @@ Usage
 
 Ext Libraries Used
 ------------
-* jQuery 
+* jQuery
     License - https://github.com/jquery/jquery/blob/master/LICENSE.txt
-    
+
 * Twitter Bootstrap
     License - https://github.com/twbs/bootstrap/blob/master/LICENSE
-    
-* CryptoJS 
+
+* [CryptoJS](https://code.google.com/archive/p/crypto-js/) 
     License - https://code.google.com/archive/p/crypto-js/wikis/License.wiki

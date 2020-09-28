@@ -393,7 +393,7 @@ function appRegistrationFormSubmission() {
 
         var userSalt = CryptoJS.lib.WordArray.random(512/8);
 
-        console.log("enteredPassword==>" + enteredPassword);
+        // console.log("enteredPassword==>" + enteredPassword);
         console.log("passwordHash==>" + passwordHash);
         console.log("userSalt==>" + userSalt);
 
@@ -830,7 +830,7 @@ function constructReadReportXML( keyForm ){
 
     var xmlString = getTabOffsetString(2)+"<"+selectedMethod+((returnDef)?(" returnDef = 'true'"):(""))+"> \n";
     xmlString += getTabOffsetString(3)+"<report>" + reportId + "</report>\n";
-    
+
     if(!returnDef) {
         xmlString += "<!--   "+
             "	<returnFormat>xml</returnFormat>" +
@@ -843,7 +843,7 @@ function constructReadReportXML( keyForm ){
             "      </arguments>" +
             "	  -->";
     }
-    
+
     xmlString += getTabOffsetString(2)+"</"+selectedMethod+">\n";
     return xmlString;
 }
@@ -1040,7 +1040,7 @@ function populateSelectObject(responseData){
     selectObjectJq.on("change", function () {
         //var selectObjectJq = $("#selectObject");
         //var currentObject = selectObjectJq.val();
- 
+
         $("#putValueFieldDiv").html("");
         //$("#createXMLShowDiv").html("");
         $("#keyOrQueryDiv").html("");
@@ -1384,7 +1384,6 @@ function constructInputViewForm(processedData) {
     constructPageSizeForm();
     constructReturnFormatForm();
     constructDocParIdForm(responseData["Type"]["_Name"], selectedMethod, false);
-    
 }
 /**
  *  AJAX Callback Function, inspect for an object call
@@ -3168,7 +3167,7 @@ function constructReadStarXML(selectedFieldsForm, keyForm, returnFormatForm, pag
         xmlString += getTabOffsetString(2) + "</"+selectedMethod+"> \n";
         return xmlString;
     }
-    
+
     var formCSV = constructFormCSV(selectedFieldsForm, "selectedFields");
     xmlString = getTabOffsetString(2) + "<"+selectedMethod+"> \n";
     xmlString += getTabOffsetString(3) + "<object>" + responseData["Type"]["_Name"]+"</object>\n";

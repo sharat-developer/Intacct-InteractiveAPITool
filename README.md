@@ -7,7 +7,7 @@ What are the features
 Users can fill in the Intacct instance credentials in the `Configurations` screen and make the API calls without having to save the credentials and also without logging into the app.
 
 ##### Demo
-![Demo video](videos/gifs/1.%20"Quick%20test".gif)
+![Demo video](videos/gifs/1.%20%22Quick%20test%22-v_2.gif)
 
 ##### How it helps
 - Users can build and post the API requests directly. The app does not force users to log in to test some API requests quickly.

@@ -1484,7 +1484,9 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 
     var xmlDocAPIRequest = vkbeautify.xml(apiRequest);
 
-    console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
+    // console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
+    var maskedXMLDocAPIRequest = xmlDocAPIRequest.replace( /\<password\>.*\<\/password\>/g, '<password>**MASKED**</password>' )
+    console.log("maskedXMLDocAPIRequest::formatted==>" + maskedXMLDocAPIRequest);
 
     var showResponseDivHTML =
             //"<div class='row'>"+
@@ -1567,8 +1569,8 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
     //showRequestJq.height( (showRequestJq[0].scrollHeight)-12 );
     //showRequestJq.height( 800 );
 
-    showRequestJq.val(xmlDocAPIRequest); //.trigger('change');
-    var xmlDocAPIRequestLength = xmlDocAPIRequest.split(/\r\n|\r|\n/).length;
+    showRequestJq.val(maskedXMLDocAPIRequest); //.trigger('change');
+    var xmlDocAPIRequestLength = maskedXMLDocAPIRequest.split(/\r\n|\r|\n/).length;
     //console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
 
     showRequestJq.attr("rows", xmlDocAPIRequestLength);
@@ -1582,7 +1584,9 @@ function populateShowApiResponseDiv(apiResponse, apiRequest) {
 function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
     console.log("inside populateShowApiResponseDiv_2_1()::apiRequest==>" +apiRequest);
     var xmlDocAPIRequest = vkbeautify.xml(apiRequest);
-    console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
+    // console.log("apiRequest::formatted==>" +xmlDocAPIRequest);
+    var maskedXMLDocAPIRequest = xmlDocAPIRequest.replace( /\<password\>.*\<\/password\>/g, '<password>**MASKED**</password>' )
+    console.log("maskedXMLDocAPIRequest::formatted==>" + maskedXMLDocAPIRequest);
 
     var showResponseDivHTML_2_1 =
             //"<div class='row'>"+
@@ -1631,8 +1635,8 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
     showResponseJq.height( (showResponseJq[0].scrollHeight)-12);
 
     var showRequestJq = $("#showRequest_2_1");
-    showRequestJq.val(xmlDocAPIRequest);
-    var xmlDocAPIRequestLength = xmlDocAPIRequest.split(/\r\n|\r|\n/).length;
+    showRequestJq.val(maskedXMLDocAPIRequest);
+    var xmlDocAPIRequestLength = maskedXMLDocAPIRequest.split(/\r\n|\r|\n/).length;
     showRequestJq.attr("rows", xmlDocAPIRequestLength);
 
 //    $('#showResponseDiv_2_1').html("<form id='showResponseForm_2_1' class='form-horizontal'  method='post'  action='#'>" +
@@ -1660,12 +1664,14 @@ function populateShowApiResponseDiv_2_1(apiResponse, apiRequest){
  */
 function populateCreateXML(apiRequest, apiVersion) {
     apiRequest = vkbeautify.xml(apiRequest);
+    var maskedXMLDocAPIRequest = apiRequest.replace( /\<password\>.*\<\/password\>/g, '<password>**MASKED**</password>' )
+    console.log("maskedXMLDocAPIRequest::formatted==>" + maskedXMLDocAPIRequest);
     var apiVersionId = convertDotToUnderScore(apiVersion);
     //$('textarea').autoResize();
     var createXMLJq = $("textarea#createXML_" + apiVersionId);
     //createXMLJq.height( (createXMLJq[0].scrollHeight)-12);
 
-    var xmlDocAPIRequestLength = apiRequest.toString().split(/\r\n|\r|\n/).length;
+    var xmlDocAPIRequestLength = maskedXMLDocAPIRequest.toString().split(/\r\n|\r|\n/).length;
     console.log("xmlDocAPIRequestLength==>" + xmlDocAPIRequestLength);
     createXMLJq.attr("rows", xmlDocAPIRequestLength);
     createXMLJq.val(apiRequest);

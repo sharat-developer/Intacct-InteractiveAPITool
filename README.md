@@ -1,7 +1,7 @@
 # Intacct-InteractiveAPITool
-The interactive tool helps the developers to construct and post Sage Intacct web-service API requests easily and intuitively.
+A tool helps the developers to construct and post Sage Intacct web-service API requests easily and intuitively.
 
-What are the features
+Features
 ------------
 #### 1. "Quick test"
 Users can fill in the Intacct instance credentials in the `Configurations` screen and make the API calls without having to save the credentials and also without logging into the app.
